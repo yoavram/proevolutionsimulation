@@ -1,4 +1,6 @@
-package il.ac.tau.yoavram.pes;
+package il.ac.tau.yoavram.pes.terminators;
+
+import il.ac.tau.yoavram.pes.Simulation;
 
 public abstract class AbstractTerminator implements Terminator {
 	Simulation simulation;

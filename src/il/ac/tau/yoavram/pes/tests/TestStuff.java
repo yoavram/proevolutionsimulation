@@ -1,13 +1,14 @@
 package il.ac.tau.yoavram.pes.tests;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertTrue;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 
-public class TestList {
-	@org.junit.Test
-	public void test() {
+public class TestStuff {
+	//@org.junit.Test
+	public void testList() {
 		List<Integer> list = new ArrayList<Integer>();
 		list.add(1);
 		list.add(2);
@@ -23,5 +24,11 @@ public class TestList {
 				k++;
 			}
 		}
+	}
+
+	@org.junit.Test
+	public void testDate() {
+		System.out.println(Calendar.getInstance().getTime().toString());
+
 	}
 }

@@ -1,4 +1,5 @@
-package il.ac.tau.yoavram.pes;
+package il.ac.tau.yoavram.pes.terminators;
+
 
 public class TickTerminator extends AbstractTerminator implements Terminator {
 
