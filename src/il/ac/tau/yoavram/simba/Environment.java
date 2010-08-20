@@ -8,6 +8,8 @@ import cern.jet.random.Poisson;
 import cern.jet.random.Uniform;
 
 public class Environment implements Serializable {
+	private static final long serialVersionUID = -2665663049159958614L;
+
 	private static final Logger logger = Logger.getLogger(Environment.class);
 
 	private int[] alleles;

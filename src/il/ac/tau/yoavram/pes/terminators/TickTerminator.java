@@ -1,14 +1,14 @@
 package il.ac.tau.yoavram.pes.terminators;
 
+import il.ac.tau.yoavram.pes.Simulation;
 
-public class TickTerminator extends AbstractTerminator implements Terminator {
+public class TickTerminator implements Terminator {
 
 	private long endAtTick = 0;
 
 	@Override
-	public void happen() {
-		if (getSimulation().getTick() >= getEndAtTick())
-			getSimulation().end();
+	public boolean terminate() {
+		return Simulation.getInstance().getTick() >= getEndAtTick();
 	}
 
 	public void setEndAtTick(long endAtTick) {

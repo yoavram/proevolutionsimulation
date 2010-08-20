@@ -1,10 +1,14 @@
 package il.ac.tau.yoavram.pes.statistics.listeners;
 
-import java.util.List;
-
 import il.ac.tau.yoavram.pes.io.CsvWriter;
 
+import java.util.List;
+
+import org.apache.log4j.Logger;
+
 public class CsvWriterListener implements DataListener {
+	private static final Logger logger = Logger.getLogger(CsvWriterListener.class);
+	
 	private CsvWriter writer;
 
 	public CsvWriterListener() {

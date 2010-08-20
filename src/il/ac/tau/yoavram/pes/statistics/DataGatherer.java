@@ -1,6 +1,5 @@
 package il.ac.tau.yoavram.pes.statistics;
 
-import il.ac.tau.yoavram.pes.Event;
 import il.ac.tau.yoavram.pes.filters.Filter;
 import il.ac.tau.yoavram.pes.statistics.aggregators.Aggregator;
 import il.ac.tau.yoavram.pes.statistics.listeners.DataListener;
@@ -8,7 +7,7 @@ import il.ac.tau.yoavram.pes.statistics.listeners.DataListener;
 import java.util.Collection;
 import java.util.List;
 
-public interface DataGatherer<T> extends Event {
+public interface DataGatherer<T> {
 	DataGatherer<T> addFilter(Filter<T> filter);
 
 	List<Filter<T>> getFilters();
@@ -32,5 +31,7 @@ public interface DataGatherer<T> extends Event {
 	Collection<DataListener> getListeners();
 
 	DataGatherer<T> setListeners(Collection<DataListener> listeners);
+
+	void gather();
 
 }

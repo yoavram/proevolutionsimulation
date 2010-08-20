@@ -6,17 +6,20 @@ import il.ac.tau.yoavram.pes.statistics.listeners.DataListener;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.EventListener;
 import java.util.HashSet;
 import java.util.List;
 
-public abstract class AbstractDataGatherer<T> implements DataGatherer<T> {
+import org.apache.log4j.Logger;
+
+public class SimpleDataGatherer<T> implements DataGatherer<T> {
+	private static Logger logger = Logger.getLogger(SimpleDataGatherer.class);
+	
 	private List<Aggregator<T>> aggregators;
 	private List<Filter<T>> filters;
 	private Collection<DataListener> listeners;
 	private Collection<Collection<T>> populations;
 
-	public AbstractDataGatherer() {
+	public SimpleDataGatherer() {
 		aggregators = new ArrayList<Aggregator<T>>();
 		filters = new ArrayList<Filter<T>>();
 		listeners = new HashSet<DataListener>();
@@ -102,7 +105,7 @@ public abstract class AbstractDataGatherer<T> implements DataGatherer<T> {
 	}
 
 	@Override
-	public void happen() {
+	public void gather() {
 		for (Collection<T> pop : populations) {
 			for (T t : pop) {
 				boolean isFilter = true;

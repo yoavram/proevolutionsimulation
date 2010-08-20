@@ -1,5 +1,5 @@
 package il.ac.tau.yoavram.pes;
 
-public interface ModelFactory<T> {
-	Model<T> create();
+public interface ModelFactory{
+	Model create();
 }

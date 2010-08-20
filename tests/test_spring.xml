@@ -6,7 +6,7 @@
 
 
   <bean id="test" 
-        class="il.tau.yoavram.pes.tests.Test">
+        class="il.ac.tau.yoavram.pes.tests.Test">
   </bean>
   <!--bean id="log4jInitialization"
 	class="org.springframework.beans.factory.config.MethodInvokingFactoryBean">

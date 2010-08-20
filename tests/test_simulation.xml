@@ -6,7 +6,7 @@
 
 
   <bean id="simulation" 
-        class="il.tau.yoavram.pes.Simulation">     
+        class="il.ac.tau.yoavram.pes.CycleSimulation">     
            
   </bean>
 

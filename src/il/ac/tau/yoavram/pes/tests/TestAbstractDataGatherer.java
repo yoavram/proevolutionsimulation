@@ -2,8 +2,8 @@ package il.ac.tau.yoavram.pes.tests;
 
 import static org.junit.Assert.assertTrue;
 import il.ac.tau.yoavram.pes.filters.Filter;
-import il.ac.tau.yoavram.pes.statistics.AbstractDataGatherer;
 import il.ac.tau.yoavram.pes.statistics.DataGatherer;
+import il.ac.tau.yoavram.pes.statistics.SimpleDataGatherer;
 import il.ac.tau.yoavram.pes.statistics.aggregators.Sum;
 import il.ac.tau.yoavram.pes.statistics.listeners.DataListener;
 import il.ac.tau.yoavram.pes.statistics.listeners.DataLogger;
@@ -59,12 +59,12 @@ public class TestAbstractDataGatherer {
 	}
 
 	@Test
-	public void testHappen() {
-		gatherer.happen();
+	public void testGather() {
+		gatherer.gather();
 
 	}
 
-	private class IntegerDataGatherer extends AbstractDataGatherer<Integer> {
+	private class IntegerDataGatherer extends SimpleDataGatherer<Integer> {
 
 	}
 

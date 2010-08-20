@@ -48,7 +48,7 @@ public class Bacteria implements Serializable {
 					fitness *= (1 - s);
 				}
 			}
-			update = getSimulation().getTick();
+			update = Simulation.getInstance().getTick();
 		}
 		return fitness;
 	}
@@ -101,11 +101,6 @@ public class Bacteria implements Serializable {
 	}
 
 	private Environment getEnvironment() {
-		// TODO - INJECT
-		return null;
-	}
-
-	private Simulation getSimulation() {
 		// TODO - INJECT
 		return null;
 	}
