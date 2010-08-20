@@ -5,7 +5,7 @@ import static org.junit.Assert.assertTrue;
 import java.io.IOException;
 
 import org.springframework.context.ApplicationContext;
-import org.springframework.context.support.ClassPathXmlApplicationContext;
+import org.springframework.context.support.FileSystemXmlApplicationContext;
 
 /**
  * 
@@ -21,7 +21,7 @@ public class TestSpring {
 
 	@org.junit.Before
 	public void setUp() throws IOException {
-		context = new ClassPathXmlApplicationContext("test_spring.xml");
+		context = new FileSystemXmlApplicationContext("tests\\test_spring.xml");
 		test = context.getBean("test", Test.class);
 	}
 
