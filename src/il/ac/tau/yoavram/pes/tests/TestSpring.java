@@ -4,10 +4,8 @@ import static org.junit.Assert.assertTrue;
 
 import java.io.IOException;
 
-import org.apache.log4j.PropertyConfigurator;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
-import org.springframework.context.support.FileSystemXmlApplicationContext;
 
 /**
  * 
