@@ -19,18 +19,22 @@ public class Bacteria implements Serializable {
 
 	private int[] environmentalAlleles;
 	private int[] housekeepingAlleles;
+	private double mutationRate;
+	private double selectionCoefficient;
+
 	private transient double fitness = -1;
 	private transient long update = -1;
 
 	public Bacteria() {
-
 	}
 
 	public Bacteria(Bacteria other) {
-		environmentalAlleles = Arrays.copyOf(other.environmentalAlleles,
-				other.environmentalAlleles.length);
-		housekeepingAlleles = Arrays.copyOf(other.housekeepingAlleles,
-				other.housekeepingAlleles.length);
+		setEnvironmentalAlleles(Arrays.copyOf(other.environmentalAlleles,
+				other.environmentalAlleles.length));
+		setHousekeepingAlleles(Arrays.copyOf(other.housekeepingAlleles,
+				other.housekeepingAlleles.length));
+		setMutationRate(other.getMutationRate());
+		setSelectionCoefficient(getSelectionCoefficient());
 	}
 
 	public double getFitness() {
@@ -101,18 +105,7 @@ public class Bacteria implements Serializable {
 	}
 
 	private Environment getEnvironment() {
-		// TODO - INJECT
-		return null;
-	}
-
-	private double getSelectionCoefficient() {
-		// TODO - INJECT
-		return Double.NaN;
-	}
-
-	public double getMutationRate() {
-		// TODO - INJECT
-		return Double.NaN;
+		return Environment.getInstace();
 	}
 
 	public int getID() {
@@ -123,4 +116,35 @@ public class Bacteria implements Serializable {
 		return this.getID() == other.getID();
 	}
 
+	public int[] getEnvironmentalAlleles() {
+		return environmentalAlleles;
+	}
+
+	public void setEnvironmentalAlleles(int[] environmentalAlleles) {
+		this.environmentalAlleles = environmentalAlleles;
+	}
+
+	public int[] getHousekeepingAlleles() {
+		return housekeepingAlleles;
+	}
+
+	public void setHousekeepingAlleles(int[] housekeepingAlleles) {
+		this.housekeepingAlleles = housekeepingAlleles;
+	}
+
+	public void setMutationRate(double mutationRate) {
+		this.mutationRate = mutationRate;
+	}
+
+	public double getMutationRate() {
+		return mutationRate;
+	}
+
+	public void setSelectionCoefficient(double selectionCoefficient) {
+		this.selectionCoefficient = selectionCoefficient;
+	}
+
+	public double getSelectionCoefficient() {
+		return selectionCoefficient;
+	}
 }

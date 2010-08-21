@@ -1,5 +1,7 @@
 package il.ac.tau.yoavram.simba;
 
+import il.ac.tau.yoavram.pes.Simulation;
+
 import java.io.Serializable;
 
 import org.apache.log4j.Logger;
@@ -12,8 +14,19 @@ public class Environment implements Serializable {
 
 	private static final Logger logger = Logger.getLogger(Environment.class);
 
+	private static Environment INSTANCE = null;
+
 	private int[] alleles;
 	private transient long lastEnvironmentalChange = 0;
+
+	public Environment(int numberOfEnvironmentalGenes) {
+		INSTANCE = this;
+		int numberOfAlleles = EnvironmentalAllele.values().length;
+		alleles = new int[numberOfEnvironmentalGenes];
+		for (int gene = 0; gene < alleles.length; gene++) {
+			alleles[gene] = Uniform.staticNextIntFromTo(0, numberOfAlleles - 1);
+		}
+	}
 
 	public void change(double fractionOfGenesToChange) {
 		double mean = fractionOfGenesToChange * alleles.length;
@@ -40,7 +53,10 @@ public class Environment implements Serializable {
 	}
 
 	private long getTick() {
-		// TODO - INJECT
-		return Integer.MAX_VALUE;
+		return Simulation.getInstance().getTick();
+	}
+
+	public static Environment getInstace() {
+		return INSTANCE;
 	}
 }

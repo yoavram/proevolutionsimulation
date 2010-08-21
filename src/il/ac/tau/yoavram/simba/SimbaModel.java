@@ -6,13 +6,30 @@ import java.util.List;
 
 import cern.jet.random.Uniform;
 
+/**
+ * TODO serialization
+ * 
+ * @author Yoav
+ * 
+ */
 public class SimbaModel implements Model {
 
+	private static final long serialVersionUID = -2304552481208280007L;
 	private List<Bacteria> population;
 	private int populationSize;
 	private double fractionOfGenesToChange;
 	private double environmentalChangeFrequency;
 	private Environment environment;
+	
+	@Override
+	public void init() {
+		population = createPopulation();
+	}
+
+	private List<Bacteria> createPopulation() {
+		// INJECT
+		return null;
+	}
 
 	@Override
 	public void step() {
@@ -76,7 +93,8 @@ public class SimbaModel implements Model {
 		this.fractionOfGenesToChange = fractionOfGenesToChange;
 	}
 
-	public void setEnvironmentalChangeFrequency(double environmentalChangeFrequency) {
+	public void setEnvironmentalChangeFrequency(
+			double environmentalChangeFrequency) {
 		this.environmentalChangeFrequency = environmentalChangeFrequency;
 	}
 

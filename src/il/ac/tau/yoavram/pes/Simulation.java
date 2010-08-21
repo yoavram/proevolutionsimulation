@@ -18,7 +18,6 @@ public class Simulation {
 	private long tick;
 	private boolean running;
 	private List<DataGatherer<?>> dataGatherers;
-
 	private Terminator terminator;
 
 	public static Simulation getInstance() {
@@ -28,10 +27,12 @@ public class Simulation {
 	public Simulation() {
 		tick = 0;
 		running = true;
+		INSTACE = this;
 	}
 
 	public void start() {
 		logger.info("Starting simulation");
+		getModel().init();
 		while (running) {
 			logger.debug("tick " + tick);
 			tick++;
