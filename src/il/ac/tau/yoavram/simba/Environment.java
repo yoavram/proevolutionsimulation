@@ -16,13 +16,17 @@ public class Environment implements Serializable {
 
 	private static Environment INSTANCE = null;
 
+	private int numberOfEnvironmentalGenes;
 	private int[] alleles;
 	private transient long lastEnvironmentalChange = 0;
 
-	public Environment(int numberOfEnvironmentalGenes) {
+	public Environment() {
+	}
+
+	public void init() {
 		INSTANCE = this;
 		int numberOfAlleles = EnvironmentalAllele.values().length;
-		alleles = new int[numberOfEnvironmentalGenes];
+		alleles = new int[getNumberOfEnvironmentalGenes()];
 		for (int gene = 0; gene < alleles.length; gene++) {
 			alleles[gene] = Uniform.staticNextIntFromTo(0, numberOfAlleles - 1);
 		}
@@ -59,4 +63,13 @@ public class Environment implements Serializable {
 	public static Environment getInstace() {
 		return INSTANCE;
 	}
+
+	public int getNumberOfEnvironmentalGenes() {
+		return numberOfEnvironmentalGenes;
+	}
+
+	public void setNumberOfEnvironmentalGenes(int numberOfEnvironmentalGenes) {
+		this.numberOfEnvironmentalGenes = numberOfEnvironmentalGenes;
+	}
+
 }

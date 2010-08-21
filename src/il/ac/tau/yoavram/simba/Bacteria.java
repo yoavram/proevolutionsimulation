@@ -39,7 +39,7 @@ public class Bacteria implements Serializable {
 
 	public double getFitness() {
 		if (fitness == -1
-				|| getEnvironment().getLastEnvironmentalChange() > update) {
+				|| Environment.getInstace().getLastEnvironmentalChange() > update) {
 			fitness = 1;
 			double s = getSelectionCoefficient();
 			for (int gene = 0; gene < housekeepingAlleles.length; gene++) {
@@ -48,7 +48,7 @@ public class Bacteria implements Serializable {
 				}
 			}
 			for (int gene = 0; gene < environmentalAlleles.length; gene++) {
-				if (getEnvironment().getIdealAllele(gene) != environmentalAlleles[gene]) {
+				if (Environment.getInstace().getIdealAllele(gene) != environmentalAlleles[gene]) {
 					fitness *= (1 - s);
 				}
 			}
@@ -102,10 +102,6 @@ public class Bacteria implements Serializable {
 		for (int gene = 0; gene < environmentalAlleles.length; gene++) {
 			environmentalAlleles[gene] = Uniform.staticNextIntFromTo(0, 2);
 		}
-	}
-
-	private Environment getEnvironment() {
-		return Environment.getInstace();
 	}
 
 	public int getID() {

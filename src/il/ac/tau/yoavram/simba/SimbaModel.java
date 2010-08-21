@@ -4,7 +4,11 @@ import il.ac.tau.yoavram.pes.Model;
 
 import java.util.List;
 
+import org.apache.log4j.Logger;
+
 import cern.jet.random.Uniform;
+
+import com.google.common.collect.Lists;
 
 /**
  * TODO serialization
@@ -13,22 +17,24 @@ import cern.jet.random.Uniform;
  * 
  */
 public class SimbaModel implements Model {
-
 	private static final long serialVersionUID = -2304552481208280007L;
+	private static final Logger logger = Logger.getLogger(SimbaModel.class);
+
 	private List<Bacteria> population;
+	private Bacteria ancestor;
 	private int populationSize;
 	private double fractionOfGenesToChange;
 	private double environmentalChangeFrequency;
 	private Environment environment;
-	
+
 	@Override
 	public void init() {
-		population = createPopulation();
-	}
-
-	private List<Bacteria> createPopulation() {
-		// INJECT
-		return null;
+		logger.debug("Inhabiting the population with decendents of "
+				+ getAncestor().getID());
+		population = Lists.newArrayList();
+		for (int i = 0; i < getPopulationSize(); i++) {
+			population.add(getAncestor().reproduce());
+		}
 	}
 
 	@Override
@@ -100,5 +106,13 @@ public class SimbaModel implements Model {
 
 	public void setEnvironment(Environment environment) {
 		this.environment = environment;
+	}
+
+	public void setAncestor(Bacteria ancestor) {
+		this.ancestor = ancestor;
+	}
+
+	public Bacteria getAncestor() {
+		return ancestor;
 	}
 }

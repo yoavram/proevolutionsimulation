@@ -2,9 +2,8 @@
 <beans xmlns="http://www.springframework.org/schema/beans"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://www.springframework.org/schema/beans
-           http://www.springframework.org/schema/beans/spring-beans-3.0.xsd">
-
-
+           http://www.springframework.org/schema/beans/spring-beans-3.0.xsd"
+	default-init-method="init">
 	<bean id="simulation" class="il.ac.tau.yoavram.pes.Simulation">
 		<property name="terminator" ref="tickTerminator" />
 		<property name="model" ref="simbaModel" />
@@ -14,24 +13,25 @@
 			</list>
 		</property>
 	</bean>
+	<bean id="environment" class="il.ac.tau.yoavram.simba.Environment">
+		<property name="numberOfEnvironmentalGenes" value="50" />
+	</bean>
+	<bean id="tickTerminator" class="il.ac.tau.yoavram.pes.terminators.TickTerminator">
+		<property name="endAtTick" value="1000" />
+	</bean>
+	<bean id="simpleGatherer" class="il.ac.tau.yoavram.pes.statistics.SimpleDataGatherer"></bean>
+	<bean id="ancestor" class="il.ac.tau.yoavram.simba.IdealAncestor">
+		<property name="numberOfEnvironmentalGenes" value="50" />
+		<property name="numberOfHousekeepingGenes" value="50" />
+		<property name="mutationRate" value="0.01" />
+		<property name="selectionCoefficient" value="0.1" />
+	</bean>
 	<bean id="simbaModel" class="il.ac.tau.yoavram.simba.SimbaModel">
 		<property name="populationSize" value="1000" />
 		<property name="fractionOfGenesToChange" value="0.0075" />
-		<property name="environmentalChangeFrequency" value="0.00001" />
-		<property name="environment" ref="envinronment" />
-		<lookup-method name="createPopulation" bean="populationFactory" />
-	</bean>
-	<bean id="environment" class="il.ac.tau.yoavram.simba.Environment">
-		<constructor-arg name="numberOfEnvironmentalGenes"
-			value="5000" />
-	</bean>
-	<bean id="tickTerminator" class="il.ac.tau.yoavram.pes.terminators.TickTerminator">
-		<property name="endAtTick"></property>
-	</bean>
-	<bean id="simpleGatherer" class="il.tau.ac.yoavram.pes.statisticsSimpleDataGatherer"></bean>
-	<bean id="populationFactory" class="il.tau.ac.yoavram.simba.IdealParentPopulationFactory">
-		<property name="numberOfEnvironmentalGenes" value="500" />
-		<property name="numberOfHousekeepingGenes" value="500" />
-		<property name="populationSize" value="100000"></property>
+		<property name="environmentalChangeFrequency" value="0.001" />
+		<property name="environment" ref="environment" />
+		<property name="ancestor" ref="ancestor" />
+
 	</bean>
 </beans>

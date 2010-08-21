@@ -1,6 +1,7 @@
 package il.ac.tau.yoavram.pes.statistics.aggregators;
 
-public abstract class Mean<T> extends AbstractAggregator<T> implements Aggregator<T> {
+public abstract class Mean<T> extends AbstractAggregator<T> implements
+		Aggregator<T> {
 
 	protected int count;
 	protected double mean;
@@ -16,6 +17,8 @@ public abstract class Mean<T> extends AbstractAggregator<T> implements Aggregato
 		return this;
 	}
 
+	protected abstract double extractData(T input);
+
 	@Override
 	public void clear() {
 		count = 0;
@@ -26,7 +29,4 @@ public abstract class Mean<T> extends AbstractAggregator<T> implements Aggregato
 	public Number result() {
 		return mean;
 	}
-
-	protected abstract double extractData(T input);
-
 }

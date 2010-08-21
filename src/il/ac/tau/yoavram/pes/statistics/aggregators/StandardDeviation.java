@@ -21,6 +21,8 @@ public abstract class StandardDeviation<T> extends AbstractAggregator<T>
 		return this;
 	}
 
+	protected abstract double extractData(T input);
+
 	@Override
 	public void clear() {
 		count = 0;
@@ -32,8 +34,6 @@ public abstract class StandardDeviation<T> extends AbstractAggregator<T>
 		return Math.sqrt(mean
 				- Math.pow(meanAggregator.result().doubleValue(), 2));
 	}
-
-	protected abstract double extractData(T input);
 
 	public void setMeanAggregator(Mean<T> meanAggregator) {
 		this.meanAggregator = meanAggregator;

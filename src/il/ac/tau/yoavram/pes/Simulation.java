@@ -32,7 +32,6 @@ public class Simulation {
 
 	public void start() {
 		logger.info("Starting simulation");
-		getModel().init();
 		while (running) {
 			logger.debug("tick " + tick);
 			tick++;
