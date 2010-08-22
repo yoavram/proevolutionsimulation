@@ -1,33 +1,42 @@
 package il.ac.tau.yoavram.pes.io;
 
+import il.ac.tau.yoavram.pes.utils.TimeUtils;
+
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.Date;
 
 //TODO - make this nice, test.
 public class CsvWriter {
 	private static final char ROW_SEPARATOR = '\n';
 	private static final char VALUE_SEPARATOR = ',';
+
 	private String filename = null;
+	private String extension = "csv";
+	private Date time;
+
 	private FileWriter writer = null;
 	private boolean newLine = true;
 
 	// private int rows = 0;
 
-	public CsvWriter(String filename) {
+	public CsvWriter() {
 		super();
-		this.filename = filename;
-		// TODO check filename
-		open();
 	}
 
-	public CsvWriter(String filename, String[] header) {
-		this(filename);
-		writeRow(header);
-	}
-
-	private void open() {
+	public void init() {
+		if (getFilename().isEmpty()) {
+			throw new IllegalArgumentException("Filename is empty");
+		}
+		String fname = getFilename();
+		if (getTime() != null) {
+			fname = fname + "." + TimeUtils.formatDate(getTime());
+		}
+		if (!getExtension().isEmpty()) {
+			fname = fname + "." + getExtension();
+		}
 		try {
-			writer = new FileWriter(filename);
+			writer = new FileWriter(fname);
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -65,19 +74,18 @@ public class CsvWriter {
 	public void newRow() {
 		try {
 			writer.append(ROW_SEPARATOR);
-			/*
-			 * if (rows++ % 1000 == 0) writer.flush();
-			 */
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		newLine = true;
+
 	}
 
 	public void close() {
 		if (writer != null) {
 			try {
+				writer.flush();
 				writer.close();
 				writer = null;
 			} catch (IOException e) {
@@ -94,4 +102,21 @@ public class CsvWriter {
 	public void setFilename(String filename) {
 		this.filename = filename;
 	}
+
+	public void setExtension(String extension) {
+		this.extension = extension;
+	}
+
+	public String getExtension() {
+		return extension;
+	}
+
+	public void setTime(Date time) {
+		this.time = time;
+	}
+
+	public Date getTime() {
+		return time;
+	}
+
 }

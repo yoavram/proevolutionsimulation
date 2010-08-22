@@ -2,7 +2,6 @@ package il.ac.tau.yoavram.pes.statistics.aggregators;
 
 public class Sum<T> extends AbstractAggregator<T> implements Aggregator<T>  {
 	private int count = 0;
-	private String name;
 
 	@Override
 	public Aggregator<T> aggregate(T input) {

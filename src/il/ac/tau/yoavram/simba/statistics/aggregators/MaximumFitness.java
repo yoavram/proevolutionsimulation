@@ -1,9 +1,9 @@
 package il.ac.tau.yoavram.simba.statistics.aggregators;
 
-import il.ac.tau.yoavram.pes.statistics.aggregators.StandardDeviation;
+import il.ac.tau.yoavram.pes.statistics.aggregators.Maximum;
 import il.ac.tau.yoavram.simba.Bacteria;
 
-public class FitnessStandardDeviation extends StandardDeviation<Bacteria> {
+public class MaximumFitness extends Maximum<Bacteria> {
 
 	@Override
 	protected double extractData(Bacteria input) {

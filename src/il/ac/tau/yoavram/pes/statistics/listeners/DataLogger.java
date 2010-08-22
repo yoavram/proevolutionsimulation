@@ -14,10 +14,6 @@ public class DataLogger implements DataListener {
 	}
 
 	@Override
-	public void close() {
-	}
-
-	@Override
 	public void setDataFieldNames(List<String> aggList) {
 		logger.info(Arrays.toString(aggList.toArray()));
 	}

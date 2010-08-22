@@ -5,7 +5,6 @@ import il.ac.tau.yoavram.pes.params.FileParamEngine;
 
 import org.apache.commons.configuration.ConfigurationException;
 
-/*TODO: document, add failure tests (null returns etc.)*/
 public class TestFileParamsEngine {
 
 	private static final String TEST_FILENAME = "tests/test.properties";

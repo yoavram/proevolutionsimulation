@@ -1,6 +1,6 @@
 package il.ac.tau.yoavram.simba;
 
-import il.ac.tau.yoavram.pes.Model;
+import il.ac.tau.yoavram.pes.SerilizableModel;
 
 import java.util.List;
 
@@ -10,45 +10,48 @@ import cern.jet.random.Uniform;
 
 import com.google.common.collect.Lists;
 
+//TODO sim invasion 
+//TODO fixation terminator 
+// TODO change environment after deserializaiton
 /**
- * TODO serialization
- * 
  * @author Yoav
  * 
  */
-public class SimbaModel implements Model {
+public class SimbaModel extends SerilizableModel<Bacteria> {
 	private static final long serialVersionUID = -2304552481208280007L;
 	private static final Logger logger = Logger.getLogger(SimbaModel.class);
 
-	private List<Bacteria> population;
 	private Bacteria ancestor;
 	private int populationSize;
 	private double fractionOfGenesToChange;
 	private double environmentalChangeFrequency;
 	private Environment environment;
+	private List<List<Bacteria>> populations;
 
 	@Override
 	public void init() {
 		logger.debug("Inhabiting the population with decendents of "
 				+ getAncestor().getID());
-		population = Lists.newArrayList();
+		List<Bacteria> pop = Lists.newArrayList();
 		for (int i = 0; i < getPopulationSize(); i++) {
-			population.add(getAncestor().reproduce());
+			pop.add(getAncestor().reproduce());
 		}
+		populations = Lists.newArrayList();
+		populations.add(pop);
 	}
 
 	@Override
 	public void step() {
 		// kill random bacteria
 		int kill = randomBacteriaIndex();
-		population.remove(kill);
+		getPopulations().get(0).remove(kill);
 
 		// reproduce random fit bacteria
-		while (population.size() < getPopulationSize()) {
+		while (getPopulations().get(0).size() < getPopulationSize()) {
 			Bacteria reproduce = randomBacteria();
 			if (reproduce.getFitness() > Uniform.staticNextDouble()) {
 				Bacteria child = reproduce.reproduce();
-				population.add(child);
+				getPopulations().get(0).add(child);
 			}
 		}
 
@@ -59,22 +62,15 @@ public class SimbaModel implements Model {
 	}
 
 	private Bacteria randomBacteria() {
-		return population.get(randomBacteriaIndex());
+		return getPopulations().get(0).get(randomBacteriaIndex());
 	}
 
 	private int randomBacteriaIndex() {
-		return Uniform.staticNextIntFromTo(0, population.size() - 1);
+		return Uniform.staticNextIntFromTo(0,
+				getPopulations().get(0).size() - 1);
 	}
 
 	/* GETTERS AND SETTERS */
-	public List<Bacteria> getPopulation() {
-		return population;
-	}
-
-	public void setPopulation(List<Bacteria> population) {
-		this.population = population;
-	}
-
 	public Environment getEnvironment() {
 		return environment;
 	}
@@ -114,5 +110,15 @@ public class SimbaModel implements Model {
 
 	public Bacteria getAncestor() {
 		return ancestor;
+	}
+
+	@Override
+	public List<List<Bacteria>> getPopulations() {
+		return populations;
+	}
+
+	@Override
+	public void setPopulations(List<List<Bacteria>> populations) {
+		this.populations = populations;
 	}
 }

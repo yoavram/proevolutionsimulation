@@ -7,8 +7,9 @@ import java.util.List;
 import org.apache.log4j.Logger;
 
 public class CsvWriterListener implements DataListener {
-	private static final Logger logger = Logger.getLogger(CsvWriterListener.class);
-	
+	private static final Logger logger = Logger
+			.getLogger(CsvWriterListener.class);
+
 	private CsvWriter writer;
 
 	public CsvWriterListener() {
@@ -35,7 +36,6 @@ public class CsvWriterListener implements DataListener {
 		return writer;
 	}
 
-	@Override
 	public void close() {
 		writer.close();
 	}
@@ -43,7 +43,5 @@ public class CsvWriterListener implements DataListener {
 	@Override
 	public void setDataFieldNames(List<String> aggList) {
 		writeHeader(aggList.toArray(new String[0]));
-
 	}
-
 }

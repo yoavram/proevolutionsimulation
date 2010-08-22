@@ -8,6 +8,7 @@ public class IdealAncestor extends Bacteria {
 
 	private int numberOfEnvironmentalGenes;
 	private int numberOfHousekeepingGenes;
+	private Environment environment;
 
 	public IdealAncestor() {
 		super();
@@ -16,7 +17,7 @@ public class IdealAncestor extends Bacteria {
 	public void init() {
 		int[] env = new int[getNumberOfEnvironmentalGenes()];
 		for (int i = 0; i < env.length; i++) {
-			env[i] = Environment.getInstace().getIdealAllele(i);
+			env[i] = getEnvironment().getIdealAllele(i);
 		}
 		int[] hk = new int[getNumberOfHousekeepingGenes()];
 		Arrays.fill(hk, HousekeepingAllele.Beneficial.ordinal());
@@ -39,5 +40,13 @@ public class IdealAncestor extends Bacteria {
 
 	public void setNumberOfHousekeepingGenes(int numberOfHousekeepingGenes) {
 		this.numberOfHousekeepingGenes = numberOfHousekeepingGenes;
+	}
+
+	public void setEnvironment(Environment environment) {
+		this.environment = environment;
+	}
+
+	public Environment getEnvironment() {
+		return environment;
 	}
 }

@@ -6,7 +6,6 @@ import org.apache.commons.configuration.PropertiesConfiguration;
 import org.apache.commons.configuration.PropertyConverter;
 import org.apache.commons.configuration.reloading.InvariantReloadingStrategy;
 
-/*TODO: document, logging, check that if file is changed after init it doesn't change the value in the runtime params*/
 public class FileParamEngine implements ParamEngine {
 
 	PropertiesConfiguration prop = null;

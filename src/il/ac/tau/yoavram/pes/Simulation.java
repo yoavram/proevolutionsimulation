@@ -1,24 +1,27 @@
 package il.ac.tau.yoavram.pes;
 
+import il.ac.tau.yoavram.pes.statistics.DataGatherer;
+import il.ac.tau.yoavram.pes.terminators.Terminator;
+import il.ac.tau.yoavram.pes.utils.TimeUtils;
+
+import java.util.Date;
 import java.util.List;
 
-import il.ac.tau.yoavram.pes.terminators.Terminator;
-import il.ac.tau.yoavram.pes.statistics.DataGatherer;
 import org.apache.log4j.Logger;
 
 /*
  * TODO fork threads
- * TODO add simulation identifier
  */
 public class Simulation {
 	private static Logger logger = Logger.getLogger(Simulation.class);
 	private static Simulation INSTACE = null;
 
-	private Model model;
+	private Model<?> model;
 	private long tick;
 	private boolean running;
 	private List<DataGatherer<?>> dataGatherers;
 	private Terminator terminator;
+	private Date time;
 
 	public static Simulation getInstance() {
 		return INSTACE;
@@ -31,13 +34,15 @@ public class Simulation {
 	}
 
 	public void start() {
-		logger.info("Starting simulation");
+		logger.info("Starting simulation " + TimeUtils.formatDate(getTime()));
 		while (running) {
 			logger.debug("tick " + tick);
 			tick++;
 			getModel().step();
 			for (DataGatherer<?> dataG : dataGatherers) {
-				dataG.gather();
+				if (getTick() % dataG.getInterval() == 0) {
+					dataG.gather();
+				}
 			}
 			if (terminator.terminate()) {
 				end();
@@ -59,11 +64,11 @@ public class Simulation {
 		return tick;
 	}
 
-	public void setModel(Model model) {
+	public void setModel(Model<?> model) {
 		this.model = model;
 	}
 
-	public Model getModel() {
+	public Model<?> getModel() {
 		return model;
 	}
 
@@ -85,5 +90,13 @@ public class Simulation {
 
 	public void addDataGatherer(DataGatherer<?> dataGatherer) {
 		dataGatherers.add(dataGatherer);
+	}
+
+	public void setTime(Date date) {
+		this.time = date;
+	}
+
+	public Date getTime() {
+		return time;
 	}
 }

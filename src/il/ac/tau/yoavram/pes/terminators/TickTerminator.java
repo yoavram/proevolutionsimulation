@@ -8,7 +8,7 @@ public class TickTerminator implements Terminator {
 
 	@Override
 	public boolean terminate() {
-		return Simulation.getInstance().getTick() > getEndAtTick();
+		return Simulation.getInstance().getTick() >= getEndAtTick();
 	}
 
 	public void setEndAtTick(long endAtTick) {

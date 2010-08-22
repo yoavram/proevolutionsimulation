@@ -1,13 +1,12 @@
 package il.ac.tau.yoavram.pes.filters;
 
-
-public class ClassFilter<T> implements Filter<T> {
+public class InstanceOfFilter<T> implements Filter<T> {
 
 	private Class<T> clazz;
 
 	@Override
 	public boolean filter(T filtrate) {
-		return getClazz().equals(filtrate.getClass());
+		return getClazz().isInstance(filtrate);
 	}
 
 	public void setClazz(Class<T> clazz) {

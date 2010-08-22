@@ -1,5 +1,6 @@
 package il.ac.tau.yoavram.pes.statistics;
 
+import il.ac.tau.yoavram.pes.Model;
 import il.ac.tau.yoavram.pes.filters.Filter;
 import il.ac.tau.yoavram.pes.statistics.aggregators.Aggregator;
 import il.ac.tau.yoavram.pes.statistics.listeners.DataListener;
@@ -13,17 +14,17 @@ import org.apache.log4j.Logger;
 
 public class SimpleDataGatherer<T> implements DataGatherer<T> {
 	private static Logger logger = Logger.getLogger(SimpleDataGatherer.class);
-	
+
 	private List<Aggregator<T>> aggregators;
 	private List<Filter<T>> filters;
 	private Collection<DataListener> listeners;
-	private Collection<Collection<T>> populations;
+	private Model<T> model;
+	private int interval = 1;
 
 	public SimpleDataGatherer() {
 		aggregators = new ArrayList<Aggregator<T>>();
 		filters = new ArrayList<Filter<T>>();
 		listeners = new HashSet<DataListener>();
-		populations = new HashSet<Collection<T>>();
 	}
 
 	@Override
@@ -45,12 +46,6 @@ public class SimpleDataGatherer<T> implements DataGatherer<T> {
 	}
 
 	@Override
-	public DataGatherer<T> addPopulation(Collection<T> population) {
-		populations.add(population);
-		return this;
-	}
-
-	@Override
 	public List<Aggregator<T>> getAggregators() {
 		return aggregators;
 	}
@@ -63,11 +58,6 @@ public class SimpleDataGatherer<T> implements DataGatherer<T> {
 	@Override
 	public Collection<DataListener> getListeners() {
 		return listeners;
-	}
-
-	@Override
-	public Collection<Collection<T>> getPopulations() {
-		return populations;
 	}
 
 	@Override
@@ -88,10 +78,24 @@ public class SimpleDataGatherer<T> implements DataGatherer<T> {
 		return this;
 	}
 
-	@Override
-	public DataGatherer<T> setPopulations(Collection<Collection<T>> populations) {
-		this.populations = populations;
+	public DataGatherer<T> setModel(Model<T> model) {
+		this.model = model;
 		return this;
+	}
+
+	public Model<T> getModel() {
+		return model;
+	}
+
+	@Override
+	public SimpleDataGatherer<T> setInterval(int interval) {
+		this.interval = interval;
+		return this;
+	}
+
+	@Override
+	public int getInterval() {
+		return interval;
 	}
 
 	public void init() {
@@ -106,7 +110,7 @@ public class SimpleDataGatherer<T> implements DataGatherer<T> {
 
 	@Override
 	public void gather() {
-		for (Collection<T> pop : populations) {
+		for (List<T> pop : getModel().getPopulations()) {
 			for (T t : pop) {
 				boolean isFilter = true;
 				for (Filter<T> filter : filters) {

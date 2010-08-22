@@ -6,7 +6,7 @@ public class MeanFitness extends
 		il.ac.tau.yoavram.pes.statistics.aggregators.Mean<Bacteria> {
 
 	@Override
-	protected Number extractData(Bacteria input) {
+	protected double extractData(Bacteria input) {
 		return input.getFitness();
 	}
 

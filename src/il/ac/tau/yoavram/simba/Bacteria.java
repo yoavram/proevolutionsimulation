@@ -1,6 +1,7 @@
 package il.ac.tau.yoavram.simba;
 
 import il.ac.tau.yoavram.pes.Simulation;
+import il.ac.tau.yoavram.pes.filters.ClassFilter;
 
 import java.io.Serializable;
 import java.util.Arrays;
@@ -39,7 +40,7 @@ public class Bacteria implements Serializable {
 
 	public double getFitness() {
 		if (fitness == -1
-				|| Environment.getInstace().getLastEnvironmentalChange() > update) {
+				|| getEnvironment().getLastEnvironmentalChange() > update) {
 			fitness = 1;
 			double s = getSelectionCoefficient();
 			for (int gene = 0; gene < housekeepingAlleles.length; gene++) {
@@ -48,7 +49,7 @@ public class Bacteria implements Serializable {
 				}
 			}
 			for (int gene = 0; gene < environmentalAlleles.length; gene++) {
-				if (Environment.getInstace().getIdealAllele(gene) != environmentalAlleles[gene]) {
+				if (getEnvironment().getIdealAllele(gene) != environmentalAlleles[gene]) {
 					fitness *= (1 - s);
 				}
 			}
@@ -108,8 +109,15 @@ public class Bacteria implements Serializable {
 		return id;
 	}
 
-	public boolean equals(Bacteria other) {
-		return this.getID() == other.getID();
+	@Override
+	public boolean equals(Object obj) {
+		return obj instanceof Bacteria
+				&& this.getID() == ((Bacteria) obj).getID();
+	}
+
+	private Environment getEnvironment() {
+		return ((SimbaModel) Simulation.getInstance().getModel())
+				.getEnvironment();
 	}
 
 	public int[] getEnvironmentalAlleles() {
@@ -143,4 +151,11 @@ public class Bacteria implements Serializable {
 	public double getSelectionCoefficient() {
 		return selectionCoefficient;
 	}
+
+	public static class Filter extends ClassFilter<Bacteria> {
+		public Filter() {
+			setClazz(Bacteria.class);
+		}
+	}
+
 }
