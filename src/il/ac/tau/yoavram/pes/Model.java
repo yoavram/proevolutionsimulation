@@ -1,6 +1,5 @@
 package il.ac.tau.yoavram.pes;
 
-import java.util.Date;
 import java.util.List;
 
 public interface Model<T> {
@@ -12,9 +11,9 @@ public interface Model<T> {
 
 	void setPopulations(List<List<T>> populations);
 
-	Date getTime();
+	Object getID();
 
-	void setTime(Date time);
+	void setID(Object id);
 
 	// TODO map, resources,...
 

@@ -2,7 +2,7 @@ package il.ac.tau.yoavram.pes.terminators;
 
 import il.ac.tau.yoavram.pes.Simulation;
 
-public class TickTerminator implements Terminator {
+public class TickTerminator extends AbstractTerminator implements Terminator {
 
 	private long endAtTick = 0;
 

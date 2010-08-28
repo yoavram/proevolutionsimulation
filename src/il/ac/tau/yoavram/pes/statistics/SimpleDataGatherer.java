@@ -110,32 +110,32 @@ public class SimpleDataGatherer<T> implements DataGatherer<T> {
 
 	@Override
 	public void gather() {
+		for (Aggregator<T> agg : getAggregators()) {
+			agg.clear();
+		}
 		for (List<T> pop : getModel().getPopulations()) {
 			for (T t : pop) {
 				boolean isFilter = true;
-				for (Filter<T> filter : filters) {
+				for (Filter<T> filter : getFilters()) {
 					if (!filter.filter(t)) {
 						isFilter = false;
 						break;
 					}
 				}
 				if (isFilter) {
-					for (Aggregator<T> agg : aggregators) {
+					for (Aggregator<T> agg : getAggregators()) {
 						agg.aggregate(t);
 					}
 				}
 			}
 		}
 
-		List<Number> dataList = new ArrayList<Number>(aggregators.size());
-		for (Aggregator<T> agg : aggregators) {
+		List<Number> dataList = new ArrayList<Number>(getAggregators().size());
+		for (Aggregator<T> agg : getAggregators()) {
 			dataList.add(agg.result());
 		}
-		for (Aggregator<T> agg : aggregators) {
-			agg.clear();
-		}
 		Number[] data = dataList.toArray(new Number[0]);
-		for (DataListener listener : listeners) {
+		for (DataListener listener : getListeners()) {
 			listener.listen(data);
 		}
 	}

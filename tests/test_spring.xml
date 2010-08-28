@@ -3,21 +3,7 @@
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xsi:schemaLocation="http://www.springframework.org/schema/beans
            http://www.springframework.org/schema/beans/spring-beans-3.0.xsd">
+<bean ></bean>
 
-
-  <bean id="test" 
-        class="il.ac.tau.yoavram.pes.tests.Test">
-  </bean>
-  <!--bean id="log4jInitialization"
-	class="org.springframework.beans.factory.config.MethodInvokingFactoryBean">
-		<property name="targetClass"
-			value="org.springframework.util.Log4jConfigurer" />
-		<property name="targetMethod" value="initLogging" />
-		<property name="arguments">
-			<list>
-				<value>log4j.properties</value>
-			</list>
-		</property>
-   </bean-->
 
 </beans>

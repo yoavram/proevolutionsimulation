@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+           http://www.springframework.org/schema/beans/spring-beans-3.0.xsd"
+	default-init-method="init" default-destroy-method="destroy">
+	<bean id="simulation" class="il.ac.tau.yoavram.pes.Simulation">
+		<property name="terminators">
+			<list>
+				<ref bean="tickTerminator" />
+			</list>
+		</property>
+		<property name="model" ref="simbaModel" />
+		<property name="dataGatherers">
+			<list>
+				<ref bean="bacteriaDataGatherer" />
+			</list>
+		</property>
+		<property name="ID" value="${jobName}.${time}" />
+	</bean>
+	<bean id="environment" class="il.ac.tau.yoavram.simba.Environment">
+		<property name="numberOfEnvironmentalGenes" value="${numberOfEnvironmentalGenes}" />
+	</bean>
+	<bean id="tickTerminator" class="il.ac.tau.yoavram.pes.terminators.TickTerminator">
+		<property name="endAtTick" value="${numberOfTicks}" />
+	</bean>
+	<bean id="ancestor" class="il.ac.tau.yoavram.simba.IdealAncestor">
+		<property name="numberOfEnvironmentalGenes" value="${numberOfEnvironmentalGenes}" />
+		<property name="numberOfHousekeepingGenes" value="${numberOfHousekeepingGenes}" />
+		<property name="mutationRate" value="${mutationRate}" />
+		<property name="selectionCoefficient" value="${selectionCoefficient}" />
+		<property name="environment" ref="environment">
+		</property>
+	</bean>
+	<bean id="simbaModel" class="il.ac.tau.yoavram.simba.SimbaModel">
+		<property name="populationSize" value="${populationSize}" />
+		<property name="fractionOfGenesToChange" value="${fractionOfGenesToChange}" />
+		<property name="environmentalChangeFrequency" value="${environmentalChangeFrequency}" />
+		<property name="environment" ref="environment" />
+		<property name="ancestor" ref="ancestor" />
+		<property name="serializedAtEnd" value="true" />
+		<property name="filename" value="${serialization.filename}" />
+		<property name="ID" value="${jobName}.${time}" />
+	</bean>
+
+	<bean id="bacteriaDataGatherer" class="il.ac.tau.yoavram.simba.statistics.SimbaDataGatherer">
+		<property name="model" ref="simbaModel" />
+		<property name="interval" value="${statistics.interval}" />
+		<property name="filters">
+			<list>
+				<bean id="bacteriaFilter" class="il.ac.tau.yoavram.simba.Bacteria.Filter" />
+			</list>
+		</property>
+		<property name="listeners">
+			<list>
+				<bean class="il.ac.tau.yoavram.pes.statistics.listeners.DataLogger" />
+				<bean class="il.ac.tau.yoavram.pes.statistics.listeners.CsvWriterListener">
+					<property name="csvWriter">
+						<bean class="il.ac.tau.yoavram.pes.io.CsvWriter"
+							destroy-method="close">
+							<property name="filename"
+								value="${output.dir}/${jobName}/${jobName}.${time}" />
+						</bean>
+					</property>
+				</bean>
+				<bean class="il.ac.tau.yoavram.pes.statistics.listeners.ChartDrawer">
+					<property name="title" value="${jobName}.${time}" />
+
+				</bean>
+			</list>
+		</property>
+		<property name="aggregators">
+			<list>
+				<!--<bean class="il.ac.tau.yoavram.pes.statistics.aggregators.Ticker">
+					<property name="name" value="tick" />
+				</bean>-->
+				<ref bean="meanFitness" />
+				<bean
+					class="il.ac.tau.yoavram.simba.statistics.aggregators.MinimumFitness">
+					<property name="name" value="min fitness" />
+				</bean>
+				<bean
+					class="il.ac.tau.yoavram.simba.statistics.aggregators.MaximumFitness">
+					<property name="name" value="max fitness" />
+				</bean>
+				<!-- <bean
+					class="il.ac.tau.yoavram.simba.statistics.aggregators.StandardDeviationFitness">
+					<property name="name" value="stdev fitness" />
+					<property name="meanAggregator" ref="meanFitness" />
+				</bean>
+				<ref bean="meanMutationRate" />
+				<bean
+					class="il.ac.tau.yoavram.simba.statistics.aggregators.MinimumMutationRate">
+					<property name="name" value="min mutation rate" />
+				</bean>
+				<bean
+					class="il.ac.tau.yoavram.simba.statistics.aggregators.MaximumMutationRate">
+					<property name="name" value="max mutation rate" />
+				</bean>
+				<bean
+					class="il.ac.tau.yoavram.simba.statistics.aggregators.StandardDeviationMutationRate">
+					<property name="name" value="stdev mutation rate" />
+					<property name="meanAggregator" ref="meanMutationRate" />
+				</bean>
+	-->		</list>
+		</property>
+	</bean>
+	<bean id="meanFitness"
+		class="il.ac.tau.yoavram.simba.statistics.aggregators.MeanFitness">
+		<property name="name" value="mean fitness" />
+	</bean>
+	<bean id="meanMutationRate"
+		class="il.ac.tau.yoavram.simba.statistics.aggregators.MeanMutationRate">
+		<property name="name" value="mean mutation rate" />
+	</bean>
+
+</beans>

@@ -1,10 +1,9 @@
 package il.ac.tau.yoavram.simba;
 
-import org.apache.log4j.Logger;
 
 public class SimBacteria extends Bacteria {
 	private static final long serialVersionUID = -5401626270460444969L;
-	private static final Logger logger = Logger.getLogger(SimBacteria.class);
+	//private static final Logger logger = Logger.getLogger(SimBacteria.class);
 
 	private double fitnessThreshold = 0;
 	private double mutationRateModifier = 1;
@@ -17,6 +16,10 @@ public class SimBacteria extends Bacteria {
 		super(other);
 		this.fitnessThreshold = other.fitnessThreshold;
 		this.mutationRateModifier = other.mutationRateModifier;
+	}
+
+	public SimBacteria(Bacteria other) {
+		super(other);
 	}
 
 	@Override

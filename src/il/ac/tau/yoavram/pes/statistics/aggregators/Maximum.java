@@ -3,7 +3,7 @@ package il.ac.tau.yoavram.pes.statistics.aggregators;
 public abstract class Maximum<T> extends AbstractAggregator<T> implements
 		Aggregator<T> {
 
-	protected double max;
+	protected double max = Double.MIN_VALUE;
 
 	public Maximum() {
 		clear();

@@ -2,6 +2,7 @@ package il.ac.tau.yoavram.pes.io;
 
 import il.ac.tau.yoavram.pes.utils.TimeUtils;
 
+import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.Date;
@@ -34,6 +35,11 @@ public class CsvWriter {
 		}
 		if (!getExtension().isEmpty()) {
 			fname = fname + "." + getExtension();
+		}
+		File file = new File(fname);
+		File dir = file.getParentFile();
+		if (!dir.exists()) {
+			dir.mkdir();
 		}
 		try {
 			writer = new FileWriter(fname);

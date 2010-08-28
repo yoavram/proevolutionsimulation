@@ -45,7 +45,7 @@ public class TestSimbaModel {
 		SimbaModel deModel = Serialization.readFromFile(serializationFilename);
 
 		assertNotNull(deModel);
-		assertEquals(deModel.getTime(), model.getTime());
+		assertEquals(deModel, model);
 		assertEquals(deModel.getAncestor(), model.getAncestor());
 		assertEquals(deModel.getEnvironment(), model.getEnvironment());
 		assertEquals(deModel.getPopulations(), model.getPopulations());

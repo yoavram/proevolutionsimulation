@@ -2,12 +2,12 @@ package il.ac.tau.yoavram.pes;
 
 import il.ac.tau.yoavram.pes.statistics.DataGatherer;
 import il.ac.tau.yoavram.pes.terminators.Terminator;
-import il.ac.tau.yoavram.pes.utils.TimeUtils;
 
-import java.util.Date;
 import java.util.List;
 
 import org.apache.log4j.Logger;
+
+import com.google.common.collect.Lists;
 
 /*
  * TODO fork threads
@@ -20,8 +20,8 @@ public class Simulation {
 	private long tick;
 	private boolean running;
 	private List<DataGatherer<?>> dataGatherers;
-	private Terminator terminator;
-	private Date time;
+	private List<Terminator> terminators;
+	private Object id;
 
 	public static Simulation getInstance() {
 		return INSTACE;
@@ -34,20 +34,30 @@ public class Simulation {
 	}
 
 	public void start() {
-		logger.info("Starting simulation " + TimeUtils.formatDate(getTime()));
+		logger.info("Starting simulation id " + getID());
 		while (running) {
-			logger.debug("tick " + tick);
-			tick++;
+			logger.debug("tick " + getTick());
+			incrementTick();
+
 			getModel().step();
-			for (DataGatherer<?> dataG : dataGatherers) {
+
+			for (DataGatherer<?> dataG : getDataGatherers()) {
 				if (getTick() % dataG.getInterval() == 0) {
 					dataG.gather();
 				}
 			}
-			if (terminator.terminate()) {
-				end();
+			for (Terminator terminator : getTerminators()) {
+				if (getTick() % terminator.getInterval() == 0
+						&& terminator.terminate()) {
+					end();
+				}
 			}
 		}
+		logger.info("Simulation finished, exiting...");
+	}
+
+	private void incrementTick() {
+		tick++;
 	}
 
 	public void end() {
@@ -72,12 +82,19 @@ public class Simulation {
 		return model;
 	}
 
-	public void setTerminator(Terminator terminator) {
-		this.terminator = terminator;
+	public void addTerminator(Terminator terminator) {
+		if (terminators == null) {
+			terminators = Lists.newArrayList();
+		}
+		getTerminators().add(terminator);
 	}
 
-	public Terminator getTerminator() {
-		return terminator;
+	public void setTerminators(List<Terminator> terminators) {
+		this.terminators = terminators;
+	}
+
+	public List<Terminator> getTerminators() {
+		return terminators;
 	}
 
 	public void setDataGatherers(List<DataGatherer<?>> dataGatherers) {
@@ -89,14 +106,17 @@ public class Simulation {
 	}
 
 	public void addDataGatherer(DataGatherer<?> dataGatherer) {
+		if (dataGatherers == null) {
+			dataGatherers = Lists.newArrayList();
+		}
 		dataGatherers.add(dataGatherer);
 	}
 
-	public void setTime(Date date) {
-		this.time = date;
+	public void setID(Object id) {
+		this.id = id;
 	}
 
-	public Date getTime() {
-		return time;
+	public Object getID() {
+		return id;
 	}
 }
