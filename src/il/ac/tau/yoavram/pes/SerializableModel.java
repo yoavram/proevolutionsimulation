@@ -2,6 +2,7 @@ package il.ac.tau.yoavram.pes;
 
 import il.ac.tau.yoavram.pes.io.Serialization;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.Serializable;
 
@@ -43,6 +44,9 @@ public abstract class SerializableModel<T> implements Model<T>, Serializable {
 		}
 		try {
 			Serialization.writeToFile(this, serString);
+			File file = new File(serString);
+			logger.info("Serialized model " + getID().toString() + " to "
+					+ file.getAbsolutePath());
 			return serString;
 		} catch (IOException e) {
 			logger.debug("Failed serializing model "
@@ -56,6 +60,9 @@ public abstract class SerializableModel<T> implements Model<T>, Serializable {
 		E deserialized = null;
 		try {
 			deserialized = Serialization.readFromFile(filename);
+			File file = new File(filename);
+			logger.info("Deserialized model " + deserialized.getID().toString()
+					+ " to " + file.getAbsolutePath());
 		} catch (IOException e) {
 			logger.error(e);
 		} catch (ClassNotFoundException e) {

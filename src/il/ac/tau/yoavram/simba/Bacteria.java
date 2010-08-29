@@ -59,7 +59,7 @@ public class Bacteria implements Serializable {
 	}
 
 	public Bacteria reproduce() {
-		logger.debug(getID() + " reproducing");
+		// logger.debug(getID() + " reproducing");
 		Bacteria child = spawn();
 		int numOfMutations = Poisson.staticNextInt(child.getMutationRate());
 		if (numOfMutations > 0) {

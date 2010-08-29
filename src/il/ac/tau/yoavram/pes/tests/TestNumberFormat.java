@@ -1,5 +1,7 @@
 package il.ac.tau.yoavram.pes.tests;
 
+import il.ac.tau.yoavram.pes.utils.NumberUtils;
+
 import java.text.NumberFormat;
 import java.util.Locale;
 
@@ -16,6 +18,10 @@ public class TestNumberFormat {
 		System.out.println(NumberFormat.getIntegerInstance().format(d));
 		System.out.println(NumberFormat.getNumberInstance().format(d));
 		System.out.println(NumberFormat.getPercentInstance().format(d));
+
+		long l = 100000;
+		System.out.println(NumberFormat.getNumberInstance().format(l));
+		System.out.println(NumberUtils.formatNumber(l));
 
 	}
 

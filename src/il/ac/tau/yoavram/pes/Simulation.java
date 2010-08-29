@@ -28,7 +28,7 @@ public class Simulation {
 		return INSTACE;
 	}
 
-	public Simulation() {
+	public Simulation() {		
 		tick = 0;
 		running = true;
 		INSTACE = this;
