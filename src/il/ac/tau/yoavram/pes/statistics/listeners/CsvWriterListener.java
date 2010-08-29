@@ -6,26 +6,27 @@ import java.util.List;
 
 import org.apache.log4j.Logger;
 
-public class CsvWriterListener implements DataListener {
+public class CsvWriterListener extends ThreadListener {
 	private static final Logger logger = Logger
 			.getLogger(CsvWriterListener.class);
 
 	private CsvWriter writer;
 
 	public CsvWriterListener() {
+		this(DEFAULT_TITLE);
 	}
 
-	public CsvWriterListener(CsvWriter writer, String[] header) {
-		setCsvWriter(writer);
+	public CsvWriterListener(String name) {
+		super(name + " " + CsvWriterListener.class.getSimpleName());
 	}
 
 	public void writeHeader(String[] header) {
-		writer.writeRow(header);
+		getCsvWriter().writeRow(header);
 	}
 
 	@Override
-	public void listen(Number[] data) {
-		writer.writeRow(data);
+	protected void consume(Number[] data) {
+		getCsvWriter().writeRow(data);
 	}
 
 	public void setCsvWriter(CsvWriter writer) {
@@ -33,11 +34,25 @@ public class CsvWriterListener implements DataListener {
 	}
 
 	public CsvWriter getCsvWriter() {
+		if (writer == null) {
+			logger.error(CsvWriter.class.getSimpleName()
+					+ " not set, can't proceed");
+			throw new NullPointerException(CsvWriter.class.getSimpleName()
+					+ " not set, can't proceed");
+		}
 		return writer;
 	}
 
-	public void close() {
-		writer.close();
+	@Override
+	public void init() {
+		super.init();
+	}
+
+	@Override
+	public void destroy() {
+		super.destroy();
+		if (writer != null)
+			writer.close();
 	}
 
 	@Override

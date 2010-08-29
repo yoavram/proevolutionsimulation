@@ -5,6 +5,6 @@ import java.util.List;
 public interface DataListener {
 	void listen(Number[] data);
 
-	void setDataFieldNames(List<String> aggList);
+	void setDataFieldNames(List<String> dataFieldNames);
 
 }

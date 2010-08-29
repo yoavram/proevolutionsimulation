@@ -19,6 +19,7 @@ public class TestExtinctionTerminator {
 	ExtinctionTerminator terminator;
 	Model<Number> model;
 
+	@SuppressWarnings("unchecked")
 	@Before
 	public void setUp() throws Exception {
 		terminator = new ExtinctionTerminator();

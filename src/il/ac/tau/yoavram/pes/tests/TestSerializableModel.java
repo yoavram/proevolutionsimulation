@@ -1,6 +1,6 @@
 package il.ac.tau.yoavram.pes.tests;
 
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 import il.ac.tau.yoavram.pes.SerializableModel;
 import il.ac.tau.yoavram.pes.io.Serialization;
 
@@ -18,7 +18,6 @@ import com.google.common.primitives.Ints;
 public class TestSerializableModel {
 	private static SerializableModel<Integer> model;
 	private static String filename;
-	private static String filenameWithDate;
 
 	@org.junit.BeforeClass
 	public static void setUpBeforeClass() {
@@ -50,18 +49,17 @@ public class TestSerializableModel {
 		SerializableModel<Integer> deModel = Serialization
 				.readFromFile(filename);
 
-		assertTrue(deModel != null);
-		assertTrue(deModel.equals(model));
-		assertTrue(deModel.getPopulations().equals(model.getPopulations()));
+		assertNotNull(deModel);
+		assertEquals(deModel, model);
+		assertEquals(deModel.getPopulations(), model.getPopulations());
 	}
 
 	@org.junit.Test
 	public void serializeTest() {
-		// since filename already has extension:
-		model.setExtension(null);
-		filenameWithDate = model.serialize();
+		filename = model.serialize();
+		assertNotNull(filename);
 
-		File file = new File(filenameWithDate);
+		File file = new File(filename);
 		assertTrue(file.exists());
 		assertTrue(file.isFile());
 		assertTrue(file.getTotalSpace() > 0);
@@ -70,12 +68,11 @@ public class TestSerializableModel {
 	@org.junit.Test
 	public void deserializeTest() {
 		SerializableModel<Integer> deModel = SerializableModel
-				.deserialize(filenameWithDate);
+				.deserialize(filename);
 
-		assertTrue(deModel != null);
-		assertTrue(deModel.equals(model));
-		assertTrue(deModel.getPopulations().equals(model.getPopulations()));
-		assertTrue(new File(filenameWithDate).delete());
+		assertNotNull(deModel);
+		assertEquals(deModel, model);
+		assertEquals(deModel.getPopulations(), model.getPopulations());
 	}
 
 	@org.junit.Test
@@ -87,10 +84,9 @@ public class TestSerializableModel {
 				"test_deserialization.xml");
 		MockModel deModel = context.getBean("model", MockModel.class);
 
-		assertTrue(deModel != null);
-		assertTrue(deModel.equals(model));
-		assertTrue(deModel.getPopulations().equals(model.getPopulations()));
-
+		assertNotNull(deModel);
+		assertEquals(deModel, model);
+		assertEquals(deModel.getPopulations(), model.getPopulations());
 	}
 
 	public static class MockModel extends SerializableModel<Integer> {

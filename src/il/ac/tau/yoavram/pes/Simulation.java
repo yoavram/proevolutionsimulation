@@ -2,6 +2,7 @@ package il.ac.tau.yoavram.pes;
 
 import il.ac.tau.yoavram.pes.statistics.DataGatherer;
 import il.ac.tau.yoavram.pes.terminators.Terminator;
+import il.ac.tau.yoavram.pes.utils.NumberUtils;
 
 import java.util.List;
 
@@ -10,7 +11,7 @@ import org.apache.log4j.Logger;
 import com.google.common.collect.Lists;
 
 /*
- * TODO fork threads
+ * TODO fork threads? listeners already fork. should simulation as well? i don't see why.
  */
 public class Simulation {
 	private static Logger logger = Logger.getLogger(Simulation.class);
@@ -36,7 +37,7 @@ public class Simulation {
 	public void start() {
 		logger.info("Starting simulation id " + getID());
 		while (running) {
-			logger.debug("tick " + getTick());
+			logger.debug("tick " + NumberUtils.formatNumber(getTick()));
 			incrementTick();
 
 			getModel().step();
@@ -61,12 +62,15 @@ public class Simulation {
 	}
 
 	public void end() {
-		logger.info("Ending simulation at tick " + getTick());
+		logger.info("Ending simulation at tick "
+				+ NumberUtils.formatNumber(getTick()));
 		running = false;
 	}
 
 	public void setTick(long tick) {
-		logger.debug("Changing tick from " + this.tick + " to " + tick);
+		logger.debug("Changing tick from "
+				+ NumberUtils.formatNumber(getTick()) + " to "
+				+ NumberUtils.formatNumber(tick));
 		this.tick = tick;
 	}
 

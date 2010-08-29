@@ -56,8 +56,7 @@
 				<bean class="il.ac.tau.yoavram.pes.statistics.listeners.DataLogger" />
 				<bean class="il.ac.tau.yoavram.pes.statistics.listeners.CsvWriterListener">
 					<property name="csvWriter">
-						<bean class="il.ac.tau.yoavram.pes.io.CsvWriter"
-							destroy-method="close">
+						<bean class="il.ac.tau.yoavram.pes.io.CsvWriter">
 							<property name="filename"
 								value="${output.dir}/${jobName}/${jobName}.${time}" />
 						</bean>
@@ -71,9 +70,9 @@
 		</property>
 		<property name="aggregators">
 			<list>
-				<!--<bean class="il.ac.tau.yoavram.pes.statistics.aggregators.Ticker">
+				<bean class="il.ac.tau.yoavram.pes.statistics.aggregators.Ticker">
 					<property name="name" value="tick" />
-				</bean>-->
+				</bean>
 				<ref bean="meanFitness" />
 				<bean
 					class="il.ac.tau.yoavram.simba.statistics.aggregators.MinimumFitness">
@@ -83,26 +82,17 @@
 					class="il.ac.tau.yoavram.simba.statistics.aggregators.MaximumFitness">
 					<property name="name" value="max fitness" />
 				</bean>
-				<!-- <bean
+				<bean
 					class="il.ac.tau.yoavram.simba.statistics.aggregators.StandardDeviationFitness">
 					<property name="name" value="stdev fitness" />
 					<property name="meanAggregator" ref="meanFitness" />
 				</bean>
-				<ref bean="meanMutationRate" />
-				<bean
-					class="il.ac.tau.yoavram.simba.statistics.aggregators.MinimumMutationRate">
-					<property name="name" value="min mutation rate" />
-				</bean>
-				<bean
-					class="il.ac.tau.yoavram.simba.statistics.aggregators.MaximumMutationRate">
-					<property name="name" value="max mutation rate" />
-				</bean>
-				<bean
-					class="il.ac.tau.yoavram.simba.statistics.aggregators.StandardDeviationMutationRate">
-					<property name="name" value="stdev mutation rate" />
-					<property name="meanAggregator" ref="meanMutationRate" />
-				</bean>
-	-->		</list>
+				<!-- ref bean="meanMutationRate" /> <bean class="il.ac.tau.yoavram.simba.statistics.aggregators.MinimumMutationRate"> 
+					<property name="name" value="min mutation rate" /> </bean> <bean class="il.ac.tau.yoavram.simba.statistics.aggregators.MaximumMutationRate"> 
+					<property name="name" value="max mutation rate" /> </bean> <bean class="il.ac.tau.yoavram.simba.statistics.aggregators.StandardDeviationMutationRate"> 
+					<property name="name" value="stdev mutation rate" /> <property name="meanAggregator" 
+					ref="meanMutationRate" /> </bean> -->
+			</list>
 		</property>
 	</bean>
 	<bean id="meanFitness"

@@ -37,6 +37,7 @@ public class TestAbstractDataGatherer {
 			}
 		};
 
+		@SuppressWarnings("unchecked")
 		Model<Integer> mockModel = mock(Model.class);
 		List<Integer> population = Lists.newArrayList();
 		for (int i = 0; i < 100; i++) {

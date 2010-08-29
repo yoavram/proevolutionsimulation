@@ -7,6 +7,8 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.Date;
 
+import com.google.common.io.Files;
+
 //TODO - make this nice, test.
 public class CsvWriter {
 	private static final char ROW_SEPARATOR = '\n';
@@ -25,7 +27,7 @@ public class CsvWriter {
 		super();
 	}
 
-	public void init() {
+	public void init() throws IOException {
 		if (getFilename().isEmpty()) {
 			throw new IllegalArgumentException("Filename is empty");
 		}
@@ -33,20 +35,13 @@ public class CsvWriter {
 		if (getTime() != null) {
 			fname = fname + "." + TimeUtils.formatDate(getTime());
 		}
+
 		if (!getExtension().isEmpty()) {
 			fname = fname + "." + getExtension();
 		}
 		File file = new File(fname);
-		File dir = file.getParentFile();
-		if (!dir.exists()) {
-			dir.mkdir();
-		}
-		try {
-			writer = new FileWriter(fname);
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		Files.createParentDirs(file);
+		writer = new FileWriter(fname);
 	}
 
 	public void writeRow(String[] row) {

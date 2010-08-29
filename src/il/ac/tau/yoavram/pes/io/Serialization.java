@@ -9,6 +9,8 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
 
+import com.google.common.io.Files;
+
 public class Serialization {
 
 	public static String writeToFile(Serializable object, String filename)
@@ -16,6 +18,7 @@ public class Serialization {
 		File file = new File(filename);
 		ObjectOutputStream stream = null;
 		try {
+			Files.createParentDirs(file);
 			file.createNewFile();
 			stream = new ObjectOutputStream(new FileOutputStream(file));
 			stream.writeObject(object);

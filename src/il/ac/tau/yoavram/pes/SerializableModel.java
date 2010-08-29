@@ -7,16 +7,17 @@ import java.io.Serializable;
 
 import org.apache.log4j.Logger;
 
-import com.google.common.base.Joiner;
+import com.google.common.base.Strings;
 
 public abstract class SerializableModel<T> implements Model<T>, Serializable {
 
 	private static final long serialVersionUID = 2620240837057469787L;
 	private static final Logger logger = Logger
 			.getLogger(SerializableModel.class);
+	private static final String DEFAULT_EXTENSION = ".ser";
 
 	private String filename;
-	private String extension = "ser";
+	private String extension;
 	private Object id;
 	private boolean serializedAtEnd;
 
@@ -30,8 +31,16 @@ public abstract class SerializableModel<T> implements Model<T>, Serializable {
 	}
 
 	public String serialize() {
-		String serString = Joiner.on('.').skipNulls()
-				.join(getFilename(), getID().toString(), getExtension());
+		// TODO do some pattern here or something, this is nasty
+		// if .ser is not in the end, attempts to construct a name, appending id
+		// object and extension.
+		String serString = getFilename();
+		if (!getFilename().endsWith(getExtension())) {
+			if (!serString.endsWith("/")) {
+				serString += ".";
+			}
+			serString += getID().toString() + "." + getExtension();
+		}
 		try {
 			Serialization.writeToFile(this, serString);
 			return serString;
@@ -72,6 +81,8 @@ public abstract class SerializableModel<T> implements Model<T>, Serializable {
 	}
 
 	public String getExtension() {
+		if (Strings.isNullOrEmpty(extension))
+			return DEFAULT_EXTENSION;
 		return extension;
 	}
 
@@ -93,9 +104,10 @@ public abstract class SerializableModel<T> implements Model<T>, Serializable {
 		return filename;
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public boolean equals(Object obj) {
-		return obj instanceof SerializableModel 
+		return obj instanceof SerializableModel
 				&& ((SerializableModel<T>) obj).getID().equals(getID());
 	}
 }

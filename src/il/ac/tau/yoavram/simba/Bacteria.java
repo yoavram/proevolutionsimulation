@@ -18,13 +18,13 @@ public class Bacteria implements Serializable {
 	private static int nextID = 0;
 	private final int id = nextID++;
 
-	private int[] environmentalAlleles;
-	private int[] housekeepingAlleles;
-	private double mutationRate;
-	private double selectionCoefficient;
+	protected int[] environmentalAlleles;
+	protected int[] housekeepingAlleles;
+	protected double mutationRate;
+	protected double selectionCoefficient;
 
-	private transient double fitness = -1;
-	private transient long update = -1;
+	protected transient double fitness = -1;
+	protected transient long update = -1;
 
 	public Bacteria() {
 	}
@@ -35,7 +35,7 @@ public class Bacteria implements Serializable {
 		setHousekeepingAlleles(Arrays.copyOf(other.housekeepingAlleles,
 				other.housekeepingAlleles.length));
 		setMutationRate(other.getMutationRate());
-		setSelectionCoefficient(getSelectionCoefficient());
+		setSelectionCoefficient(other.getSelectionCoefficient());
 	}
 
 	public double getFitness() {

@@ -13,6 +13,7 @@ import java.util.List;
 import org.apache.log4j.Logger;
 
 public class SimpleDataGatherer<T> implements DataGatherer<T> {
+	@SuppressWarnings("unused")
 	private static Logger logger = Logger.getLogger(SimpleDataGatherer.class);
 
 	private List<Aggregator<T>> aggregators;
