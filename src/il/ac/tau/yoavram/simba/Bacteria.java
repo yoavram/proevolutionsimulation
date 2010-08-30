@@ -2,14 +2,12 @@ package il.ac.tau.yoavram.simba;
 
 import il.ac.tau.yoavram.pes.Simulation;
 import il.ac.tau.yoavram.pes.filters.ClassFilter;
+import il.ac.tau.yoavram.pes.utils.RandomUtils;
 
 import java.io.Serializable;
 import java.util.Arrays;
 
 import org.apache.log4j.Logger;
-
-import cern.jet.random.Poisson;
-import cern.jet.random.Uniform;
 
 public class Bacteria implements Serializable {
 	private static final long serialVersionUID = -490159741474792583L;
@@ -61,7 +59,7 @@ public class Bacteria implements Serializable {
 	public Bacteria reproduce() {
 		// logger.debug(getID() + " reproducing");
 		Bacteria child = spawn();
-		int numOfMutations = Poisson.staticNextInt(child.getMutationRate());
+		int numOfMutations = RandomUtils.nextPoisson(child.getMutationRate());
 		if (numOfMutations > 0) {
 			logger.debug("new organism " + getID() + " has " + numOfMutations
 					+ " mutations");
@@ -77,7 +75,7 @@ public class Bacteria implements Serializable {
 	}
 
 	public void mutate() {
-		int gene = Uniform.staticNextIntFromTo(0, housekeepingAlleles.length
+		int gene = RandomUtils.nextInt(0, housekeepingAlleles.length
 				+ environmentalAlleles.length - 1);
 
 		int currentAllele = -1;
@@ -89,7 +87,7 @@ public class Bacteria implements Serializable {
 		} else {
 			gene -= housekeepingAlleles.length;
 			currentAllele = environmentalAlleles[gene];
-			newAllele = (currentAllele + Uniform.staticNextIntFromTo(1, 2)) % 3;
+			newAllele = (currentAllele + RandomUtils.nextInt(1, 2)) % 3;
 			environmentalAlleles[gene] = newAllele;
 		}
 		logger.debug("Mutation at bacteria " + getID() + " gene " + gene
@@ -98,10 +96,10 @@ public class Bacteria implements Serializable {
 
 	public void randomize() {
 		for (int gene = 0; gene < housekeepingAlleles.length; gene++) {
-			housekeepingAlleles[gene] = Uniform.staticNextIntFromTo(0, 1);
+			housekeepingAlleles[gene] = RandomUtils.nextInt(0, 1);
 		}
 		for (int gene = 0; gene < environmentalAlleles.length; gene++) {
-			environmentalAlleles[gene] = Uniform.staticNextIntFromTo(0, 2);
+			environmentalAlleles[gene] = RandomUtils.nextInt(0, 2);
 		}
 	}
 

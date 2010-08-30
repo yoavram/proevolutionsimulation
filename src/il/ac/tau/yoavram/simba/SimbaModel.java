@@ -2,12 +2,11 @@ package il.ac.tau.yoavram.simba;
 
 import il.ac.tau.yoavram.pes.Invasion;
 import il.ac.tau.yoavram.pes.SerializableModel;
+import il.ac.tau.yoavram.pes.utils.RandomUtils;
 
 import java.util.List;
 
 import org.apache.log4j.Logger;
-
-import cern.jet.random.Uniform;
 
 import com.google.common.collect.Lists;
 
@@ -66,7 +65,7 @@ public class SimbaModel extends SerializableModel<Bacteria> {
 		// reproduce random fit bacteria
 		while (getPopulations().get(0).size() < getPopulationSize()) {
 			Bacteria reproduce = randomBacteria();
-			if (reproduce.getFitness() > Uniform.staticNextDouble()) {
+			if (reproduce.getFitness() > RandomUtils.nextDouble()) {
 				Bacteria child = reproduce.reproduce();
 				getPopulations().get(0).add(child);
 				logger.debug("Reproduced bacteria " + reproduce.getID()
@@ -75,7 +74,7 @@ public class SimbaModel extends SerializableModel<Bacteria> {
 		}
 
 		// change environment
-		if (Uniform.staticNextDouble() < getEnvironmentalChangeFrequency()) {
+		if (RandomUtils.nextDouble() < getEnvironmentalChangeFrequency()) {
 			logger.debug("Changing the environment");
 			getEnvironment().change(getFractionOfGenesToChange());
 		}
@@ -86,8 +85,7 @@ public class SimbaModel extends SerializableModel<Bacteria> {
 	}
 
 	private int randomBacteriaIndex() {
-		return Uniform.staticNextIntFromTo(0,
-				getPopulations().get(0).size() - 1);
+		return RandomUtils.nextInt(0, getPopulations().get(0).size() - 1);
 	}
 
 	/* GETTERS AND SETTERS */

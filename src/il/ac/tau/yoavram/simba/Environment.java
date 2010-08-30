@@ -1,14 +1,12 @@
 package il.ac.tau.yoavram.simba;
 
 import il.ac.tau.yoavram.pes.Simulation;
+import il.ac.tau.yoavram.pes.utils.RandomUtils;
 
 import java.io.Serializable;
 import java.util.Arrays;
 
 import org.apache.log4j.Logger;
-
-import cern.jet.random.Poisson;
-import cern.jet.random.Uniform;
 
 public class Environment implements Serializable {
 	private static final long serialVersionUID = -2665663049159958614L;
@@ -26,15 +24,15 @@ public class Environment implements Serializable {
 		int numberOfAlleles = EnvironmentalAllele.values().length;
 		alleles = new int[getNumberOfEnvironmentalGenes()];
 		for (int gene = 0; gene < alleles.length; gene++) {
-			alleles[gene] = Uniform.staticNextIntFromTo(0, numberOfAlleles - 1);
+			alleles[gene] = RandomUtils.nextInt(0, numberOfAlleles - 1);
 		}
 	}
 
 	public void change(double fractionOfGenesToChange) {
 		double mean = fractionOfGenesToChange * alleles.length;
-		int toChange = Poisson.staticNextInt(mean);
+		int toChange = RandomUtils.nextPoisson(mean);
 		for (int i = 0; i < toChange; i++) {
-			int gene = Uniform.staticNextIntFromTo(0, alleles.length);
+			int gene = RandomUtils.nextInt(0, alleles.length);
 			int currentAllele = alleles[gene];
 			int newAllele = (currentAllele + 1) % 2;
 			alleles[gene] = newAllele;

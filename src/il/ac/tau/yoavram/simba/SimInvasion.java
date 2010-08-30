@@ -1,10 +1,9 @@
 package il.ac.tau.yoavram.simba;
 
 import il.ac.tau.yoavram.pes.Invasion;
+import il.ac.tau.yoavram.pes.utils.RandomUtils;
 
 import java.util.List;
-
-import cern.jet.random.Uniform;
 
 public class SimInvasion implements Invasion<Bacteria, SimBacteria> {
 	// private static final Logger logger = Logger.getLogger(SimInvasion.class);
@@ -18,7 +17,7 @@ public class SimInvasion implements Invasion<Bacteria, SimBacteria> {
 		for (List<Bacteria> population : populations) {
 			for (Bacteria b : population) {
 				population.remove(b);
-				if (Uniform.staticNextDouble() < getInvasionRate()) {
+				if (RandomUtils.nextDouble() < getInvasionRate()) {
 					SimBacteria sim = new SimBacteria(b);
 					sim.setFitnessThreshold(getFitnessThreshold());
 					sim.setMutationRateModifier(getMutationRateModifier());
