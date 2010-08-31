@@ -1,12 +1,7 @@
 package il.ac.tau.yoavram.pes;
 
-import il.ac.tau.yoavram.pes.utils.TimeUtils;
-
-import java.io.File;
 import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.net.URL;
 import java.util.Date;
 import java.util.Properties;
 
@@ -14,10 +9,6 @@ import org.apache.log4j.Logger;
 import org.springframework.beans.factory.config.PropertyPlaceholderConfigurer;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
-import org.springframework.context.support.FileSystemXmlApplicationContext;
-import org.springframework.core.io.ClassPathResource;
-
-import com.google.common.io.Files;
 
 /**
  * 
@@ -47,6 +38,17 @@ public abstract class SpringRunner {
 		System.out.println("Starting " + SpringRunner.class.getSimpleName());
 		SimulationConfigurer configurer = new SimulationConfigurer();
 		configurer.configure(args, new Date());
+		if (configurer.getSpringXmlFile() == null) {
+			System.err.println("Spring XML file not defined");
+			System.exit(1);
+		}
+		if (configurer.getProperties() == null) {
+			System.err.println("Properties not defined");
+			System.exit(1);
+		}
+		if (configurer.getLog4jFile() == null) {
+			System.err.println("Log4j properties not defined");
+		}
 
 		Properties properties = configurer.getProperties();
 		String jobName = properties

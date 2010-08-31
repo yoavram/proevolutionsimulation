@@ -114,7 +114,7 @@ public class SimulationConfigurer {
 		try {
 			cmd = parser.parse(options, args);
 		} catch (ParseException e) {
-			logger.error(e);
+			e.printStackTrace();
 			printHelp();
 		}
 		return cmd;
@@ -126,8 +126,8 @@ public class SimulationConfigurer {
 			String filename = cmdLine.getOptionValue(OptCode.FileProperties
 					.toString());
 			try {
-				InputStream propStream = this.getClass().getClassLoader().getResourceAsStream(
-						filename);
+				InputStream propStream = this.getClass().getClassLoader()
+						.getResourceAsStream(filename);
 				props.load(propStream);
 			} catch (FileNotFoundException e) {
 				logger.error("File " + filename + " not found: " + e);
