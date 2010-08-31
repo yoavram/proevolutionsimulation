@@ -80,7 +80,11 @@ public class SimulationConfigurer {
 	public void configure(String[] args, Date date) {
 		cmdLine = parseArgs(args);
 		log4jUrl = createLog4jUrl();
-		PropertyConfigurator.configure(log4jUrl);
+		if (log4jUrl == null) {
+			System.err.println("No Log4j properties file found");
+		} else {
+			PropertyConfigurator.configure(log4jUrl);
+		}
 		// TODO change log file name
 		properties = createProperties();
 		springXmlUrl = createSpringXmlUrl();
