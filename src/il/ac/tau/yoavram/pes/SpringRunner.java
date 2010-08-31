@@ -74,7 +74,7 @@ public abstract class SpringRunner {
 
 		logger.debug("Starting simulation " + jobName);
 		simulation.start();
-		if (Boolean.parseBoolean(properties.getProperty("simulation.block"))) {
+		if (Boolean.parseBoolean(properties.getProperty("simulation.block","false"))) {
 			System.out.println("Press any key to exit...");
 			System.in.read();
 		}
