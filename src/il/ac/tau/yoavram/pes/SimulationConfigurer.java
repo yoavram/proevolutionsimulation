@@ -128,9 +128,9 @@ public class SimulationConfigurer {
 			try {
 				props.load(new FileInputStream(filename));
 			} catch (FileNotFoundException e) {
-				logger.error(e);
+				logger.error("File " + filename + " not found: " + e);
 			} catch (IOException e) {
-				logger.error(e);
+				logger.error("Error loading " + filename + ": " + e);
 			}
 			logger.debug("Loaded properties from file " + filename + ": "
 					+ props.toString());
