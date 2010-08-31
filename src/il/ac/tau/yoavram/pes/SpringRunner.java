@@ -41,6 +41,7 @@ public abstract class SpringRunner {
 	}
 
 	public static void run(String[] args) throws IOException {
+		logger.info("Starting " + SpringRunner.class.getSimpleName());
 		SimulationConfigurer configurer = new SimulationConfigurer();
 		Date date = new Date();
 		String dateString = TimeUtils.formatDate(date);
@@ -57,7 +58,7 @@ public abstract class SpringRunner {
 
 		AbstractXmlApplicationContext context = new FileSystemXmlApplicationContext();
 
-		logger.info("adding properties to context: " + properties.toString());
+		logger.info("Adding properties to context: " + properties.toString());
 		PropertyPlaceholderConfigurer propertyPlaceholderConfigurer = new PropertyPlaceholderConfigurer();
 		propertyPlaceholderConfigurer.setProperties(properties);
 		context.addBeanFactoryPostProcessor(propertyPlaceholderConfigurer);
@@ -65,7 +66,7 @@ public abstract class SpringRunner {
 		File propertiesFile = new File(jobConfigDir.getAbsoluteFile()
 				+ File.separator + jobName + '.' + dateString
 				+ SimulationConfigurer.PROPERTIES_EXTENSION);
-		logger.debug("saving properties to file "
+		logger.debug("Saving properties to file "
 				+ propertiesFile.getAbsolutePath());
 		properties.store(new FileOutputStream(propertiesFile),
 				propertiesFile.getName());
@@ -73,8 +74,11 @@ public abstract class SpringRunner {
 		File contextFile = new File(jobConfigDir.getAbsoluteFile()
 				+ File.separator + jobName + '.' + dateString
 				+ SimulationConfigurer.XML_EXTENSION);
+
+		logger.info("Copying context file to " + contextFile.getAbsolutePath());
 		Files.copy(configurer.getSpringXmlFile(), contextFile);
-		logger.info("loading context from file "
+
+		logger.info("Loading context from file "
 				+ contextFile.getAbsolutePath());
 		context.setConfigLocation(contextFile.getAbsolutePath());
 
@@ -84,7 +88,7 @@ public abstract class SpringRunner {
 
 		Simulation simulation = context.getBean("simulation", Simulation.class);
 
-		logger.debug("starting simulation " + jobName);
+		logger.debug("Starting simulation " + jobName);
 		simulation.start();
 		if (Boolean.parseBoolean(properties.getProperty("simulation.block"))) {
 			System.out.println("Press any key to exit...");
