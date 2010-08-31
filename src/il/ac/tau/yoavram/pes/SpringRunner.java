@@ -63,24 +63,26 @@ public abstract class SpringRunner {
 		propertyPlaceholderConfigurer.setProperties(properties);
 		context.addBeanFactoryPostProcessor(propertyPlaceholderConfigurer);
 
-		File propertiesFile = new File(jobConfigDir.getAbsoluteFile()
+		File propertiesFile = new File(jobConfigDir.getCanonicalPath()
 				+ File.separator + jobName + '.' + dateString
 				+ SimulationConfigurer.PROPERTIES_EXTENSION);
 		logger.debug("Saving properties to file "
-				+ propertiesFile.getAbsolutePath());
+				+ propertiesFile.getCanonicalPath());
 		properties.store(new FileOutputStream(propertiesFile),
 				propertiesFile.getName());
 
-		File contextFile = new File(jobConfigDir.getAbsoluteFile()
+		File contextFile = new File(jobConfigDir.getCanonicalFile()
 				+ File.separator + jobName + '.' + dateString
 				+ SimulationConfigurer.XML_EXTENSION);
 
-		logger.info("Copying context file from " +configurer.getSpringXmlFile().getAbsolutePath()+ " to " + contextFile.getAbsolutePath());
+		logger.info("Copying context file from "
+				+ configurer.getSpringXmlFile().getCanonicalPath() + " to "
+				+ contextFile.getCanonicalPath());
 		Files.copy(configurer.getSpringXmlFile(), contextFile);
 
 		logger.info("Loading context from file "
-				+ contextFile.getAbsolutePath());
-		context.setConfigLocation(contextFile.getAbsolutePath());
+				+ contextFile.getCanonicalPath());
+		context.setConfigLocation(contextFile.getCanonicalPath());
 
 		// make sure destroy methods will be called and refresh the context
 		context.registerShutdownHook();
