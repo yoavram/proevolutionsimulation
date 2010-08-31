@@ -10,7 +10,7 @@ import org.apache.log4j.Logger;
 
 import com.google.common.base.Strings;
 
-public abstract class SerializableModel<T> implements Model<T>, Serializable {
+public abstract class SerializableModel<T extends Object> implements Model<T >, Serializable {
 
 	private static final long serialVersionUID = 2620240837057469787L;
 	private static final Logger logger = Logger
