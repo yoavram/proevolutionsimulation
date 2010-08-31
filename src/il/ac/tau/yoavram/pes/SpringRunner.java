@@ -82,7 +82,7 @@ public abstract class SpringRunner {
 
 		logger.info("Loading context from file "
 				+ contextFile.getCanonicalPath());
-		context.setConfigLocation(contextFile.getCanonicalPath());
+		context.setConfigLocation(contextFile.getPath());
 
 		// make sure destroy methods will be called and refresh the context
 		context.registerShutdownHook();
