@@ -81,8 +81,9 @@ public abstract class SpringRunner {
 		Files.copy(configurer.getSpringXmlFile(), contextFile);
 
 		logger.info("Loading context from file "
-				+ contextFile.getCanonicalPath());
-		context.setConfigLocation(contextFile.getPath());
+				+ configurer.getSpringXmlFile().getCanonicalPath());
+		context.setConfigLocation(configurer.getSpringXmlFile()
+				.getCanonicalPath());
 
 		// make sure destroy methods will be called and refresh the context
 		context.registerShutdownHook();
