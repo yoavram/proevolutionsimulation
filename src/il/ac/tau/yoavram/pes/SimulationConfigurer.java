@@ -3,9 +3,9 @@ package il.ac.tau.yoavram.pes;
 import il.ac.tau.yoavram.pes.utils.TimeUtils;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.Date;
 import java.util.Properties;
 
@@ -126,7 +126,9 @@ public class SimulationConfigurer {
 			String filename = cmdLine.getOptionValue(OptCode.FileProperties
 					.toString());
 			try {
-				props.load(new FileInputStream(filename));
+				InputStream propStream = this.getClass().getClassLoader().getResourceAsStream(
+						filename);
+				props.load(propStream);
 			} catch (FileNotFoundException e) {
 				logger.error("File " + filename + " not found: " + e);
 			} catch (IOException e) {

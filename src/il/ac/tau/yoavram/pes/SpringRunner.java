@@ -6,13 +6,16 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.net.URL;
 import java.util.Date;
 import java.util.Properties;
 
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.config.PropertyPlaceholderConfigurer;
 import org.springframework.context.support.AbstractXmlApplicationContext;
+import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.context.support.FileSystemXmlApplicationContext;
+import org.springframework.core.io.ClassPathResource;
 
 import com.google.common.io.Files;
 
@@ -43,47 +46,23 @@ public abstract class SpringRunner {
 	public static void run(String[] args) throws IOException {
 		System.out.println("Starting " + SpringRunner.class.getSimpleName());
 		SimulationConfigurer configurer = new SimulationConfigurer();
-		Date date = new Date();
-		String dateString = TimeUtils.formatDate(date);
-		configurer.configure(args, date);
+		configurer.configure(args, new Date());
+
 		Properties properties = configurer.getProperties();
 		String jobName = properties
 				.getProperty(SimulationConfigurer.JOB_NAME_KEY);
 
-		File jobConfigDir = new File(SimulationConfigurer.CONFIG_DIR_NAME
-				+ File.separator + jobName);
-		if (!jobConfigDir.exists()) {
-			jobConfigDir.mkdir();
-		}
-
-		AbstractXmlApplicationContext context = new FileSystemXmlApplicationContext();
+		AbstractXmlApplicationContext context = new ClassPathXmlApplicationContext();
 
 		logger.info("Adding properties to context: " + properties.toString());
 		PropertyPlaceholderConfigurer propertyPlaceholderConfigurer = new PropertyPlaceholderConfigurer();
 		propertyPlaceholderConfigurer.setProperties(properties);
 		context.addBeanFactoryPostProcessor(propertyPlaceholderConfigurer);
 
-		File propertiesFile = new File(jobConfigDir.getCanonicalPath()
-				+ File.separator + jobName + '.' + dateString
-				+ SimulationConfigurer.PROPERTIES_EXTENSION);
-		logger.debug("Saving properties to file "
-				+ propertiesFile.getCanonicalPath());
-		properties.store(new FileOutputStream(propertiesFile),
-				propertiesFile.getName());
-
-		File contextFile = new File(jobConfigDir.getCanonicalFile()
-				+ File.separator + jobName + '.' + dateString
-				+ SimulationConfigurer.XML_EXTENSION);
-
-		logger.info("Copying context file from "
-				+ configurer.getSpringXmlFile().getCanonicalPath() + " to "
-				+ contextFile.getCanonicalPath());
-		Files.copy(configurer.getSpringXmlFile(), contextFile);
-
 		logger.info("Loading context from file "
-				+ configurer.getSpringXmlFile().getCanonicalPath());
-		context.setConfigLocation(configurer.getSpringXmlFile()
-				.getCanonicalPath());
+				+ configurer.getSpringXmlFile().getName());
+
+		context.setConfigLocation(configurer.getSpringXmlFile().getName());
 
 		// make sure destroy methods will be called and refresh the context
 		context.registerShutdownHook();
