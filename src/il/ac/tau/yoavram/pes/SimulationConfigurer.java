@@ -6,6 +6,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URL;
 import java.util.Date;
 import java.util.Properties;
 
@@ -21,7 +22,7 @@ import org.apache.log4j.Logger;
 import org.apache.log4j.PropertyConfigurator;
 
 public class SimulationConfigurer {
-	public static final String LOG4J_DEFAULT_CONFIG_FILE = "config/log4j.properties";
+	public static final String LOG4J_DEFAULT_CONFIG_FILE = "log4j.properties";
 
 	private static final Logger logger = Logger
 			.getLogger(SimulationConfigurer.class);
@@ -38,8 +39,8 @@ public class SimulationConfigurer {
 	private HelpFormatter helpFormatter;
 	private Properties properties = null;
 	private CommandLine cmdLine = null;
-	private File log4jFile;
-	private File springXmlFile;
+	private URL log4jUrl;
+	private URL springXmlUrl;
 
 	public enum OptCode {
 		Help, Xml, Properties, FileProperties, Log;
@@ -78,35 +79,38 @@ public class SimulationConfigurer {
 
 	public void configure(String[] args, Date date) {
 		cmdLine = parseArgs(args);
-		log4jFile = createLog4jFile();
-		PropertyConfigurator.configure(log4jFile.getAbsolutePath());
+		log4jUrl = createLog4jUrl();
+		PropertyConfigurator.configure(log4jUrl);
 		// TODO change log file name
 		properties = createProperties();
-		springXmlFile = createSpringXmlFile();
+		springXmlUrl = createSpringXmlUrl();
 
 		if (!properties.containsKey(JOB_NAME_KEY)) {
-			properties.put(JOB_NAME_KEY,
-					springXmlFile.getName()
-							.replace(XML_EXTENSION, EMPTY_STRING));
+			String fullpath = springXmlUrl.getFile();
+			String[] parts = fullpath.split("/");
+			String lastPart = parts[parts.length - 1];
+			String filename = lastPart.replace(XML_EXTENSION, EMPTY_STRING);
+			properties.put(JOB_NAME_KEY, filename);
 		}
 		if (!properties.containsKey(TIME)) {
 			properties.put(TIME, TimeUtils.formatDate(date));
 		}
 	}
 
-	private File createSpringXmlFile() {
-		return new File(cmdLine.getOptionValue(OptCode.Xml.toString()));
+	private URL createSpringXmlUrl() {
+		return this.getClass().getClassLoader()
+				.getResource(cmdLine.getOptionValue(OptCode.Xml.toString()));
 
 	}
 
-	private File createLog4jFile() {
+	private URL createLog4jUrl() {
 		String log4jFilename = null;
 		if (cmdLine.hasOption(OptCode.Log.toString())) {
 			log4jFilename = cmdLine.getOptionValue(OptCode.Log.toString());
 		} else {
 			log4jFilename = LOG4J_DEFAULT_CONFIG_FILE;
 		}
-		return new File(log4jFilename);
+		return this.getClass().getClassLoader().getResource(log4jFilename);
 	}
 
 	private CommandLine parseArgs(String[] args) {
@@ -125,9 +129,16 @@ public class SimulationConfigurer {
 		if (cmdLine.hasOption(OptCode.FileProperties.toString())) {
 			String filename = cmdLine.getOptionValue(OptCode.FileProperties
 					.toString());
+			InputStream propStream = this.getClass().getClassLoader()
+					.getResourceAsStream(filename);
+			if (propStream == null) {
+				String msg = "Could not stream the properties file " + filename
+						+ " in the classpath";
+				logger.error(msg);
+				throw new NullPointerException(msg);
+			}
 			try {
-				InputStream propStream = this.getClass().getClassLoader()
-						.getResourceAsStream(filename);
+
 				props.load(propStream);
 			} catch (FileNotFoundException e) {
 				logger.error("File " + filename + " not found: " + e);
@@ -164,11 +175,11 @@ public class SimulationConfigurer {
 		return properties;
 	}
 
-	public File getLog4jFile() {
-		return log4jFile;
+	public URL getLog4jUrl() {
+		return log4jUrl;
 	}
 
-	public File getSpringXmlFile() {
-		return springXmlFile;
+	public URL getSpringXmlUrl() {
+		return springXmlUrl;
 	}
 }

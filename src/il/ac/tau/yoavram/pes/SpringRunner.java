@@ -38,7 +38,7 @@ public abstract class SpringRunner {
 		System.out.println("Starting " + SpringRunner.class.getSimpleName());
 		SimulationConfigurer configurer = new SimulationConfigurer();
 		configurer.configure(args, new Date());
-		if (configurer.getSpringXmlFile() == null) {
+		if (configurer.getSpringXmlUrl() == null) {
 			System.err.println("Spring XML file not defined");
 			System.exit(1);
 		}
@@ -46,7 +46,7 @@ public abstract class SpringRunner {
 			System.err.println("Properties not defined");
 			System.exit(1);
 		}
-		if (configurer.getLog4jFile() == null) {
+		if (configurer.getLog4jUrl() == null) {
 			System.err.println("Log4j properties not defined");
 		}
 
@@ -62,9 +62,9 @@ public abstract class SpringRunner {
 		context.addBeanFactoryPostProcessor(propertyPlaceholderConfigurer);
 
 		logger.info("Loading context from file "
-				+ configurer.getSpringXmlFile().getName());
+				+ configurer.getSpringXmlUrl().toString());
 
-		context.setConfigLocation(configurer.getSpringXmlFile().getName());
+		context.setConfigLocation(configurer.getSpringXmlUrl().toString());
 
 		// make sure destroy methods will be called and refresh the context
 		context.registerShutdownHook();
