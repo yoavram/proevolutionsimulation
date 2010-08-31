@@ -41,7 +41,7 @@ public abstract class SpringRunner {
 	}
 
 	public static void run(String[] args) throws IOException {
-		logger.info("Starting " + SpringRunner.class.getSimpleName());
+		System.out.println("Starting " + SpringRunner.class.getSimpleName());
 		SimulationConfigurer configurer = new SimulationConfigurer();
 		Date date = new Date();
 		String dateString = TimeUtils.formatDate(date);
@@ -75,7 +75,7 @@ public abstract class SpringRunner {
 				+ File.separator + jobName + '.' + dateString
 				+ SimulationConfigurer.XML_EXTENSION);
 
-		logger.info("Copying context file to " + contextFile.getAbsolutePath());
+		logger.info("Copying context file from " +configurer.getSpringXmlFile().getAbsolutePath()+ " to " + contextFile.getAbsolutePath());
 		Files.copy(configurer.getSpringXmlFile(), contextFile);
 
 		logger.info("Loading context from file "
