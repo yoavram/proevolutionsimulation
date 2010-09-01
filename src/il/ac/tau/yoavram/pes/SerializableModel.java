@@ -40,7 +40,7 @@ public abstract class SerializableModel<T extends Object> implements Model<T >, 
 			if (!serString.endsWith("/")) {
 				serString += ".";
 			}
-			serString += getID().toString() + "." + getExtension();
+			serString += getID().toString() + getExtension();
 		}
 		try {
 			Serialization.writeToFile(this, serString);

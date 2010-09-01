@@ -7,13 +7,21 @@ import java.util.concurrent.LinkedBlockingQueue;
 
 import org.apache.log4j.Logger;
 
-public abstract class ThreadListener extends Thread implements DataListener {
+/**
+ * wrapper class
+ * 
+ * @author yoavram
+ * 
+ */
+public class ThreadListener extends Thread implements DataListener {
 	private static final Logger logger = Logger.getLogger(ThreadListener.class);
 
-	protected static final String DEFAULT_TITLE = "proevolution simulation";
-
+	private DataListener inner;
 	private final BlockingQueue<Number[]> queue;
-	protected List<String> dataFieldNames;
+
+	public ThreadListener() {
+		this(ThreadListener.class.getSimpleName());
+	}
 
 	public ThreadListener(String name) {
 		super(name);
@@ -27,21 +35,21 @@ public abstract class ThreadListener extends Thread implements DataListener {
 	public void destroy() {
 		Iterator<Number[]> e = queue.iterator();
 		while (e.hasNext()) {
-			consume(e.next());
+			inner.listen(e.next());
 		}
 	}
 
 	@Override
 	public void run() {
 		try {
-			while (true) {
-				consume(queue.take());
+			while (running) {
+				inner.listen(queue.take());
 			}
 		} catch (InterruptedException e) {
 			logger.warn("Interrupted: " + e);
 		}
 	}
-	
+
 	@Override
 	public void listen(Number[] data) {
 		try {
@@ -51,12 +59,26 @@ public abstract class ThreadListener extends Thread implements DataListener {
 		}
 	}
 
-	protected abstract void consume(Number[] data);
-
-	
 	@Override
 	public void setDataFieldNames(List<String> dataFieldNames) {
-		this.dataFieldNames = dataFieldNames;
+		inner.setDataFieldNames(dataFieldNames);
 	}
 
+	public DataListener getInner() {
+		return inner;
+	}
+
+	public void setInner(DataListener inner) {
+		this.inner = inner;
+	}
+
+	private boolean running = true;
+
+	public boolean isRunning() {
+		return running;
+	}
+
+	public void setRunning(boolean running) {
+		this.running = running;
+	}
 }

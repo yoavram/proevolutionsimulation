@@ -6,18 +6,13 @@ import java.util.List;
 
 import org.apache.log4j.Logger;
 
-public class CsvWriterListener extends ThreadListener {
+public class CsvWriterListener implements DataListener {
 	private static final Logger logger = Logger
 			.getLogger(CsvWriterListener.class);
 
 	private CsvWriter writer;
 
 	public CsvWriterListener() {
-		this(DEFAULT_TITLE);
-	}
-
-	public CsvWriterListener(String name) {
-		super(name + " " + CsvWriterListener.class.getSimpleName());
 	}
 
 	public void writeHeader(String[] header) {
@@ -25,7 +20,7 @@ public class CsvWriterListener extends ThreadListener {
 	}
 
 	@Override
-	protected void consume(Number[] data) {
+	public void listen(Number[] data) {
 		getCsvWriter().writeRow(data);
 	}
 
@@ -43,14 +38,10 @@ public class CsvWriterListener extends ThreadListener {
 		return writer;
 	}
 
-	@Override
 	public void init() {
-		super.init();
 	}
 
-	@Override
 	public void destroy() {
-		super.destroy();
 		if (writer != null)
 			writer.close();
 	}
