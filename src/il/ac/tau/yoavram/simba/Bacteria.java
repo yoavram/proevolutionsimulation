@@ -12,9 +12,9 @@ import org.apache.log4j.Logger;
 public class Bacteria implements Serializable {
 	private static final long serialVersionUID = -490159741474792583L;
 	private static final Logger logger = Logger.getLogger(Bacteria.class);
-
+	protected static ThreadLocal<Bacteria> trash = new ThreadLocal<Bacteria>();
 	private static int nextID = 0;
-	private final int id = nextID++;
+	private int id = nextID++;
 
 	protected int[] environmentalAlleles;
 	protected int[] housekeepingAlleles;
@@ -25,35 +25,65 @@ public class Bacteria implements Serializable {
 	protected transient long update = -1;
 
 	public Bacteria() {
+		environmentalAlleles = new int[0];
+		housekeepingAlleles = new int[0];
 	}
 
 	public Bacteria(Bacteria other) {
-		setEnvironmentalAlleles(Arrays.copyOf(other.environmentalAlleles,
-				other.environmentalAlleles.length));
-		setHousekeepingAlleles(Arrays.copyOf(other.housekeepingAlleles,
-				other.housekeepingAlleles.length));
-		setMutationRate(other.getMutationRate());
-		setSelectionCoefficient(other.getSelectionCoefficient());
+		this();
+		copy(other);
 	}
 
-	public double getFitness() {
-		if (fitness == -1
-				|| getEnvironment().getLastEnvironmentalChange() > update) {
-			fitness = 1;
-			double s = getSelectionCoefficient();
-			for (int gene = 0; gene < housekeepingAlleles.length; gene++) {
-				if (housekeepingAlleles[gene] != 0) {
-					fitness *= (1 - s);
-				}
-			}
-			for (int gene = 0; gene < environmentalAlleles.length; gene++) {
-				if (getEnvironment().getIdealAllele(gene) != environmentalAlleles[gene]) {
-					fitness *= (1 - s);
-				}
-			}
-			update = Simulation.getInstance().getTick();
+	/**
+	 * should be overridden if new members are given
+	 * 
+	 * @param other
+	 */
+	protected void copy(Bacteria other) {
+		environmentalAlleles = Arrays.copyOf(other.environmentalAlleles,
+				other.environmentalAlleles.length);
+		housekeepingAlleles = Arrays.copyOf(other.housekeepingAlleles,
+				other.housekeepingAlleles.length);
+		mutationRate = other.mutationRate;
+		selectionCoefficient = other.selectionCoefficient;
+	}
+
+	/**
+	 * should be overridden by new types
+	 * 
+	 * @param other
+	 */
+	protected Bacteria create() {
+		return new Bacteria();
+	}
+
+	public Bacteria getTrash() {
+		return trash.get();
+	}
+
+	public void setTrash(Bacteria bacteria) {
+		trash.set(bacteria);
+	}
+
+	public void removeTrash() {
+		trash.remove();
+	}
+
+	public void die() {
+		setTrash(this);
+	}
+
+	public Bacteria spawn() {
+		Bacteria recycled = null;
+		if (getTrash() == null)
+			recycled = create();
+		else {
+			recycled = getTrash();
+			removeTrash();
+			recycled.id = nextID++;
 		}
-		return fitness;
+		recycled.copy(this);
+		return recycled;
 	}
 
 	public Bacteria reproduce() {
@@ -68,10 +98,6 @@ public class Bacteria implements Serializable {
 			child.mutate();
 		}
 		return child;
-	}
-
-	protected Bacteria spawn() {
-		return new Bacteria(this);
 	}
 
 	public void mutate() {
@@ -92,6 +118,26 @@ public class Bacteria implements Serializable {
 		}
 		logger.debug("Mutation at bacteria " + getID() + " gene " + gene
 				+ " mutated from " + currentAllele + " to " + newAllele);
+	}
+
+	public double getFitness() {
+		if (fitness == -1
+				|| getEnvironment().getLastEnvironmentalChange() > update) {
+			fitness = 1;
+			double s = getSelectionCoefficient();
+			for (int gene = 0; gene < housekeepingAlleles.length; gene++) {
+				if (housekeepingAlleles[gene] != 0) {
+					fitness *= (1 - s);
+				}
+			}
+			for (int gene = 0; gene < environmentalAlleles.length; gene++) {
+				if (getEnvironment().getIdealAllele(gene) != environmentalAlleles[gene]) {
+					fitness *= (1 - s);
+				}
+			}
+			update = Simulation.getInstance().getTick();
+		}
+		return fitness;
 	}
 
 	public void randomize() {

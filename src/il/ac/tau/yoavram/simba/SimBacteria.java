@@ -1,9 +1,9 @@
 package il.ac.tau.yoavram.simba;
 
-
 public class SimBacteria extends Bacteria {
 	private static final long serialVersionUID = -5401626270460444969L;
-	//private static final Logger logger = Logger.getLogger(SimBacteria.class);
+	// private static final Logger logger = Logger.getLogger(SimBacteria.class);
+	protected static ThreadLocal<SimBacteria> simTrash = new ThreadLocal<SimBacteria>();
 
 	private double fitnessThreshold = 0;
 	private double mutationRateModifier = 1;
@@ -12,14 +12,39 @@ public class SimBacteria extends Bacteria {
 		super();
 	}
 
-	public SimBacteria(SimBacteria other) {
-		super(other);
-		this.fitnessThreshold = other.fitnessThreshold;
-		this.mutationRateModifier = other.mutationRateModifier;
+	public SimBacteria(Bacteria other) {
+		this();
+		copy(other);
 	}
 
-	public SimBacteria(Bacteria other) {
-		super(other);
+	@Override
+	protected void copy(Bacteria other) {
+		super.copy(other);
+		if (other instanceof SimBacteria) {
+			SimBacteria otherSim = (SimBacteria) other;
+			this.fitnessThreshold = otherSim.fitnessThreshold;
+			this.mutationRateModifier = otherSim.mutationRateModifier;
+		}
+	}
+
+	@Override
+	protected Bacteria create() {
+		return new SimBacteria();
+	}
+
+	public Bacteria getTrash() {
+		return simTrash.get();
+	}
+
+	public void setTrash(Bacteria bacteria) {
+		if (bacteria instanceof SimBacteria)
+			simTrash.set((SimBacteria) bacteria);
+		else
+			super.setTrash(bacteria);
+	}
+
+	public void removeTrash() {
+		simTrash.remove();
 	}
 
 	@Override
@@ -29,11 +54,6 @@ public class SimBacteria extends Bacteria {
 		} else {
 			return super.getMutationRate();
 		}
-	}
-
-	@Override
-	protected Bacteria spawn() {
-		return new SimBacteria();
 	}
 
 	public void setFitnessThreshold(double fitnessThreshold) {

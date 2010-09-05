@@ -59,6 +59,7 @@ public class SimbaModel extends SerializableModel<Bacteria> {
 	public void step() {
 		// kill random bacteria
 		int kill = randomBacteriaIndex();
+		getPopulations().get(0).get(kill).die();
 		getPopulations().get(0).remove(kill);
 		logger.debug("Killed bacteria " + kill);
 
