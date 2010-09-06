@@ -1,15 +1,19 @@
 package il.ac.tau.yoavram.pes.statistics.listeners;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.List;
 
+import javax.imageio.ImageIO;
+import javax.imageio.stream.ImageOutputStream;
+
 import org.apache.log4j.Logger;
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartPanel;
-import org.jfree.chart.ChartUtilities;
 import org.jfree.chart.JFreeChart;
+import org.jfree.chart.encoders.ImageFormat;
 import org.jfree.chart.plot.PlotOrientation;
 import org.jfree.chart.renderer.xy.XYItemRenderer;
 import org.jfree.chart.renderer.xy.XYLineAndShapeRenderer;
@@ -20,8 +24,8 @@ import org.jfree.ui.RefineryUtilities;
 
 import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
+import com.google.common.io.Closeables;
 import com.google.common.io.LineReader;
-import com.sun.image.codec.jpeg.ImageFormatException;
 
 //TODO make the main method nicer.
 public class ChartDrawer implements DataListener {
@@ -32,8 +36,9 @@ public class ChartDrawer implements DataListener {
 	private static final float QUALITY = 1.0f;
 	private static final int WIDTH = 1024;
 	private static final int HEIGHT = 768;
-	private static final String DEFAULT_FILE_EXTENSION = ".jpg";
+	private static final String DEFAULT_FILE_EXTENSION = ".png";
 
+	private ImageOutputStream imgStream;
 	private ApplicationFrame appFrame;
 	private JFreeChart chart;
 	private XYSeriesCollection dataset;
@@ -62,6 +67,15 @@ public class ChartDrawer implements DataListener {
 			RefineryUtilities.centerFrameOnScreen(appFrame);
 			appFrame.setVisible(true);
 		}
+		if (!Strings.isNullOrEmpty(getFilename())) {
+			try {
+				imgStream = ImageIO.createImageOutputStream(new File(
+						getFilename()));
+			} catch (IOException e) {
+				logger.error("Failed creating image file '" + filename + "': "
+						+ e);
+			}
+		}
 	}
 
 	@Override
@@ -72,19 +86,33 @@ public class ChartDrawer implements DataListener {
 	}
 
 	public void destroy() {
-		if (!Strings.isNullOrEmpty(getFilename())) {
+		if (imgStream != null) {
+			saveToFile();
+		}
+	}
+
+	private void saveToFile() {
+		if (imgStream != null) {
 			try {
-				ChartUtilities.saveChartAsJPEG(new File(filename), QUALITY,
-						chart, WIDTH, HEIGHT);
+				ImageIO.write(chart.createBufferedImage(WIDTH, HEIGHT),
+						ImageFormat.PNG, imgStream);
 				logger.info("Saved chart to file " + filename);
-			} catch (ImageFormatException e) {
-				logger.error("Failed formating chart to image: " + e);
+			} catch (FileNotFoundException e) {
+				logger.error("Failed creating image file '" + filename + "': "
+						+ e);
 			} catch (IOException e) {
 				logger.error("Failed writing chart to image file: " + e);
+			} finally {
+				if (imgStream != null) {
+					try {
+						imgStream.close();
+					} catch (IOException e) {
+					}
+				}
 			}
 		}
 	}
-	
+
 	@Override
 	public void setDataFieldNames(List<String> dataFieldNames) {
 		// this.dataFieldNames = dataFieldNames;
@@ -103,7 +131,7 @@ public class ChartDrawer implements DataListener {
 	}
 
 	public void setFilename(String filename) {
-		if (filename.endsWith(DEFAULT_FILE_EXTENSION)) {
+		if (!filename.endsWith(DEFAULT_FILE_EXTENSION)) {
 			filename = filename.concat(DEFAULT_FILE_EXTENSION);
 		}
 		this.filename = filename;
@@ -120,7 +148,7 @@ public class ChartDrawer implements DataListener {
 	public boolean isShowApplet() {
 		return showApplet;
 	}
-	
+
 	public static void main(String[] args) throws IOException {
 		if (args.length < 1) {
 			System.err
