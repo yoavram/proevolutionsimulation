@@ -2,6 +2,7 @@ package il.ac.tau.yoavram.pes;
 
 import il.ac.tau.yoavram.pes.utils.TimeUtils;
 
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
@@ -23,12 +24,13 @@ import org.apache.log4j.PropertyConfigurator;
 public class SimulationConfigurer {
 	public static final String LOG4J_DEFAULT_CONFIG_FILE = "log4j.properties";
 
-	private static final Logger logger = Logger
-			.getLogger(SimulationConfigurer.class);
+	// private static final Logger logger = Logger
+	// .getLogger(SimulationConfigurer.class);
 
 	public static final String JOB_NAME_KEY = "jobName";
 	public static final String CONFIG_DIR_NAME = "config";
 	public static final String XML_EXTENSION = ".xml";
+	public static final String LOG_EXTENTION = ".log";
 	public static final String PROPERTIES_EXTENSION = ".properties";
 	public static final String EMPTY_STRING = "";
 	public static final String TIME = "time";
@@ -38,8 +40,8 @@ public class SimulationConfigurer {
 	private HelpFormatter helpFormatter;
 	private Properties properties = null;
 	private CommandLine cmdLine = null;
-	private URL log4jUrl;
-	private URL springXmlUrl;
+	private URL springXmlUrl = null;
+	private String logFilename = null;
 
 	public enum OptCode {
 		Help, Xml, Properties, FileProperties, Log;
@@ -78,26 +80,27 @@ public class SimulationConfigurer {
 
 	public void configure(String[] args, Date date) {
 		cmdLine = parseArgs(args);
-		log4jUrl = createLog4jUrl();
-		if (log4jUrl == null) {
-			System.err.println("No Log4j properties file found");
-		} else {
-			PropertyConfigurator.configure(log4jUrl);
-		}
-		// TODO change log file name
+		if (cmdLine == null)
+			return;
 		properties = createProperties();
 		springXmlUrl = createSpringXmlUrl();
+		Properties log4jProps = createLog4jProperties();
 
 		if (!properties.containsKey(JOB_NAME_KEY)) {
 			String fullpath = springXmlUrl.getFile();
 			String[] parts = fullpath.split("/");
 			String lastPart = parts[parts.length - 1];
 			String filename = lastPart.replace(XML_EXTENSION, EMPTY_STRING);
-			properties.put(JOB_NAME_KEY, filename);
+			properties.setProperty(JOB_NAME_KEY, filename);
 		}
 		if (!properties.containsKey(TIME)) {
-			properties.put(TIME, TimeUtils.formatDate(date));
+			properties.setProperty(TIME, TimeUtils.formatDate(date));
 		}
+		logFilename = properties.getProperty(JOB_NAME_KEY) + '.'
+				+ properties.getProperty(TIME) + LOG_EXTENTION;
+		log4jProps.setProperty("log4j.appender.FILE.File", logFilename);
+		System.out.println("Logging to file " + logFilename);
+		PropertyConfigurator.configure(log4jProps);
 	}
 
 	private URL createSpringXmlUrl() {
@@ -106,14 +109,32 @@ public class SimulationConfigurer {
 
 	}
 
-	private URL createLog4jUrl() {
-		String log4jFilename = null;
+	private Properties createLog4jProperties() {
+		String filename = null;
 		if (cmdLine.hasOption(OptCode.Log.toString())) {
-			log4jFilename = cmdLine.getOptionValue(OptCode.Log.toString());
+			filename = cmdLine.getOptionValue(OptCode.Log.toString());
 		} else {
-			log4jFilename = LOG4J_DEFAULT_CONFIG_FILE;
+			filename = LOG4J_DEFAULT_CONFIG_FILE;
 		}
-		return this.getClass().getClassLoader().getResource(log4jFilename);
+		InputStream stream = this.getClass().getClassLoader()
+				.getResourceAsStream(filename);
+		if (stream == null) {
+			String msg = "Could not stream the properties file " + filename
+					+ " in the classpath";
+			System.err.println(msg);
+			throw new NullPointerException(msg);
+		}
+		Properties props = new Properties();
+		try {
+			props.load(stream);
+		} catch (FileNotFoundException e) {
+			System.err.println("File " + filename + " not found: " + e);
+		} catch (IOException e) {
+			System.err.println("Error loading " + filename + ": " + e);
+		}
+		System.out.println("Loaded Log4j properties from file " + filename
+				+ ": " + props.toString());
+		return props;
 	}
 
 	private CommandLine parseArgs(String[] args) {
@@ -132,30 +153,30 @@ public class SimulationConfigurer {
 		if (cmdLine.hasOption(OptCode.FileProperties.toString())) {
 			String filename = cmdLine.getOptionValue(OptCode.FileProperties
 					.toString());
-			InputStream propStream = this.getClass().getClassLoader()
+			InputStream stream = this.getClass().getClassLoader()
 					.getResourceAsStream(filename);
-			if (propStream == null) {
+			if (stream == null) {
 				String msg = "Could not stream the properties file " + filename
 						+ " in the classpath";
-				logger.error(msg);
+				System.err.println(msg);
 				throw new NullPointerException(msg);
 			}
 			try {
 
-				props.load(propStream);
+				props.load(stream);
 			} catch (FileNotFoundException e) {
-				logger.error("File " + filename + " not found: " + e);
+				System.err.println("File " + filename + " not found: " + e);
 			} catch (IOException e) {
-				logger.error("Error loading " + filename + ": " + e);
+				System.err.println("Error loading " + filename + ": " + e);
 			}
-			logger.debug("Loaded properties from file " + filename + ": "
+			System.out.println("Loaded properties from file " + filename + ": "
 					+ props.toString());
 		}
 		if (cmdLine.hasOption(OptCode.Properties.toString())) {
 			Properties cmdLineProps = cmdLine
 					.getOptionProperties(OptCode.Properties.toString());
 			props.putAll(cmdLineProps);
-			logger.debug("Command line properties given: "
+			System.out.println("Command line properties given: "
 					+ cmdLineProps.toString());
 		}
 		return props;
@@ -178,8 +199,8 @@ public class SimulationConfigurer {
 		return properties;
 	}
 
-	public URL getLog4jUrl() {
-		return log4jUrl;
+	public String getLogFilename() {
+		return logFilename;
 	}
 
 	public URL getSpringXmlUrl() {

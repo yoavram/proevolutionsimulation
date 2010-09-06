@@ -28,13 +28,14 @@ public class Simulation {
 		return INSTACE;
 	}
 
-	public Simulation() {		
+	public Simulation() {
 		tick = 0;
 		running = true;
 		INSTACE = this;
 	}
 
 	public void start() {
+		long start = System.currentTimeMillis();
 		logger.info("Starting simulation id " + getID());
 		while (running) {
 			logger.debug("tick " + NumberUtils.formatNumber(getTick()));
@@ -54,7 +55,8 @@ public class Simulation {
 				}
 			}
 		}
-		logger.info("Simulation finished, exiting...");
+		long stop = System.currentTimeMillis();
+		logger.info("Simulation finished, duration " + NumberUtils.formatNumber(stop - start) + " ms");
 	}
 
 	private void incrementTick() {

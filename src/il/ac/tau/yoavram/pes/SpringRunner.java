@@ -28,7 +28,7 @@ public abstract class SpringRunner {
 		try {
 			run(args);
 		} catch (Exception e) {
-			logger.error(e);
+			e.printStackTrace(System.err);
 			System.exit(1);
 		}
 		System.exit(0);
@@ -40,14 +40,12 @@ public abstract class SpringRunner {
 		configurer.configure(args, new Date());
 		if (configurer.getSpringXmlUrl() == null) {
 			System.err.println("Spring XML file not defined");
+			System.err.println();
 			System.exit(1);
 		}
 		if (configurer.getProperties() == null) {
 			System.err.println("Properties not defined");
 			System.exit(1);
-		}
-		if (configurer.getLog4jUrl() == null) {
-			System.err.println("Log4j properties not defined");
 		}
 
 		Properties properties = configurer.getProperties();
@@ -74,7 +72,8 @@ public abstract class SpringRunner {
 
 		logger.debug("Starting simulation " + jobName);
 		simulation.start();
-		if (Boolean.parseBoolean(properties.getProperty("simulation.block","false"))) {
+		if (Boolean.parseBoolean(properties.getProperty("simulation.block",
+				"false"))) {
 			System.out.println("Press any key to exit...");
 			System.in.read();
 		}
