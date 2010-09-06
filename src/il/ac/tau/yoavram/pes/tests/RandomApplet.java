@@ -17,7 +17,7 @@ public class RandomApplet extends java.applet.Applet implements Runnable {
 		//return rnd.nextInt();
 		//return twister.nextInt();
 	}
-	org.apache.commons.math.random.MersenneTwister twister=new org.apache.commons.math.random.MersenneTwister();
+	//org.apache.commons.math.random.MersenneTwister twister=new org.apache.commons.math.random.MersenneTwister();
 	int[][] out_grid;
 
 	int a_atgrid = 0;

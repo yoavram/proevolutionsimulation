@@ -7,10 +7,10 @@ import java.awt.Graphics;
 import java.awt.Image;
 import java.util.Random;
 
-import org.apache.commons.math.distribution.PoissonDistribution;
+/*import org.apache.commons.math.distribution.PoissonDistribution;
 import org.apache.commons.math.distribution.PoissonDistributionImpl;
 import org.apache.commons.math.random.MersenneTwister;
-import org.junit.Before;
+*/import org.junit.Before;
 import org.junit.Test;
 
 import cern.jet.random.Poisson;
@@ -22,8 +22,8 @@ public class TestColt {
 	Uniform coltUniform;
 	Poisson coltPoisson;
 	Random javaRand;
-	MersenneTwister apacheTwister;
-	PoissonDistribution apachePoisson;
+	//MersenneTwister apacheTwister;
+//	PoissonDistribution apachePoisson;
 	Randomizer pesRandomizer;
 //	Ranlux ranlux;
 //	Ranmar ranmar;
@@ -33,8 +33,8 @@ public class TestColt {
 		coltUniform = new Uniform(0, 1, Uniform.makeDefaultGenerator());
 		coltPoisson = new Poisson(poissonMean, Poisson.makeDefaultGenerator());
 		javaRand = new Random();
-		apacheTwister = new MersenneTwister();
-		apachePoisson = new PoissonDistributionImpl(poissonMean);
+	//	apacheTwister = new MersenneTwister();
+	//	apachePoisson = new PoissonDistributionImpl(poissonMean);
 		// pesRandomizer = new Randomizer();
 	//	ranlux = new Ranlux(2, new Date());
 	//	ranmar = new Ranmar();
@@ -141,9 +141,9 @@ public class TestColt {
 		double meanSq = 0;
 
 		for (int i = 0; i < times; i++) {
-			double d = apacheTwister.nextDouble();
-			mean = (mean * i + d) / (i + 1);
-			meanSq = (meanSq * i + Math.pow(d, 2)) / (i + 1);
+	//		double d = apacheTwister.nextDouble();
+		//	mean = (mean * i + d) / (i + 1);
+		//	meanSq = (meanSq * i + Math.pow(d, 2)) / (i + 1);
 		}
 
 		double meanError1 = Math.abs(0.5 - mean);
@@ -209,8 +209,9 @@ public class TestColt {
 
 	long timeApacheTwisterDouble(double times) {
 		long tick = System.currentTimeMillis();
-		for (int i = 0; i < times; i++)
-			apacheTwister.nextDouble();
+		for (int i = 0; i < times; i++){
+	//		apacheTwister.nextDouble();
+		}
 		long tock = System.currentTimeMillis();
 		return tock - tick;
 
@@ -284,8 +285,9 @@ public class TestColt {
 	long timeApacheTwisterInt(double times) {
 		int to = Integer.MAX_VALUE;
 		long tick = System.currentTimeMillis();
-		for (int i = 0; i < times; i++)
-			apacheTwister.nextInt(to);
+		for (int i = 0; i < times; i++){
+		//	apacheTwister.nextInt(to);
+		}
 		long tock = System.currentTimeMillis();
 		return tock - tick;
 
