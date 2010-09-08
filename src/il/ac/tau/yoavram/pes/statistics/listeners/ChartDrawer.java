@@ -67,18 +67,13 @@ public class ChartDrawer implements DataListener {
 			appFrame.pack();
 			RefineryUtilities.centerFrameOnScreen(appFrame);
 			appFrame.setVisible(true);
-		} else {
-			// this makes sure that if X11 or another windows en system is not
-			// available the code will still function
-			System.setProperty("java.awt.headless", Boolean.toString(false));
 		}
 		if (!Strings.isNullOrEmpty(getFilename())) {
 			try {
-				File file = new File(getFilename());
+				File file =new File(
+						getFilename());
 				imgStream = ImageIO.createImageOutputStream(file);
-				logger.info(ChartDrawer.class.getSimpleName()
-						+ Character.SPACE_SEPARATOR + getTitle()
-						+ " output file: " + file.getCanonicalPath());
+				logger.info(ChartDrawer.class.getSimpleName()+Character.SPACE_SEPARATOR+getTitle()+" output file: "+file.getCanonicalPath());
 			} catch (IOException e) {
 				logger.error("Failed creating image file '" + filename + "': "
 						+ e);
