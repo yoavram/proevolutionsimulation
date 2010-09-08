@@ -2,6 +2,7 @@ package il.ac.tau.yoavram.pes;
 
 import il.ac.tau.yoavram.pes.utils.TimeUtils;
 
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
@@ -32,7 +33,6 @@ public class SimulationConfigurer {
 
 	public SimulationConfigurer(String[] args, Date date) {
 		CommandLine cmdLine = PesCommandLineParser.parse(args);
-
 		// TODO check stuff
 		springXmlConfig = this
 				.getClass()
@@ -79,7 +79,9 @@ public class SimulationConfigurer {
 			properties.setProperty(TIME, TimeUtils.formatDate(date));
 		}
 
-		logFilename = properties.getProperty(JOB_NAME_KEY) + '.'
+		logFilename = properties.getProperty("log.dir") + File.separator
+				+ properties.getProperty(JOB_NAME_KEY) + File.separator
+				+ properties.getProperty(JOB_NAME_KEY) + '.'
 				+ properties.getProperty(TIME) + LOG_EXTENTION;
 		log4jProps.setProperty("log4j.appender.FILE.File", logFilename);
 		System.out.println("Logging to file " + logFilename);
