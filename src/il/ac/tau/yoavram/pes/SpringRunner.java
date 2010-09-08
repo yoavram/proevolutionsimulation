@@ -2,7 +2,6 @@ package il.ac.tau.yoavram.pes;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.util.Date;
 import java.util.Properties;
 
 import org.apache.log4j.Logger;
@@ -36,10 +35,9 @@ public abstract class SpringRunner {
 
 	public static void run(String[] args) throws IOException {
 		System.out.println("Starting " + SpringRunner.class.getSimpleName());
-		SimulationConfigurer configurer = new SimulationConfigurer();
-		configurer.configure(args, new Date());
-		if (configurer.getSpringXmlUrl() == null) {
-			System.err.println("Spring XML file not defined");
+		SimulationConfigurer configurer = new SimulationConfigurer(args);
+		if (configurer.getSpringXmlConfig() == null) {
+			System.err.println("Spring XML config file not defined");
 			System.err.println();
 			System.exit(1);
 		}
@@ -60,9 +58,9 @@ public abstract class SpringRunner {
 		context.addBeanFactoryPostProcessor(propertyPlaceholderConfigurer);
 
 		logger.info("Loading context from file "
-				+ configurer.getSpringXmlUrl().toString());
+				+ configurer.getSpringXmlConfig().toString());
 
-		context.setConfigLocation(configurer.getSpringXmlUrl().toString());
+		context.setConfigLocation(configurer.getSpringXmlConfig().toString());
 
 		// make sure destroy methods will be called and refresh the context
 		context.registerShutdownHook();
