@@ -67,6 +67,10 @@ public class ChartDrawer implements DataListener {
 			appFrame.pack();
 			RefineryUtilities.centerFrameOnScreen(appFrame);
 			appFrame.setVisible(true);
+		} else {
+			// this makes sure that if X11 or another windows en system is not
+			// available the code will still function
+			System.setProperty("java.awt.headless", Boolean.toString(false));
 		}
 		if (!Strings.isNullOrEmpty(getFilename())) {
 			try {
