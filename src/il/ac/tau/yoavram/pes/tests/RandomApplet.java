@@ -12,6 +12,8 @@ import java.awt.Image;
 import java.util.Random;
 
 public class RandomApplet extends java.applet.Applet implements Runnable {
+	private static final long serialVersionUID = 1L;
+
 	private int nextInt() {
 		return RandomUtils.nextInt();
 		//return rnd.nextInt();

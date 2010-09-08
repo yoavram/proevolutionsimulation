@@ -24,7 +24,6 @@ import org.jfree.ui.RefineryUtilities;
 
 import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
-import com.google.common.io.Closeables;
 import com.google.common.io.LineReader;
 
 //TODO make the main method nicer.
@@ -33,7 +32,6 @@ public class ChartDrawer implements DataListener {
 
 	private static final String COMMA = ",";
 	private static final String DEFAULT_TITLE = "proevolutions simulation";
-	private static final float QUALITY = 1.0f;
 	private static final int WIDTH = 1024;
 	private static final int HEIGHT = 768;
 	private static final String DEFAULT_FILE_EXTENSION = ".png";
@@ -57,6 +55,9 @@ public class ChartDrawer implements DataListener {
 
 	public void init() {
 		if (isShowApplet()) {
+			logger.debug("Creating applet for "
+					+ ChartDrawer.class.getSimpleName()
+					+ Character.SPACE_SEPARATOR + getTitle());
 			chartPanel = new ChartPanel(chart, true, true, true, true, true);
 			chartPanel.setSize(WIDTH, HEIGHT);
 			appFrame = new ApplicationFrame(chart.getTitle().getText());
@@ -69,8 +70,11 @@ public class ChartDrawer implements DataListener {
 		}
 		if (!Strings.isNullOrEmpty(getFilename())) {
 			try {
-				imgStream = ImageIO.createImageOutputStream(new File(
-						getFilename()));
+				File file = new File(getFilename());
+				imgStream = ImageIO.createImageOutputStream(file);
+				logger.info(ChartDrawer.class.getSimpleName()
+						+ Character.SPACE_SEPARATOR + getTitle()
+						+ " output file: " + file.getCanonicalPath());
 			} catch (IOException e) {
 				logger.error("Failed creating image file '" + filename + "': "
 						+ e);

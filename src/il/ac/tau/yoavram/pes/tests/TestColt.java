@@ -2,9 +2,6 @@ package il.ac.tau.yoavram.pes.tests;
 
 import il.ac.tau.yoavram.pes.utils.Randomizer;
 
-import java.awt.Color;
-import java.awt.Graphics;
-import java.awt.Image;
 import java.util.Random;
 
 /*import org.apache.commons.math.distribution.PoissonDistribution;
