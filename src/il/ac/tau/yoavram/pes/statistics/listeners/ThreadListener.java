@@ -33,6 +33,7 @@ public class ThreadListener extends Thread implements DataListener {
 	}
 
 	public void destroy() {
+		setRunning(false);
 		Iterator<Number[]> e = queue.iterator();
 		while (e.hasNext()) {
 			inner.listen(e.next());

@@ -1,5 +1,6 @@
 package il.ac.tau.yoavram.pes.terminators;
 
+import il.ac.tau.yoavram.pes.Simulation;
 import il.ac.tau.yoavram.pes.statistics.aggregators.Aggregator;
 
 public class EquillibriumTerminator extends AbstractTerminator implements

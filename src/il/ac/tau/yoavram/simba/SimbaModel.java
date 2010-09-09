@@ -65,17 +65,18 @@ public class SimbaModel extends SerializableModel<Bacteria> {
 
 		// reproduce random fit bacteria
 		while (getPopulations().get(0).size() < getPopulationSize()) {
-			Bacteria reproduce = randomBacteria();
-			if (reproduce.getFitness() > RandomUtils.nextDouble()) {
-				Bacteria child = reproduce.reproduce();
+			Bacteria mother = randomBacteria();
+			if (mother.getFitness() > RandomUtils.nextDouble()) {
+				Bacteria child = mother.reproduce();
 				getPopulations().get(0).add(child);
-				logger.debug("Reproduced bacteria " + reproduce.getID()
+				logger.debug("Reproduced bacteria " + mother.getID()
 						+ ", child is " + child.getID());
 			}
 		}
 
 		// change environment
-		if (RandomUtils.nextDouble() < getEnvironmentalChangeFrequency()) {
+		if (getEnvironmentalChangeFrequency() > 0
+				&& RandomUtils.nextDouble() < getEnvironmentalChangeFrequency()) {
 			logger.debug("Changing the environment");
 			getEnvironment().change(getFractionOfGenesToChange());
 		}

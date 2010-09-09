@@ -15,15 +15,13 @@ public class SimInvasion implements Invasion<Bacteria, SimBacteria> {
 	@Override
 	public List<List<Bacteria>> invade(List<List<Bacteria>> populations) {
 		for (List<Bacteria> population : populations) {
-			for (Bacteria b : population) {
-				population.remove(b);
+			for (int i = 0; i < population.size(); i++) {
 				if (RandomUtils.nextDouble() < getInvasionRate()) {
-					SimBacteria sim = new SimBacteria(b);
+					SimBacteria sim = new SimBacteria(population.get(i));
 					sim.setFitnessThreshold(getFitnessThreshold());
 					sim.setMutationRateModifier(getMutationRateModifier());
-					b = sim;
+					population.set(i, sim);
 				}
-				population.add(b);
 			}
 		}
 
