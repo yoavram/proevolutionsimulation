@@ -2,15 +2,12 @@ package il.ac.tau.yoavram.pes.tests;
 
 import il.ac.tau.yoavram.pes.utils.RandomUtils;
 
-public class ClusterCheck {
+public class TestCluster {
 
-	/**
-	 * @param args
-	 */
 	public static void main(String[] args) {
-		int i = 0;
+		System.out.println("Running infinite loop...");
 		while (true) {
-			i = RandomUtils.nextInt();
+			RandomUtils.nextInt();
 		}
 	}
 

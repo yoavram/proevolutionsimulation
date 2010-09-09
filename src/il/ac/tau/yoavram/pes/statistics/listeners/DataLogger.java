@@ -1,5 +1,6 @@
 package il.ac.tau.yoavram.pes.statistics.listeners;
 
+import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
 
@@ -16,6 +17,10 @@ public class DataLogger implements DataListener {
 	@Override
 	public void setDataFieldNames(List<String> aggList) {
 		logger.info(Arrays.toString(aggList.toArray()));
+	}
+
+	@Override
+	public void close() throws IOException {
 	}
 
 }

@@ -21,10 +21,9 @@ public class Environment implements Serializable {
 	}
 
 	public void init() {
-		int numberOfAlleles = EnvironmentalAllele.values().length;
 		alleles = new int[getNumberOfEnvironmentalGenes()];
 		for (int gene = 0; gene < alleles.length; gene++) {
-			alleles[gene] = RandomUtils.nextInt(0, numberOfAlleles - 1);
+			alleles[gene] = RandomUtils.nextInt(0, 1);
 		}
 	}
 

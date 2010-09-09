@@ -20,10 +20,15 @@ public class IdealAncestor extends Bacteria {
 			env[i] = getEnvironment().getIdealAllele(i);
 		}
 		int[] hk = new int[getNumberOfHousekeepingGenes()];
-		Arrays.fill(hk, HousekeepingAllele.Beneficial.ordinal());
+		Arrays.fill(hk, 0);
 
 		setEnvironmentalAlleles(env);
 		setHousekeepingAlleles(hk);
+	}
+
+	@Override
+	public void die() {
+		// do not go to recycling
 	}
 
 	public int getNumberOfEnvironmentalGenes() {

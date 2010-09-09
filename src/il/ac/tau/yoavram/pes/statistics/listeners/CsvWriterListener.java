@@ -2,9 +2,12 @@ package il.ac.tau.yoavram.pes.statistics.listeners;
 
 import il.ac.tau.yoavram.pes.io.CsvWriter;
 
+import java.io.IOException;
 import java.util.List;
 
 import org.apache.log4j.Logger;
+
+import com.google.common.io.Closeables;
 
 public class CsvWriterListener implements DataListener {
 	private static final Logger logger = Logger
@@ -41,9 +44,9 @@ public class CsvWriterListener implements DataListener {
 	public void init() {
 	}
 
-	public void destroy() {
-		if (writer != null)
-			writer.close();
+	@Override
+	public void close() throws IOException {
+		Closeables.closeQuietly(writer);
 	}
 
 	@Override

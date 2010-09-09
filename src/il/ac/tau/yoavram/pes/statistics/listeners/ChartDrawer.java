@@ -36,7 +36,6 @@ public class ChartDrawer implements DataListener {
 	private static final int HEIGHT = 768;
 	private static final String DEFAULT_FILE_EXTENSION = ".png";
 
-	private ImageOutputStream imgStream;
 	private ApplicationFrame appFrame;
 	private JFreeChart chart;
 	private XYSeriesCollection dataset;
@@ -68,17 +67,6 @@ public class ChartDrawer implements DataListener {
 			RefineryUtilities.centerFrameOnScreen(appFrame);
 			appFrame.setVisible(true);
 		}
-		if (!Strings.isNullOrEmpty(getFilename())) {
-			try {
-				File file =new File(
-						getFilename());
-				imgStream = ImageIO.createImageOutputStream(file);
-				logger.info(ChartDrawer.class.getSimpleName()+Character.SPACE_SEPARATOR+getTitle()+" output file: "+file.getCanonicalPath());
-			} catch (IOException e) {
-				logger.error("Failed creating image file '" + filename + "': "
-						+ e);
-			}
-		}
 	}
 
 	@Override
@@ -88,14 +76,27 @@ public class ChartDrawer implements DataListener {
 		}
 	}
 
-	public void destroy() {
-		if (imgStream != null) {
-			saveToFile();
-		}
+	@Override
+	public void close() throws IOException {
+		saveToFile();
 	}
 
 	private void saveToFile() {
+		ImageOutputStream imgStream = null;
+		if (!Strings.isNullOrEmpty(getFilename())) {
+			try {
+				File file = new File(getFilename());
+				imgStream = ImageIO.createImageOutputStream(file);
+				logger.info(ChartDrawer.class.getSimpleName()
+						+ Character.SPACE_SEPARATOR + getTitle()
+						+ " output file: " + file.getAbsolutePath());
+			} catch (IOException e) {
+				logger.error("Failed creating image file '" + filename + "': "
+						+ e);
+			}
+		}
 		if (imgStream != null) {
+
 			try {
 				ImageIO.write(chart.createBufferedImage(WIDTH, HEIGHT),
 						ImageFormat.PNG, imgStream);
@@ -202,6 +203,6 @@ public class ChartDrawer implements DataListener {
 		}
 		System.out.println();
 		System.out.println(lines + " lines read");
-		drawer.destroy();
+		drawer.close();
 	}
 }

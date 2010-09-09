@@ -4,6 +4,7 @@ import il.ac.tau.yoavram.pes.statistics.DataGatherer;
 import il.ac.tau.yoavram.pes.terminators.Terminator;
 import il.ac.tau.yoavram.pes.utils.NumberUtils;
 
+import java.io.IOException;
 import java.util.List;
 
 import org.apache.log4j.Logger;
@@ -28,6 +29,11 @@ public class Simulation {
 		return INSTACE;
 	}
 
+	/**
+	 * construct new simulation. as simulation is a singleton this will override
+	 * previous simulation. to get the latest simulation use
+	 * <code>getInstance()</code>
+	 */
 	public Simulation() {
 		tick = 0;
 		running = true;
@@ -51,12 +57,25 @@ public class Simulation {
 			for (Terminator terminator : getTerminators()) {
 				if (getTick() % terminator.getInterval() == 0
 						&& terminator.terminate()) {
+					logger.info(terminator.getClass().getSimpleName()
+							+ " terminated the simulation");
 					end();
 				}
 			}
 		}
 		long stop = System.currentTimeMillis();
-		logger.info("Simulation finished, duration " + NumberUtils.formatNumber(stop - start) + " ms");
+		logger.info("Simulation finished, "+getTick()+" ticks, "
+				+ NumberUtils.formatNumber(stop - start) + " ms");
+
+		logger.info("Closing data gatherers");
+		for (DataGatherer<?> dataG : getDataGatherers()) {
+			try {
+				dataG.close();
+			} catch (IOException e) {
+				logger.warn("Error closing " + dataG.toString() + ": " + e);
+			}
+		}
+
 	}
 
 	private void incrementTick() {

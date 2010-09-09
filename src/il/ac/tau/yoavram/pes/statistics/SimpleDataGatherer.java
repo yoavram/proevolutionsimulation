@@ -5,6 +5,7 @@ import il.ac.tau.yoavram.pes.filters.Filter;
 import il.ac.tau.yoavram.pes.statistics.aggregators.Aggregator;
 import il.ac.tau.yoavram.pes.statistics.listeners.DataListener;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
@@ -110,6 +111,13 @@ public class SimpleDataGatherer<T> implements DataGatherer<T> {
 	}
 
 	@Override
+	public void close() throws IOException {
+		for (DataListener listener : getListeners()) {
+			listener.close();
+		}
+	}
+
+	@Override
 	public void gather() {
 		for (Aggregator<T> agg : getAggregators()) {
 			agg.clear();
@@ -140,4 +148,5 @@ public class SimpleDataGatherer<T> implements DataGatherer<T> {
 			listener.listen(data);
 		}
 	}
+
 }

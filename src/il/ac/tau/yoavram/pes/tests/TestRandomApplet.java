@@ -11,15 +11,17 @@ import java.awt.Graphics;
 import java.awt.Image;
 import java.util.Random;
 
-public class RandomApplet extends java.applet.Applet implements Runnable {
+public class TestRandomApplet extends java.applet.Applet implements Runnable {
 	private static final long serialVersionUID = 1L;
 
 	private int nextInt() {
 		return RandomUtils.nextInt();
-		//return rnd.nextInt();
-		//return twister.nextInt();
+		// return rnd.nextInt();
+		// return twister.nextInt();
 	}
-	//org.apache.commons.math.random.MersenneTwister twister=new org.apache.commons.math.random.MersenneTwister();
+
+	// org.apache.commons.math.random.MersenneTwister twister=new
+	// org.apache.commons.math.random.MersenneTwister();
 	int[][] out_grid;
 
 	int a_atgrid = 0;
@@ -39,7 +41,7 @@ public class RandomApplet extends java.applet.Applet implements Runnable {
 
 	// TT_Random TT_rnd = new TT_Random();
 
-	 Random rnd = new Random();
+	Random rnd = new Random();
 
 	int hside = 128;
 	int vside = 128;
@@ -69,8 +71,8 @@ public class RandomApplet extends java.applet.Applet implements Runnable {
 	// ...........................Methods........................
 
 	public void init() {
-		int c;
-		boolean random = false;
+		// int c;
+		// boolean random = false;
 
 		if (getParameter("h") != null)
 			hside = (new Integer(getParameter("h"))).intValue();
@@ -93,7 +95,7 @@ public class RandomApplet extends java.applet.Applet implements Runnable {
 
 		start();
 
-		 rnd.setSeed(99);
+		rnd.setSeed(99);
 
 		calculate = new Thread(this);
 
@@ -107,7 +109,7 @@ public class RandomApplet extends java.applet.Applet implements Runnable {
 			for (y = 0; y < vside; y++) {
 
 				// *very* poor quality
-				///////out_grid[x][y] = (int) rnd.nextLong();
+				// /////out_grid[x][y] = (int) rnd.nextLong();
 				out_grid[x][y] = nextInt();
 				// out_grid[x][y] = (int) TT_rnd.nextInt();
 
@@ -202,7 +204,7 @@ public class RandomApplet extends java.applet.Applet implements Runnable {
 	}
 
 	public static void main(String[] args) {
-		RandomApplet n = new RandomApplet();
+		TestRandomApplet n = new TestRandomApplet();
 		n.init();
 	}
 }

@@ -1,5 +1,6 @@
 package il.ac.tau.yoavram.pes.statistics.listeners;
 
+import java.io.IOException;
 import java.util.Iterator;
 import java.util.List;
 import java.util.concurrent.BlockingQueue;
@@ -18,6 +19,7 @@ public class ThreadListener extends Thread implements DataListener {
 
 	private DataListener inner;
 	private final BlockingQueue<Number[]> queue;
+	private boolean running = true;
 
 	public ThreadListener() {
 		this(ThreadListener.class.getSimpleName());
@@ -32,7 +34,9 @@ public class ThreadListener extends Thread implements DataListener {
 		start();
 	}
 
-	public void destroy() {
+	@Override
+	public void close() throws IOException {
+		setRunning(false);
 		setRunning(false);
 		Iterator<Number[]> e = queue.iterator();
 		while (e.hasNext()) {
@@ -43,7 +47,7 @@ public class ThreadListener extends Thread implements DataListener {
 	@Override
 	public void run() {
 		try {
-			while (running) {
+			while (isRunning()) {
 				inner.listen(queue.take());
 			}
 		} catch (InterruptedException e) {
@@ -72,8 +76,6 @@ public class ThreadListener extends Thread implements DataListener {
 	public void setInner(DataListener inner) {
 		this.inner = inner;
 	}
-
-	private boolean running = true;
 
 	public boolean isRunning() {
 		return running;

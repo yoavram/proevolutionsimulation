@@ -2,15 +2,19 @@ package il.ac.tau.yoavram.pes.io;
 
 import il.ac.tau.yoavram.pes.utils.TimeUtils;
 
+import java.io.Closeable;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.Date;
 
+import org.apache.log4j.Logger;
+
+import com.google.common.io.Closeables;
 import com.google.common.io.Files;
 
-//TODO - make this nice, test.
-public class CsvWriter {
+public class CsvWriter implements Closeable {
+	private static final Logger logger = Logger.getLogger(CsvWriter.class);
 	private static final char ROW_SEPARATOR = '\n';
 	private static final char VALUE_SEPARATOR = ',';
 
@@ -20,8 +24,7 @@ public class CsvWriter {
 
 	private FileWriter writer = null;
 	private boolean newLine = true;
-
-	// private int rows = 0;
+	private File file = null;
 
 	public CsvWriter() {
 		super();
@@ -39,9 +42,10 @@ public class CsvWriter {
 		if (!getExtension().isEmpty()) {
 			fname = fname + "." + getExtension();
 		}
-		File file = new File(fname);
+		file = new File(fname);
 		Files.createParentDirs(file);
 		writer = new FileWriter(fname);
+		logger.info("Writing to file " + file.getAbsolutePath());
 	}
 
 	public void writeRow(String[] row) {
@@ -62,8 +66,8 @@ public class CsvWriter {
 			}
 			writer.append(data);
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			logger.warn("Failed writing value to cell in file "
+					+ file.getAbsolutePath() + ": " + e);
 		}
 		newLine = false;
 	}
@@ -76,24 +80,15 @@ public class CsvWriter {
 		try {
 			writer.append(ROW_SEPARATOR);
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			logger.warn("Failed writing new line in file "
+					+ file.getAbsolutePath() + ": " + e);
 		}
 		newLine = true;
 
 	}
 
 	public void close() {
-		if (writer != null) {
-			try {
-				writer.flush();
-				writer.close();
-				writer = null;
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-		}
+		Closeables.closeQuietly(writer);
 	}
 
 	public String getFilename() {
