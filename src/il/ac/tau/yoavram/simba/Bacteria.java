@@ -12,7 +12,7 @@ import org.apache.log4j.Logger;
 public class Bacteria implements Serializable {
 	private static final long serialVersionUID = -490159741474792583L;
 	private static final Logger logger = Logger.getLogger(Bacteria.class);
-	protected static ThreadLocal<Bacteria> trash = new ThreadLocal<Bacteria>();
+	protected static Bacteria trash = null;
 	private static int nextID = 0;
 	private int id = nextID++;
 
@@ -22,7 +22,7 @@ public class Bacteria implements Serializable {
 	protected double selectionCoefficient;
 
 	protected transient double fitness = -1;
-	protected transient long update = -1;
+	protected transient long update = Long.MAX_VALUE;
 
 	public Bacteria() {
 		environmentalAlleles = new int[0];
@@ -46,6 +46,8 @@ public class Bacteria implements Serializable {
 				other.housekeepingAlleles.length);
 		mutationRate = other.mutationRate;
 		selectionCoefficient = other.selectionCoefficient;
+		fitness = -1;
+		update = Long.MAX_VALUE;
 	}
 
 	/**
@@ -58,15 +60,15 @@ public class Bacteria implements Serializable {
 	}
 
 	public Bacteria getTrash() {
-		return trash.get();
+		return trash;
 	}
 
 	public void setTrash(Bacteria bacteria) {
-		trash.set(bacteria);
+		trash = bacteria;
 	}
 
 	public void removeTrash() {
-		trash.remove();
+		trash = null;
 	}
 
 	public void die() {
