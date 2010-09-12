@@ -24,7 +24,7 @@
 	<bean id="simbaModel" class="il.ac.tau.yoavram.simba.SimbaModel"
 		factory-method="deserialize">
 		<constructor-arg name="filename"
-			value="${serialization.dir}/${serialization.filename}" />
+			value="${serialization.dir}${serialization.filename}" />
 		<property name="serializedAtEnd" value="false" />
 		<property name="ID" value="${jobName}.${time}" />
 		<property name="changeEnvironmentOnStartup" value="true" />
