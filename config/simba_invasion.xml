@@ -59,7 +59,7 @@
 					<property name="inner">
 						<bean class="il.ac.tau.yoavram.pes.statistics.listeners.ChartDrawer">
 							<property name="title" value="pop.${jobName}.${time}" />
-							<property name="showApplet" value="true" />
+							<property name="showApplet" value="${simulation.block}" />
 							<property name="filename"
 								value="${output.dir}/${jobName}/pop.${jobName}.${time}" />
 						</bean>
@@ -119,7 +119,7 @@
 					<property name="inner">
 						<bean class="il.ac.tau.yoavram.pes.statistics.listeners.ChartDrawer">
 							<property name="title" value="sim.${jobName}.${time}" />
-							<property name="showApplet" value="true" />
+							<property name="showApplet" value="${simulation.block}" />
 							<property name="filename"
 								value="${output.dir}/${jobName}/sim.${jobName}.${time}" />
 						</bean>
