@@ -3,6 +3,7 @@ package il.ac.tau.yoavram.pes;
 import il.ac.tau.yoavram.pes.statistics.DataGatherer;
 import il.ac.tau.yoavram.pes.terminators.Terminator;
 import il.ac.tau.yoavram.pes.utils.NumberUtils;
+import il.ac.tau.yoavram.pes.utils.TimeUtils;
 
 import java.io.IOException;
 import java.util.List;
@@ -64,8 +65,9 @@ public class Simulation {
 			}
 		}
 		long stop = System.currentTimeMillis();
-		logger.info("Simulation finished, "+getTick()+" ticks, "
-				+ NumberUtils.formatNumber(stop - start) + " ms");
+		logger.info("Simulation finished, "
+				+ NumberUtils.formatNumber(getTick()) + " ticks, "
+				+ TimeUtils.formatDuration(stop - start));
 
 		logger.info("Closing data gatherers");
 		for (DataGatherer<?> dataG : getDataGatherers()) {
@@ -83,8 +85,6 @@ public class Simulation {
 	}
 
 	public void end() {
-		logger.info("Ending simulation at tick "
-				+ NumberUtils.formatNumber(getTick()));
 		running = false;
 	}
 

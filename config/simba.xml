@@ -39,7 +39,7 @@
 		<property name="environment" ref="environment" />
 		<property name="ancestor" ref="ancestor" />
 		<property name="serializedAtEnd" value="true" />
-		<property name="filename" value="${serialization.filename}" />
+		<property name="filename" value="${serialization.dir}/" />
 		<property name="ID" value="${jobName}.${time}" />
 	</bean>
 

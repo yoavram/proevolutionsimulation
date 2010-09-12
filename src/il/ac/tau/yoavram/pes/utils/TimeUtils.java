@@ -23,4 +23,10 @@ public class TimeUtils {
 	public static String formatDate(long time) {
 		return formatDate(new Date(time));
 	}
+
+	public static String formatDuration(long durationMillis) {
+		return org.apache.commons.lang.time.DurationFormatUtils
+				.formatDurationWords(durationMillis, true, true);
+	}
+
 }
