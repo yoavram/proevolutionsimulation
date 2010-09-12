@@ -88,6 +88,20 @@ public class TestSerializableModel {
 		assertEquals(deModel, model);
 		assertEquals(deModel.getPopulations(), model.getPopulations());
 	}
+	
+	@org.junit.Test
+	public void springDeserializeAndSetParameterTest() {
+		File file = new File(filename);
+		assertTrue(file.exists());
+
+		ApplicationContext context = new ClassPathXmlApplicationContext(
+				"test_deserialization.xml");
+		MockModel deModel = context.getBean("model2", MockModel.class);
+
+		assertNotNull(deModel);
+		assertFalse(deModel.equals(model));
+		assertEquals(deModel.getPopulations(), model.getPopulations());
+	}
 
 	public static class MockModel extends SerializableModel<Integer> {
 		private static final long serialVersionUID = 1L;

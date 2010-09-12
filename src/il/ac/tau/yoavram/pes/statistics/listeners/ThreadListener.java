@@ -37,10 +37,20 @@ public class ThreadListener extends Thread implements DataListener {
 	@Override
 	public void close() throws IOException {
 		setRunning(false);
-		setRunning(false);
 		Iterator<Number[]> e = queue.iterator();
 		while (e.hasNext()) {
 			inner.listen(e.next());
+		}
+	}
+
+	@Override
+	public void destroy() {
+		if (isRunning()) {
+			try {
+				close();
+			} catch (IOException e) {
+				logger.error("Error closing: " + e);
+			}
 		}
 	}
 

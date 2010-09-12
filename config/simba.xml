@@ -71,7 +71,7 @@
 					<property name="inner">
 						<bean class="il.ac.tau.yoavram.pes.statistics.listeners.ChartDrawer">
 							<property name="title" value="${jobName}.${time}" />
-							<property name="showApplet" value="false"/>
+							<property name="showApplet" value="true"/>
 							<property name="filename" value="${output.dir}/${jobName}/${jobName}.${time}"/>
 						</bean>
 					</property>

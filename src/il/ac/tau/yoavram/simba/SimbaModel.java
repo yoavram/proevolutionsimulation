@@ -48,7 +48,7 @@ public class SimbaModel extends SerializableModel<Bacteria> {
 		}
 		if (getInvasion() != null) {
 			logger.info("Invading the populations with "
-					+ getInvasion().getInvasionRate() + "% "
+					+ getInvasion().getInvasionRate() * 100 + "% "
 					+ getInvasion().getInvaderName());
 			setPopulations(getInvasion().invade(getPopulations()));
 		}
@@ -69,8 +69,9 @@ public class SimbaModel extends SerializableModel<Bacteria> {
 			if (mother.getFitness() > RandomUtils.nextDouble()) {
 				Bacteria child = mother.reproduce();
 				getPopulations().get(0).add(child);
-				logger.debug("Reproduced bacteria " + mother.getID()
-						+ ", child is " + child.getID());
+				logger.debug("Reproduced " + mother.getClass().getSimpleName()
+						+ mother.getID() + ", child is "
+						+ child.getClass().getSimpleName() + child.getID());
 			}
 		}
 

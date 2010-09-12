@@ -6,7 +6,17 @@
 
 	<bean id="model" class="il.ac.tau.yoavram.pes.SerializableModel"
 		factory-method="deserialize">
-		<constructor-arg name="filename" value="tests/test_model_serialization.ser" />
+		<constructor-arg name="filename"
+			value="tests/test_model_serialization.ser" />
+	</bean>
+
+	<bean id="model2" class="il.ac.tau.yoavram.pes.SerializableModel"
+		factory-method="deserialize">
+		<constructor-arg name="filename"
+			value="tests/test_model_serialization.ser" />
+		<property name="ID">
+			<bean class="java.util.Date" />
+		</property>
 	</bean>
 
 </beans>

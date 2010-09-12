@@ -4,6 +4,7 @@ import il.ac.tau.yoavram.pes.Simulation;
 import il.ac.tau.yoavram.pes.filters.ClassFilter;
 import il.ac.tau.yoavram.pes.utils.RandomUtils;
 
+import java.io.ObjectInputStream;
 import java.io.Serializable;
 import java.util.Arrays;
 
@@ -12,6 +13,11 @@ import org.apache.log4j.Logger;
 public class Bacteria implements Serializable {
 	private static final long serialVersionUID = -490159741474792583L;
 	private static final Logger logger = Logger.getLogger(Bacteria.class);
+
+	private static final double DEFAULT_FITNESS = -1;
+	private static final long DEFAULT_UPDATE = Long.MAX_VALUE;
+	private static final int[] EMPTY_INT_ARRAY=new int[0];
+
 	protected static Bacteria trash = null;
 	private static int nextID = 0;
 	private int id = nextID++;
@@ -21,12 +27,12 @@ public class Bacteria implements Serializable {
 	protected double mutationRate;
 	protected double selectionCoefficient;
 
-	protected transient double fitness = -1;
-	protected transient long update = Long.MAX_VALUE;
+	protected transient double fitness = DEFAULT_FITNESS;
+	protected transient long update = DEFAULT_UPDATE;
 
 	public Bacteria() {
-		environmentalAlleles = new int[0];
-		housekeepingAlleles = new int[0];
+		environmentalAlleles = EMPTY_INT_ARRAY;
+		housekeepingAlleles = EMPTY_INT_ARRAY;
 	}
 
 	public Bacteria(Bacteria other) {
@@ -46,8 +52,8 @@ public class Bacteria implements Serializable {
 				other.housekeepingAlleles.length);
 		mutationRate = other.mutationRate;
 		selectionCoefficient = other.selectionCoefficient;
-		fitness = -1;
-		update = Long.MAX_VALUE;
+		fitness = DEFAULT_FITNESS;
+		update = DEFAULT_UPDATE;
 	}
 
 	/**
@@ -69,6 +75,12 @@ public class Bacteria implements Serializable {
 
 	public void removeTrash() {
 		trash = null;
+	}
+
+	private void readObject(ObjectInputStream ois) throws Exception {
+		ois.defaultReadObject();
+		fitness = DEFAULT_FITNESS;
+		update = DEFAULT_UPDATE;
 	}
 
 	public void die() {

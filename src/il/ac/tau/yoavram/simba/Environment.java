@@ -28,10 +28,9 @@ public class Environment implements Serializable {
 	}
 
 	public void change(double fractionOfGenesToChange) {
-		double mean = fractionOfGenesToChange * alleles.length;
-		int toChange = RandomUtils.nextPoisson(mean);
+		double toChange = Math.ceil(fractionOfGenesToChange * alleles.length);
 		for (int i = 0; i < toChange; i++) {
-			int gene = RandomUtils.nextInt(0, alleles.length);
+			int gene = RandomUtils.nextInt(0, alleles.length-1);
 			int currentAllele = alleles[gene];
 			int newAllele = (currentAllele + 1) % 2;
 			alleles[gene] = newAllele;

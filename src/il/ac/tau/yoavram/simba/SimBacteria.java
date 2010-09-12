@@ -1,5 +1,7 @@
 package il.ac.tau.yoavram.simba;
 
+import il.ac.tau.yoavram.pes.filters.ClassFilter;
+
 public class SimBacteria extends Bacteria {
 	private static final long serialVersionUID = -5401626270460444969L;
 	// private static final Logger logger = Logger.getLogger(SimBacteria.class);
@@ -70,6 +72,12 @@ public class SimBacteria extends Bacteria {
 
 	public double getMutationRateModifier() {
 		return mutationRateModifier;
+	}
+
+	public static class Filter extends ClassFilter<Bacteria> {
+		public Filter() {
+			setClazz(SimBacteria.class);
+		}
 	}
 
 }
