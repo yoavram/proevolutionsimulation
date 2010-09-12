@@ -10,7 +10,8 @@ import org.apache.log4j.Logger;
 
 import com.google.common.base.Strings;
 
-public abstract class SerializableModel<T extends Object> implements Model<T >, Serializable {
+public abstract class SerializableModel<T extends Object> implements Model<T>,
+		Serializable {
 
 	private static final long serialVersionUID = 2620240837057469787L;
 	private static final Logger logger = Logger
@@ -18,6 +19,7 @@ public abstract class SerializableModel<T extends Object> implements Model<T >, 
 	private static final String DEFAULT_EXTENSION = ".ser";
 
 	private String filename;
+	private String path;
 	private String extension;
 	private Object id;
 	private boolean serializedAtEnd;
@@ -32,15 +34,14 @@ public abstract class SerializableModel<T extends Object> implements Model<T >, 
 	}
 
 	public String serialize() {
-		// TODO do some pattern here or something, this is nasty
-		// if .ser is not in the end, attempts to construct a name, appending id
-		// object and extension.
-		String serString = getFilename();
-		if (!getFilename().endsWith(getExtension())) {
-			if (!serString.endsWith("/")) {
-				serString += ".";
-			}
-			serString += getID().toString() + getExtension();
+		String serString = getPath();
+		if (Strings.isNullOrEmpty(getFilename())) {
+			serString += getID().toString();
+		} else {
+			serString += getFilename();
+		}
+		if (!serString.endsWith(getExtension())) {
+			serString += getExtension();
 		}
 		try {
 			Serialization.writeToFile(this, serString);
@@ -116,5 +117,41 @@ public abstract class SerializableModel<T extends Object> implements Model<T >, 
 	public boolean equals(Object obj) {
 		return obj instanceof SerializableModel
 				&& ((SerializableModel<T>) obj).getID().equals(getID());
+	}
+
+	public void setPath(String path) {
+		this.path = path;
+	}
+
+	public String getPath() {
+		return path;
+	}
+
+	public static class Factory {
+		private String filename;
+
+		public <E extends SerializableModel<?>> E deserialize() {
+			E deserialized = null;
+			try {
+				deserialized = Serialization.readFromFile(getFilename());
+				File file = new File(getFilename());
+				logger.info("Deserialized model "
+						+ deserialized.getID().toString() + " to "
+						+ file.getAbsolutePath());
+			} catch (IOException e) {
+				logger.error(e);
+			} catch (ClassNotFoundException e) {
+				logger.error(e);
+			}
+			return deserialized;
+		}
+
+		public void setFilename(String filename) {
+			this.filename = filename;
+		}
+
+		public String getFilename() {
+			return filename;
+		}
 	}
 }
