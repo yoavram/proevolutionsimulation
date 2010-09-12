@@ -25,9 +25,6 @@
 		<property name="filename"
 			value="${serialization.dir}${serialization.filename}" />
 	</bean>
-	<!-- <bean id="simbaModel" class="il.ac.tau.yoavram.simba.SimbaModel" factory-method="deserialize"> 
-		<constructor-arg name="filename" value="${serialization.dir}${serialization.filename}" 
-		/> -->
 	<bean id="simbaModel" class="il.ac.tau.yoavram.simba.SimbaModel"
 		factory-bean="modelFactory" factory-method="deserialize">
 		<property name="serializedAtEnd" value="false" />

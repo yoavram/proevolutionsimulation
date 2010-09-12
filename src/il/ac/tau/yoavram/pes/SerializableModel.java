@@ -128,6 +128,7 @@ public abstract class SerializableModel<T extends Object> implements Model<T>,
 	}
 
 	public static class Factory {
+		private static final Logger logger = Logger.getLogger(Factory.class);
 		private String filename;
 
 		public <E extends SerializableModel<?>> E deserialize() {
@@ -136,12 +137,12 @@ public abstract class SerializableModel<T extends Object> implements Model<T>,
 				deserialized = Serialization.readFromFile(getFilename());
 				File file = new File(getFilename());
 				logger.info("Deserialized model "
-						+ deserialized.getID().toString() + " to "
+						+ deserialized.getID().toString() + " from "
 						+ file.getAbsolutePath());
 			} catch (IOException e) {
-				logger.error(e);
+				logger.error("Deserialization failed: " + e);
 			} catch (ClassNotFoundException e) {
-				logger.error(e);
+				logger.error("Deserialization failed: " + e);
 			}
 			return deserialized;
 		}
