@@ -77,7 +77,6 @@ public class Simulation {
 				logger.warn("Error closing " + dataG.toString() + ": " + e);
 			}
 		}
-
 	}
 
 	private void incrementTick() {

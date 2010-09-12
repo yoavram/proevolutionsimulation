@@ -132,7 +132,7 @@
 				<ref bean="ticker" />
 				<bean
 					class="il.ac.tau.yoavram.simba.statistics.aggregators.MutatorFraction">
-					<property name="name" value="mutato fraction" />
+					<property name="name" value="mutator fraction" />
 				</bean>
 				<ref bean="simMeanFitness" />
 				<ref bean="maxFitness" />

@@ -41,6 +41,7 @@ public class ThreadListener extends Thread implements DataListener {
 		while (e.hasNext()) {
 			inner.listen(e.next());
 		}
+		inner.close();
 	}
 
 	@Override
