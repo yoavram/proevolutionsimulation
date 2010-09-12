@@ -8,9 +8,17 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
+import java.util.zip.GZIPInputStream;
+import java.util.zip.GZIPOutputStream;
 
 import com.google.common.io.Files;
 
+/**
+ * file format is java serialization and then gzip compression
+ * 
+ * @author user
+ * 
+ */
 public class Serialization {
 
 	public static String writeToFile(Serializable object, String filename)
@@ -20,7 +28,8 @@ public class Serialization {
 		try {
 			Files.createParentDirs(file);
 			file.createNewFile();
-			stream = new ObjectOutputStream(new FileOutputStream(file));
+			stream = new ObjectOutputStream(new GZIPOutputStream(
+					new FileOutputStream(file)));
 			stream.writeObject(object);
 		} finally {
 			if (stream != null) {
@@ -43,7 +52,8 @@ public class Serialization {
 		ObjectInputStream stream = null;
 		Object object = null;
 		try {
-			stream = new ObjectInputStream(new FileInputStream(file));
+			stream = new ObjectInputStream(new GZIPInputStream(
+					new FileInputStream(file)));
 			object = stream.readObject();
 		} finally {
 			if (stream != null) {
