@@ -34,7 +34,7 @@ public abstract class SerializableModel<T extends Object> implements Model<T>,
 	}
 
 	public String serialize() {
-		String serString = getDir();
+		String serString = getDir()+File.separator;
 		if (Strings.isNullOrEmpty(getFilename())) {
 			serString += getID().toString();
 		} else {

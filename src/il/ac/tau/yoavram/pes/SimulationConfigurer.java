@@ -1,5 +1,6 @@
 package il.ac.tau.yoavram.pes;
 
+import il.ac.tau.yoavram.pes.utils.DelayedLogger;
 import il.ac.tau.yoavram.pes.utils.TimeUtils;
 
 import java.io.File;
@@ -7,13 +8,19 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.Properties;
 
 import org.apache.commons.cli.CommandLine;
+import org.apache.log4j.Logger;
 import org.apache.log4j.PropertyConfigurator;
 
 public class SimulationConfigurer {
+	private static final DelayedLogger logger = new DelayedLogger(
+			Logger.getLogger(SimulationConfigurer.class));
+
 	public static final String LOG4J_DEFAULT_CONFIG_FILE = "log4j.properties";
 	public static final String JOB_NAME_KEY = "jobName";
 	public static final String CONFIG_DIR_NAME = "config";
@@ -23,15 +30,19 @@ public class SimulationConfigurer {
 	public static final String EMPTY_STRING = "";
 	public static final String TIME = "time";
 
+	private List<String> logMsgs;
+
 	private URL springXmlConfig;
 	private Properties properties;
 	private String logFilename;
 
-	public SimulationConfigurer(String[] args) {
+	public SimulationConfigurer(String[] args) throws IOException {
 		this(args, new Date());
 	}
 
-	public SimulationConfigurer(String[] args, Date date) {
+	public SimulationConfigurer(String[] args, Date date) throws IOException {
+		logMsgs = new ArrayList<String>();
+
 		CommandLine cmdLine = PesCommandLineParser.parse(args);
 		// TODO check stuff
 		springXmlConfig = this
@@ -54,7 +65,7 @@ public class SimulationConfigurer {
 					.getOptionProperties(PesCommandLineParser.OptCode.Properties
 							.toString());
 			properties.putAll(cmdLineProps);
-			System.out.println("Command line properties given: "
+			logger.info("Command line properties given: "
 					+ cmdLineProps.toString());
 		}
 
@@ -84,26 +95,22 @@ public class SimulationConfigurer {
 				+ properties.getProperty(JOB_NAME_KEY) + '.'
 				+ properties.getProperty(TIME) + LOG_EXTENTION;
 		log4jProps.setProperty("log4j.appender.FILE.File", logFilename);
-		System.out.println("Logging to file " + logFilename);
+		logger.info("Logging to file " + logFilename);
 		PropertyConfigurator.configure(log4jProps);
+		logger.info("Finished configuring simulation");
 	}
 
-	private Properties loadPropertiesFromClasspath(String filename) {
+	private Properties loadPropertiesFromClasspath(String filename)
+			throws IOException {
 		return loadPropertiesFromClasspath(new Properties(), filename);
 	}
 
 	private Properties loadPropertiesFromClasspath(Properties props,
-			String filename) {
+			String filename) throws IOException {
 		InputStream stream = this.getClass().getClassLoader()
 				.getResourceAsStream(filename);
-		try {
-			props.load(stream);
-		} catch (FileNotFoundException e) {
-			System.err.println("File " + filename + " not found: " + e);
-		} catch (IOException e) {
-			System.err.println("Error loading " + filename + ": " + e);
-		}
-		System.out.println("Loaded properties from file " + filename + ": "
+		props.load(stream);
+		logger.info("Loaded properties from file " + filename + ": "
 				+ props.toString());
 		return props;
 	}

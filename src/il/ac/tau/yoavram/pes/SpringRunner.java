@@ -43,6 +43,7 @@ public abstract class SpringRunner {
 		}
 		if (configurer.getProperties() == null) {
 			System.err.println("Properties not defined");
+			System.err.println();
 			System.exit(1);
 		}
 

@@ -37,6 +37,11 @@ public class ThreadListener extends Thread implements DataListener {
 	@Override
 	public void close() throws IOException {
 		setRunning(false);
+		try {
+			interrupt();
+			join();
+		} catch (InterruptedException e) {
+		}
 		Iterator<Number[]> e = queue.iterator();
 		while (e.hasNext()) {
 			inner.listen(e.next());
@@ -62,7 +67,6 @@ public class ThreadListener extends Thread implements DataListener {
 				inner.listen(queue.take());
 			}
 		} catch (InterruptedException e) {
-			logger.warn("Interrupted: " + e);
 		}
 	}
 
@@ -86,6 +90,7 @@ public class ThreadListener extends Thread implements DataListener {
 
 	public void setInner(DataListener inner) {
 		this.inner = inner;
+		setName(getName() + inner.getClass().getSimpleName());
 	}
 
 	public boolean isRunning() {

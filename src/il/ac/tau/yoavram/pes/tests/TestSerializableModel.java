@@ -18,10 +18,14 @@ import com.google.common.primitives.Ints;
 public class TestSerializableModel {
 	private static SerializableModel<Integer> model;
 	private static String filename;
+	private static String dir;
+	private static String path;
 
 	@org.junit.BeforeClass
 	public static void setUpBeforeClass() {
-		filename = "tests/test_model_serialization.ser";
+		dir = "tests";
+		filename = "test_model_serialization.ser";
+		path = dir + File.separator + filename;
 		model = new MockModel();
 		model.setID(new Date());
 		List<Integer> pop = Ints.asList(new int[] { 0, 1, 2, 3, 4, 5, 6, 7, 8,
@@ -30,14 +34,15 @@ public class TestSerializableModel {
 		popList.add(pop);
 		model.setPopulations(popList);
 		model.setFilename(filename);
+		model.setDir(dir);
 	}
 
 	@org.junit.Test
 	public void writeToFileTest() throws IOException {
-		File file = new File(filename);
+		File file = new File(path);
 		assertTrue(!file.exists() || file.delete());
 
-		Serialization.writeToFile(model, filename);
+		Serialization.writeToFile(model, path);
 
 		assertTrue(file.exists());
 		assertTrue(file.isFile());
@@ -46,8 +51,7 @@ public class TestSerializableModel {
 
 	@org.junit.Test
 	public void readFromFileTest() throws IOException, ClassNotFoundException {
-		SerializableModel<Integer> deModel = Serialization
-				.readFromFile(filename);
+		SerializableModel<Integer> deModel = Serialization.readFromFile(path);
 
 		assertNotNull(deModel);
 		assertEquals(deModel, model);
@@ -56,10 +60,10 @@ public class TestSerializableModel {
 
 	@org.junit.Test
 	public void serializeTest() {
-		filename = model.serialize();
-		assertNotNull(filename);
+		path = model.serialize();
+		assertNotNull(path);
 
-		File file = new File(filename);
+		File file = new File(path);
 		assertTrue(file.exists());
 		assertTrue(file.isFile());
 		assertTrue(file.getTotalSpace() > 0);
@@ -68,7 +72,7 @@ public class TestSerializableModel {
 	@org.junit.Test
 	public void deserializeTest() {
 		SerializableModel<Integer> deModel = SerializableModel
-				.deserialize(filename);
+				.deserialize(path);
 
 		assertNotNull(deModel);
 		assertEquals(deModel, model);
@@ -77,7 +81,7 @@ public class TestSerializableModel {
 
 	@org.junit.Test
 	public void springDeserializeTest() {
-		File file = new File(filename);
+		File file = new File(path);
 		assertTrue(file.exists());
 
 		ApplicationContext context = new ClassPathXmlApplicationContext(
@@ -88,10 +92,10 @@ public class TestSerializableModel {
 		assertEquals(deModel, model);
 		assertEquals(deModel.getPopulations(), model.getPopulations());
 	}
-	
+
 	@org.junit.Test
 	public void springDeserializeAndSetParameterTest() {
-		File file = new File(filename);
+		File file = new File(path);
 		assertTrue(file.exists());
 
 		ApplicationContext context = new ClassPathXmlApplicationContext(
