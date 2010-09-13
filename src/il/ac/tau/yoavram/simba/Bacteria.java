@@ -16,7 +16,7 @@ public class Bacteria implements Serializable {
 
 	private static final double DEFAULT_FITNESS = -1;
 	private static final long DEFAULT_UPDATE = Long.MAX_VALUE;
-	private static final int[] EMPTY_INT_ARRAY=new int[0];
+	private static final int[] EMPTY_INT_ARRAY = new int[0];
 
 	protected static Bacteria trash = null;
 	private static int nextID = 0;
@@ -26,6 +26,16 @@ public class Bacteria implements Serializable {
 	protected int[] housekeepingAlleles;
 	protected double mutationRate;
 	protected double selectionCoefficient;
+	protected double beneficialMutationProbability;
+
+	public double getBeneficialMutationProbability() {
+		return beneficialMutationProbability;
+	}
+
+	public void setBeneficialMutationProbability(
+			double beneficialMutationProbability) {
+		this.beneficialMutationProbability = beneficialMutationProbability;
+	}
 
 	protected transient double fitness = DEFAULT_FITNESS;
 	protected transient long update = DEFAULT_UPDATE;
@@ -120,18 +130,34 @@ public class Bacteria implements Serializable {
 
 		int currentAllele = -1;
 		int newAllele = -1;
+		double rand = RandomUtils.nextDouble();
 		if (gene < housekeepingAlleles.length) {
 			currentAllele = housekeepingAlleles[gene];
-			newAllele = (currentAllele + 1) % 2;
+			if (currentAllele == 0 && rand > getBeneficialMutationProbability()) {
+				newAllele = 1;
+			} else if (currentAllele != 0
+					&& rand < getBeneficialMutationProbability()) {
+				newAllele = 0;
+			}
 			housekeepingAlleles[gene] = newAllele;
+
 		} else {
 			gene -= housekeepingAlleles.length;
 			currentAllele = environmentalAlleles[gene];
-			newAllele = (currentAllele + RandomUtils.nextInt(1, 2)) % 3;
-			environmentalAlleles[gene] = newAllele;
+			if (currentAllele == 2 && rand < getBeneficialMutationProbability()) {
+				newAllele = RandomUtils.nextInt(0, 1);
+			} else if (currentAllele != 2) {
+				if (rand > getBeneficialMutationProbability()) {
+					newAllele = 2;
+				} else if (rand < getBeneficialMutationProbability() / 2) {
+					newAllele = (currentAllele + 1) % 2;
+				}
+			}
 		}
-		logger.debug("Mutation at bacteria " + getID() + " gene " + gene
-				+ " mutated from " + currentAllele + " to " + newAllele);
+		/*if (newAllele != -1) {
+			logger.debug("Mutation at bacteria " + getID() + " gene " + gene
+					+ " mutated from " + currentAllele + " to " + newAllele);
+		}*/
 	}
 
 	public double getFitness() {

@@ -72,7 +72,7 @@
 					<property name="inner">
 						<bean class="il.ac.tau.yoavram.pes.statistics.listeners.ChartDrawer">
 							<property name="title" value="${jobName}.${time}" />
-							<property name="showApplet" value="true" />
+							<property name="showApplet" value="false" />
 							<property name="filename"
 								value="${output.dir}/${jobName}/${jobName}.${time}" />
 						</bean>
@@ -115,5 +115,4 @@
 		class="il.ac.tau.yoavram.simba.statistics.aggregators.MeanMutationRate">
 		<property name="name" value="mean mutation rate" />
 	</bean>
-
 </beans>
