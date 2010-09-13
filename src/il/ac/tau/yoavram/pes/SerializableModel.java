@@ -19,7 +19,7 @@ public abstract class SerializableModel<T extends Object> implements Model<T>,
 	private static final String DEFAULT_EXTENSION = ".ser";
 
 	private String filename;
-	private String path;
+	private String dir;
 	private String extension;
 	private Object id;
 	private boolean serializedAtEnd;
@@ -34,7 +34,7 @@ public abstract class SerializableModel<T extends Object> implements Model<T>,
 	}
 
 	public String serialize() {
-		String serString = getPath();
+		String serString = getDir();
 		if (Strings.isNullOrEmpty(getFilename())) {
 			serString += getID().toString();
 		} else {
@@ -119,12 +119,12 @@ public abstract class SerializableModel<T extends Object> implements Model<T>,
 				&& ((SerializableModel<T>) obj).getID().equals(getID());
 	}
 
-	public void setPath(String path) {
-		this.path = path;
+	public void setDir(String dir) {
+		this.dir = dir;
 	}
 
-	public String getPath() {
-		return path;
+	public String getDir() {
+		return dir;
 	}
 
 	public static class Factory {
