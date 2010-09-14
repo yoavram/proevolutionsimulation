@@ -30,8 +30,6 @@
 		<property name="mutationRate" value="${mutationRate}" />
 		<property name="selectionCoefficient" value="${selectionCoefficient}" />
 		<property name="beneficialMutationProbability" value="${beneficialMutationProbability}" />
-		<property name="environment" ref="environment">
-		</property>
 	</bean>
 	<bean id="simbaModel" class="il.ac.tau.yoavram.simba.SimbaModel">
 		<property name="populationSize" value="${populationSize}" />
@@ -72,7 +70,7 @@
 					<property name="inner">
 						<bean class="il.ac.tau.yoavram.pes.statistics.listeners.ChartDrawer">
 							<property name="title" value="${jobName}.${time}" />
-							<property name="showApplet" value="false" />
+							<property name="showApplet" value="${simulation.block}" />
 							<property name="filename"
 								value="${output.dir}/${jobName}/${jobName}.${time}" />
 						</bean>

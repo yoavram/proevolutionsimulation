@@ -23,7 +23,7 @@
 	</bean>
 	<bean class="il.ac.tau.yoavram.pes.SerializableModel.Factory" id="modelFactory">
 		<property name="filename"
-			value="${serialization.dir}${serialization.filename}" />
+			value="${serialization.dir}/${serialization.filename}" />
 	</bean>
 	<bean id="simbaModel" class="il.ac.tau.yoavram.simba.SimbaModel"
 		factory-bean="modelFactory" factory-method="deserialize">

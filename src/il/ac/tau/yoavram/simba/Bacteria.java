@@ -53,8 +53,8 @@ public class Bacteria implements Serializable {
 				other.housekeepingAlleles.length);
 		mutationRate = other.mutationRate;
 		selectionCoefficient = other.selectionCoefficient;
-		beneficialMutationProbability=other.beneficialMutationProbability;
-		
+		beneficialMutationProbability = other.beneficialMutationProbability;
+
 		fitness = DEFAULT_FITNESS;
 		update = DEFAULT_UPDATE;
 	}
@@ -68,15 +68,15 @@ public class Bacteria implements Serializable {
 		return new Bacteria();
 	}
 
-	public Bacteria getTrash() {
+	protected Bacteria getTrash() {
 		return trash;
 	}
 
-	public void setTrash(Bacteria bacteria) {
-		trash = bacteria;
+	protected void setTrash() {
+		trash = this;
 	}
 
-	public void removeTrash() {
+	protected void removeTrash() {
 		trash = null;
 	}
 
@@ -87,7 +87,7 @@ public class Bacteria implements Serializable {
 	}
 
 	public void die() {
-		setTrash(this);
+		setTrash();
 	}
 
 	public Bacteria spawn() {
@@ -106,7 +106,7 @@ public class Bacteria implements Serializable {
 	public Bacteria reproduce() {
 		// logger.debug(getID() + " reproducing");
 		Bacteria child = spawn();
-		int numOfMutations = RandomUtils.nextPoisson(child.getMutationRate());
+		int numOfMutations = RandomUtils.nextPoisson(getMutationRate());
 		if (numOfMutations > 0) {
 			logger.debug("new organism " + getID() + " has " + numOfMutations
 					+ " mutations");
@@ -120,31 +120,24 @@ public class Bacteria implements Serializable {
 	public void mutate() {
 		int gene = RandomUtils.nextInt(0, housekeepingAlleles.length
 				+ environmentalAlleles.length - 1);
-		int currentAllele = -1;
 		int newAllele = -1;
 		double rand = RandomUtils.nextDouble();
 
 		if (gene < housekeepingAlleles.length) {
-			currentAllele = housekeepingAlleles[gene];
-			if (currentAllele == 0 && rand > getBeneficialMutationProbability()) {
-				newAllele = 1;
-			} else if (currentAllele == 1
-					&& rand < getBeneficialMutationProbability()) {
+			if (rand < getBeneficialMutationProbability())
 				newAllele = 0;
-			}
+			else
+				newAllele = 1;
 			housekeepingAlleles[gene] = newAllele;
 		} else {
 			gene -= housekeepingAlleles.length;
-			currentAllele = environmentalAlleles[gene];
-			if (currentAllele == 2 && rand < getBeneficialMutationProbability()) {
-				newAllele = RandomUtils.nextInt(0, 1);
-			} else if (currentAllele != 2) {
-				if (rand > getBeneficialMutationProbability()) {
-					newAllele = 2;
-				} else if (rand < getBeneficialMutationProbability() / 2) {
-					newAllele = (currentAllele + 1) % 2;
-				}
-			}
+			if (rand < getBeneficialMutationProbability())
+				newAllele = getEnvironment().getIdealAllele(gene);
+			else if (rand < 2 * getBeneficialMutationProbability())
+				newAllele = (getEnvironment().getIdealAllele(gene) + 1) % 2;
+			else
+				newAllele = 2;
+			environmentalAlleles[gene] = newAllele;
 		}
 	}
 
@@ -187,9 +180,8 @@ public class Bacteria implements Serializable {
 				&& this.getID() == ((Bacteria) obj).getID();
 	}
 
-	private Environment getEnvironment() {
-		return ((SimbaModel) Simulation.getInstance().getModel())
-				.getEnvironment();
+	protected Environment getEnvironment() {
+		return Environment.getInstance();
 	}
 
 	public int[] getEnvironmentalAlleles() {
@@ -226,6 +218,7 @@ public class Bacteria implements Serializable {
 
 	/**
 	 * see http://www.sciencemag.org/cgi/content/full/317/5839/813
+	 * 
 	 * @return
 	 */
 	public double getBeneficialMutationProbability() {

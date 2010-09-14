@@ -2,21 +2,25 @@ package il.ac.tau.yoavram.simba;
 
 import java.util.Arrays;
 
-public class IdealAncestor extends Bacteria {
+import il.ac.tau.yoavram.pes.utils.RandomUtils;
 
-	private static final long serialVersionUID = 2429038920415328352L;
+public class RandomAncestor extends Bacteria {
+	private static final long serialVersionUID = 2055347433087760819L;
 
 	private int numberOfEnvironmentalGenes;
 	private int numberOfHousekeepingGenes;
 
-	public IdealAncestor() {
+	public RandomAncestor() {
 		super();
 	}
 
 	public void init() {
 		int[] env = new int[getNumberOfEnvironmentalGenes()];
 		for (int i = 0; i < env.length; i++) {
-			env[i] = getEnvironment().getIdealAllele(i);
+			if (RandomUtils.nextDouble() < 0.01)
+				env[i] = RandomUtils.nextInt(0, 1);
+			else
+				env[i] = getEnvironment().getIdealAllele(i);
 		}
 		int[] hk = new int[getNumberOfHousekeepingGenes()];
 		Arrays.fill(hk, 0);
@@ -45,5 +49,4 @@ public class IdealAncestor extends Bacteria {
 	public void setNumberOfHousekeepingGenes(int numberOfHousekeepingGenes) {
 		this.numberOfHousekeepingGenes = numberOfHousekeepingGenes;
 	}
-
 }

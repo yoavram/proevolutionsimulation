@@ -17,7 +17,7 @@ import com.google.common.collect.Lists;
  */
 public class Simulation {
 	private static Logger logger = Logger.getLogger(Simulation.class);
-	private static Simulation INSTACE = null;
+	private static Simulation INSTANCE = null;
 
 	private Model<?> model;
 	private long tick;
@@ -27,18 +27,19 @@ public class Simulation {
 	private Object id;
 
 	public static Simulation getInstance() {
-		return INSTACE;
+		return INSTANCE;
 	}
 
 	/**
 	 * construct new simulation. as simulation is a singleton this will override
 	 * previous simulation. to get the latest simulation use
-	 * <code>getInstance()</code>
+	 * <code>getInstance()</code> TODO make this private and create with fatory
+	 * mehtod in spring
 	 */
 	public Simulation() {
 		tick = 0;
 		running = true;
-		INSTACE = this;
+		INSTANCE = this;
 	}
 
 	public void start() {
