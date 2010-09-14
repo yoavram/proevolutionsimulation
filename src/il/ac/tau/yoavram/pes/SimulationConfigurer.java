@@ -4,7 +4,6 @@ import il.ac.tau.yoavram.pes.utils.DelayedLogger;
 import il.ac.tau.yoavram.pes.utils.TimeUtils;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
@@ -30,8 +29,6 @@ public class SimulationConfigurer {
 	public static final String EMPTY_STRING = "";
 	public static final String TIME = "time";
 
-	private List<String> logMsgs;
-
 	private URL springXmlConfig;
 	private Properties properties;
 	private String logFilename;
@@ -41,8 +38,6 @@ public class SimulationConfigurer {
 	}
 
 	public SimulationConfigurer(String[] args, Date date) throws IOException {
-		logMsgs = new ArrayList<String>();
-
 		CommandLine cmdLine = PesCommandLineParser.parse(args);
 		// TODO check stuff
 		springXmlConfig = this
