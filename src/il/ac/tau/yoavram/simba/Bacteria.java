@@ -28,15 +28,6 @@ public class Bacteria implements Serializable {
 	protected double selectionCoefficient;
 	protected double beneficialMutationProbability;
 
-	public double getBeneficialMutationProbability() {
-		return beneficialMutationProbability;
-	}
-
-	public void setBeneficialMutationProbability(
-			double beneficialMutationProbability) {
-		this.beneficialMutationProbability = beneficialMutationProbability;
-	}
-
 	protected transient double fitness = DEFAULT_FITNESS;
 	protected transient long update = DEFAULT_UPDATE;
 
@@ -62,6 +53,8 @@ public class Bacteria implements Serializable {
 				other.housekeepingAlleles.length);
 		mutationRate = other.mutationRate;
 		selectionCoefficient = other.selectionCoefficient;
+		beneficialMutationProbability=other.beneficialMutationProbability;
+		
 		fitness = DEFAULT_FITNESS;
 		update = DEFAULT_UPDATE;
 	}
@@ -127,20 +120,19 @@ public class Bacteria implements Serializable {
 	public void mutate() {
 		int gene = RandomUtils.nextInt(0, housekeepingAlleles.length
 				+ environmentalAlleles.length - 1);
-
 		int currentAllele = -1;
 		int newAllele = -1;
 		double rand = RandomUtils.nextDouble();
+
 		if (gene < housekeepingAlleles.length) {
 			currentAllele = housekeepingAlleles[gene];
 			if (currentAllele == 0 && rand > getBeneficialMutationProbability()) {
 				newAllele = 1;
-			} else if (currentAllele != 0
+			} else if (currentAllele == 1
 					&& rand < getBeneficialMutationProbability()) {
 				newAllele = 0;
 			}
 			housekeepingAlleles[gene] = newAllele;
-
 		} else {
 			gene -= housekeepingAlleles.length;
 			currentAllele = environmentalAlleles[gene];
@@ -154,10 +146,6 @@ public class Bacteria implements Serializable {
 				}
 			}
 		}
-		/*if (newAllele != -1) {
-			logger.debug("Mutation at bacteria " + getID() + " gene " + gene
-					+ " mutated from " + currentAllele + " to " + newAllele);
-		}*/
 	}
 
 	public double getFitness() {
@@ -236,10 +224,22 @@ public class Bacteria implements Serializable {
 		return selectionCoefficient;
 	}
 
+	/**
+	 * see http://www.sciencemag.org/cgi/content/full/317/5839/813
+	 * @return
+	 */
+	public double getBeneficialMutationProbability() {
+		return beneficialMutationProbability;
+	}
+
+	public void setBeneficialMutationProbability(
+			double beneficialMutationProbability) {
+		this.beneficialMutationProbability = beneficialMutationProbability;
+	}
+
 	public static class Filter extends ClassFilter<Bacteria> {
 		public Filter() {
 			setClazz(Bacteria.class);
 		}
 	}
-
 }
