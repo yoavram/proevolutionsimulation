@@ -24,6 +24,8 @@ public abstract class Minimum<T> extends AbstractAggregator<T> implements
 
 	@Override
 	public Number result() {
+		if (Double.isInfinite(min))
+			min = Double.NaN;
 		return min;
 	}
 }

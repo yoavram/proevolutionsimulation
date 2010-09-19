@@ -24,6 +24,8 @@ public abstract class Maximum<T> extends AbstractAggregator<T> implements
 
 	@Override
 	public Number result() {
+		if (Double.isInfinite(max))
+			max = Double.NaN;
 		return max;
 	}
 }
