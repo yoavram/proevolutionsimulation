@@ -1,14 +1,20 @@
 package il.ac.tau.yoavram.pes.statistics.listeners;
 
+import il.ac.tau.yoavram.pes.utils.NumberUtils;
+
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
+import java.io.FilenameFilter;
 import java.io.IOException;
 import java.util.List;
 
+import javax.annotation.processing.FilerException;
 import javax.imageio.ImageIO;
 import javax.imageio.stream.ImageOutputStream;
 
+import org.apache.commons.io.FilenameUtils;
+import org.apache.commons.io.filefilter.FileFilterUtils;
 import org.apache.log4j.Logger;
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartPanel;
@@ -34,7 +40,8 @@ public class ChartDrawer implements DataListener {
 	private static final String DEFAULT_TITLE = "proevolutions simulation";
 	private static final int WIDTH = 1024;
 	private static final int HEIGHT = 768;
-	private static final String DEFAULT_FILE_EXTENSION = ".png";
+	private static final String DEFAULT_OUTPUT_FILE_EXTENSION = ".png";
+	private static final String DEFAULT_INPUT_FILE_EXTENSION = ".csv";
 
 	private ApplicationFrame appFrame;
 	private JFreeChart chart;
@@ -135,8 +142,8 @@ public class ChartDrawer implements DataListener {
 	}
 
 	public void setFilename(String filename) {
-		if (!filename.endsWith(DEFAULT_FILE_EXTENSION)) {
-			filename = filename.concat(DEFAULT_FILE_EXTENSION);
+		if (!filename.endsWith(DEFAULT_OUTPUT_FILE_EXTENSION)) {
+			filename = filename.concat(DEFAULT_OUTPUT_FILE_EXTENSION);
 		}
 		this.filename = filename;
 	}
@@ -159,42 +166,69 @@ public class ChartDrawer implements DataListener {
 					.println("Usage: java "
 							+ ChartDrawer.class.getSimpleName()
 							+ " <CSV filename> <lines to read | default is 0, meaning all lines> <Optional-output "
-							+ DEFAULT_FILE_EXTENSION + " file>");
+							+ DEFAULT_OUTPUT_FILE_EXTENSION
+							+ " file> | <Directory of CSV files>");
 			System.exit(1);
 		}
-		System.out.println("Opening file " + args[0]);
-		File file = new File(args[0]);
-		LineReader reader = new LineReader(new FileReader(file));
 
+		File input = new File(args[0]);
+		File output = null;
 		int linesToRead = 0;
-		if (args.length > 1) {
-			linesToRead = Integer.valueOf(args[1]);
-		}
-		if (linesToRead == 0) {
-			linesToRead = Integer.MAX_VALUE;
-		}
 
+		if (input.isDirectory()) {
+			System.out.println("Iterating " + DEFAULT_INPUT_FILE_EXTENSION
+					+ " files in directory " + input.getAbsolutePath());
+			for (File file : input.listFiles((FilenameFilter) FileFilterUtils
+					.suffixFileFilter(DEFAULT_INPUT_FILE_EXTENSION))) {
+				output = new File(FilenameUtils.removeExtension(file
+						.getAbsolutePath()) + DEFAULT_OUTPUT_FILE_EXTENSION);
+				readFile(file, linesToRead, output);
+			}
+		} else {
+			if (args.length > 1) {
+				linesToRead = Integer.valueOf(args[1]);
+			}
+
+			if (args.length > 2) {
+				output = new File(args[2]);
+			}
+			readFile(input, linesToRead, output);
+		}
+	}
+
+	public static void readFile(File input, int linesToRead, File output)
+			throws IOException {
+		System.out.println("Opening file " + input);
+		LineReader reader = new LineReader(new FileReader(input));
 		String line = reader.readLine(); // header line
 		List<String> headerFields = Lists.newArrayList(line.split(COMMA));
 		System.out.println("Extracted header: " + line);
 		System.out.println("Starting " + ChartDrawer.class.getSimpleName());
 		ChartDrawer drawer = new ChartDrawer();
-		drawer.setTitle(file.getName());
+		drawer.setTitle(input.getName());
 		drawer.setDataFieldNames(headerFields);
-		if (args.length > 2) {
-			System.out.println("Saving to file " + args[1]);
+		if (output != null) {
+			System.out.println("Saving to file " + output.getAbsolutePath());
 			drawer.setShowApplet(false);
-			drawer.setFilename(args[2]);
+			drawer.setFilename(output.getAbsolutePath());
 		}
 		drawer.init();
 
 		int lines = 0;
-		System.out.print("Reading " + linesToRead + " lines...");
+		if (lines == 0) {
+			linesToRead = Integer.MAX_VALUE;
+			System.out.print("Reading all lines...");
+		} else {
+			System.out.print("Reading " + NumberUtils.formatNumber(linesToRead)
+					+ " lines...");
+		}
 		while ((line = reader.readLine()) != null && lines < linesToRead) {
 			String[] sp = line.split(COMMA);
-			Number[] data = new Number[sp.length];
+			Double[] data = new Double[sp.length];
 			for (int i = 0; i < data.length; i++) {
 				data[i] = Double.valueOf(sp[i]);
+				if (Double.isInfinite(data[i]))
+					data[i] = Double.NaN;
 			}
 			drawer.listen(data);
 			if (lines++ % 100 == 0) {
@@ -202,7 +236,7 @@ public class ChartDrawer implements DataListener {
 			}
 		}
 		System.out.println();
-		System.out.println(lines + " lines read");
+		System.out.println(NumberUtils.formatNumber(lines) + " lines read");
 		drawer.close();
 	}
 }
