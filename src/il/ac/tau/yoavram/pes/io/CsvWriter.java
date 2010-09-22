@@ -87,7 +87,11 @@ public class CsvWriter implements Closeable {
 
 	}
 
-	public void close() {
+	@Override
+	public void close() throws IOException {
+		if (writer != null) {
+			writer.flush();
+		}
 		Closeables.closeQuietly(writer);
 	}
 
