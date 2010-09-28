@@ -27,7 +27,6 @@ public class CsvWriter implements Closeable {
 	private File file = null;
 
 	public CsvWriter() {
-		super();
 	}
 
 	public void init() throws IOException {
