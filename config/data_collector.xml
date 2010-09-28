@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+           http://www.springframework.org/schema/beans/spring-beans-3.0.xsd"
+	default-init-method="init" default-destroy-method="close">
+
+	<bean class="il.ac.tau.yoavram.pes.utils.DataCollector">
+		<property name="path"
+			value="D:/yoavram/proevolution/results/pes2010/ben mut rate 0.5/output/" />
+		<property name="writer">
+			<bean class="il.ac.tau.yoavram.pes.io.CsvWriter">
+				<property name="filename"
+					value="D:/yoavram/proevolution/results/pes2010/ben mut rate 0.5/output/sim_freq" />
+			</bean>
+		</property>
+	</bean>
+</beans>
+	

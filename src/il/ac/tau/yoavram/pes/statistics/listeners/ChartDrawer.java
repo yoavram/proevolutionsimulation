@@ -1,15 +1,14 @@
 package il.ac.tau.yoavram.pes.statistics.listeners;
 
+import il.ac.tau.yoavram.pes.io.CsvReader;
 import il.ac.tau.yoavram.pes.utils.NumberUtils;
 
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.io.FileReader;
 import java.io.FilenameFilter;
 import java.io.IOException;
 import java.util.List;
 
-import javax.annotation.processing.FilerException;
 import javax.imageio.ImageIO;
 import javax.imageio.stream.ImageOutputStream;
 
@@ -30,13 +29,10 @@ import org.jfree.ui.RefineryUtilities;
 
 import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
-import com.google.common.io.LineReader;
 
-//TODO make the main method nicer.
 public class ChartDrawer implements DataListener {
 	private static final Logger logger = Logger.getLogger(ChartDrawer.class);
 
-	private static final String COMMA = ",";
 	private static final String DEFAULT_TITLE = "proevolutions simulation";
 	private static final int WIDTH = 1024;
 	private static final int HEIGHT = 768;
@@ -199,10 +195,12 @@ public class ChartDrawer implements DataListener {
 	public static void readFile(File input, int linesToRead, File output)
 			throws IOException {
 		System.out.println("Opening file " + input);
-		LineReader reader = new LineReader(new FileReader(input));
-		String line = reader.readLine(); // header line
-		List<String> headerFields = Lists.newArrayList(line.split(COMMA));
-		System.out.println("Extracted header: " + line);
+		CsvReader reader = new CsvReader();
+		reader.setFile(input);
+		reader.init();
+		String[] row = reader.firstRow(); // header line
+		List<String> headerFields = Lists.newArrayList(row);
+		System.out.println("Extracted header: " + row);
 		System.out.println("Starting " + ChartDrawer.class.getSimpleName());
 		ChartDrawer drawer = new ChartDrawer();
 		drawer.setTitle(input.getName());
@@ -222,11 +220,10 @@ public class ChartDrawer implements DataListener {
 			System.out.print("Reading " + NumberUtils.formatNumber(linesToRead)
 					+ " lines...");
 		}
-		while ((line = reader.readLine()) != null && lines < linesToRead) {
-			String[] sp = line.split(COMMA);
-			Double[] data = new Double[sp.length];
+		while ((row = reader.nextRow()) != null && lines < linesToRead) {
+			Double[] data = new Double[row.length];
 			for (int i = 0; i < data.length; i++) {
-				data[i] = Double.valueOf(sp[i]);
+				data[i] = Double.valueOf(row[i]);
 				if (Double.isInfinite(data[i]))
 					data[i] = Double.NaN;
 			}

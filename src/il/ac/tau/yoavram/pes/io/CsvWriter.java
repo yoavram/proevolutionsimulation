@@ -6,6 +6,7 @@ import java.io.Closeable;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.OutputStreamWriter;
 import java.util.Date;
 
 import org.apache.log4j.Logger;
@@ -17,12 +18,15 @@ public class CsvWriter implements Closeable {
 	private static final Logger logger = Logger.getLogger(CsvWriter.class);
 	private static final char ROW_SEPARATOR = '\n';
 	private static final char VALUE_SEPARATOR = ',';
+	private static final String COMPRESSION_EXTENSION = ".gzip";
+	private static final String CSV_EXTENISON = "csv";
 
 	private String filename = null;
-	private String extension = "csv";
+	private String extension = CSV_EXTENISON;
 	private Date time;
+	private boolean compress = false;
 
-	private FileWriter writer = null;
+	private OutputStreamWriter writer = null;
 	private boolean newLine = true;
 	private File file = null;
 
@@ -41,9 +45,17 @@ public class CsvWriter implements Closeable {
 		if (!getExtension().isEmpty()) {
 			fname = fname + "." + getExtension();
 		}
+		if (isCompress()) {
+			fname = fname + COMPRESSION_EXTENSION;
+		}
 		file = new File(fname);
 		Files.createParentDirs(file);
-		writer = new FileWriter(fname);
+		if (isCompress()) {
+			writer = new GZIPFileWriter(fname);
+		} else {
+			writer = new FileWriter(fname);
+		}
+
 		logger.info("Writing to file " + file.getAbsolutePath());
 	}
 
@@ -85,11 +97,19 @@ public class CsvWriter implements Closeable {
 		newLine = true;
 
 	}
+	
+	public void flush() {
+		try {
+			writer.flush();
+		} catch (IOException e) {
+			logger.warn(e);
+		}
+	}
 
 	@Override
-	public void close() throws IOException {
+	public void close() {
 		if (writer != null) {
-			writer.flush();
+			flush();
 		}
 		Closeables.closeQuietly(writer);
 	}
@@ -116,6 +136,14 @@ public class CsvWriter implements Closeable {
 
 	public Date getTime() {
 		return time;
+	}
+
+	public void setCompress(boolean compress) {
+		this.compress = compress;
+	}
+
+	public boolean isCompress() {
+		return compress;
 	}
 
 }
