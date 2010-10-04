@@ -51,7 +51,7 @@ public class SimBacteria extends Bacteria {
 
 	@Override
 	public double getMutationRate() {
-		if (getFitness() < getFitnessThreshold()) {
+		if (getFitness() <= getFitnessThreshold()) {
 			return getMutationRateModifier() * super.getMutationRate();
 		} else {
 			return super.getMutationRate();
