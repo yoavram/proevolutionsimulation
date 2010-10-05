@@ -13,7 +13,6 @@ import org.apache.log4j.Logger;
 import com.google.common.collect.Lists;
 
 /*
- * TODO fork threads? listeners already fork. should simulation as well? i don't see why.
  */
 public class Simulation {
 	private static Logger logger = Logger.getLogger(Simulation.class);
@@ -25,6 +24,7 @@ public class Simulation {
 	private List<DataGatherer<?>> dataGatherers;
 	private List<Terminator> terminators;
 	private Object id;
+	private int tickInterval = 1000;
 
 	public static Simulation getInstance() {
 		return INSTANCE;
@@ -33,7 +33,7 @@ public class Simulation {
 	/**
 	 * construct new simulation. as simulation is a singleton this will override
 	 * previous simulation. to get the latest simulation use
-	 * <code>getInstance()</code> TODO make this private and create with fatory
+	 * <code>getInstance()</code> TODO make this private and create with factory
 	 * mehtod in spring
 	 */
 	public Simulation() {
@@ -46,7 +46,8 @@ public class Simulation {
 		long start = System.currentTimeMillis();
 		logger.info("Starting simulation id " + getID());
 		while (running) {
-			logger.debug("tick " + NumberUtils.formatNumber(getTick()));
+			if (getTick() % getTickInterval() == 0)
+				logger.debug("tick " + NumberUtils.formatNumber(getTick()));
 			incrementTick();
 
 			getModel().step();
@@ -143,5 +144,13 @@ public class Simulation {
 
 	public Object getID() {
 		return id;
+	}
+
+	public void setTickInterval(int tickInterval) {
+		this.tickInterval = tickInterval;
+	}
+
+	public int getTickInterval() {
+		return tickInterval;
 	}
 }

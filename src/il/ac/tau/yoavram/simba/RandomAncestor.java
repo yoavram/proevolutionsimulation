@@ -1,7 +1,5 @@
 package il.ac.tau.yoavram.simba;
 
-import java.util.Arrays;
-
 import il.ac.tau.yoavram.pes.utils.RandomUtils;
 
 public class RandomAncestor extends Bacteria {
@@ -22,11 +20,16 @@ public class RandomAncestor extends Bacteria {
 			else
 				env[i] = getEnvironment().getIdealAllele(i);
 		}
-		int[] hk = new int[getNumberOfHousekeepingGenes()];
-		Arrays.fill(hk, 0);
-
 		setEnvironmentalAlleles(env);
-		setHousekeepingAlleles(hk);
+		setNumberOfHousekeepingGenes(RandomUtils.nextInt(0,
+				getNumberOfHousekeepingGenes()));
+	}
+
+	public void randomize() {
+
+		for (int gene = 0; gene < environmentalAlleles.length; gene++) {
+			environmentalAlleles[gene] = RandomUtils.nextInt(0, 2);
+		}
 	}
 
 	@Override

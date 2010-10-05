@@ -1,32 +1,12 @@
 package il.ac.tau.yoavram.simba.statistics.aggregators;
 
-import il.ac.tau.yoavram.pes.statistics.aggregators.AbstractAggregator;
-import il.ac.tau.yoavram.pes.statistics.aggregators.Aggregator;
+import il.ac.tau.yoavram.pes.statistics.aggregators.FilterFraction;
 import il.ac.tau.yoavram.simba.Bacteria;
-import il.ac.tau.yoavram.simba.SimBacteria;
+import il.ac.tau.yoavram.simba.statistics.filters.SimBacteriaFilter;
 
-public class SimFraction extends AbstractAggregator<Bacteria> {
+public class SimFraction extends FilterFraction<Bacteria> {
 
-	private double total = 0;
-	private double sim = 0;
-
-	@Override
-	public Aggregator<Bacteria> aggregate(Bacteria input) {
-		total++;
-		if (input.getClass().equals(SimBacteria.class)) {
-			sim++;
-		}
-		return this;
+	public void init() {
+		setFilter(new SimBacteriaFilter());
 	}
-
-	@Override
-	public Double result() {
-		return sim / total;
-	}
-
-	@Override
-	public void clear() {
-		sim = total = 0;
-	}
-
 }

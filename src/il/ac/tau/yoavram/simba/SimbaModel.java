@@ -67,7 +67,8 @@ public class SimbaModel extends SerializableModel<Bacteria> {
 		int tries = 0;
 		while (getPopulations().get(0).size() < getPopulationSize()) {
 			Bacteria mother = randomBacteria();
-			if (mother.getFitness() > RandomUtils.nextDouble() || tries++ > getPopulationSize()) {
+			if (mother.getFitness() > RandomUtils.nextDouble()
+					|| tries++ > getPopulationSize()) {
 				Bacteria child = mother.reproduce();
 				getPopulations().get(0).add(child);
 				logger.debug("Reproduced " + mother.getClass().getSimpleName()

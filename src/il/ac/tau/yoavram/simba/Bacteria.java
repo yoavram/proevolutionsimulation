@@ -1,7 +1,6 @@
 package il.ac.tau.yoavram.simba;
 
 import il.ac.tau.yoavram.pes.Simulation;
-import il.ac.tau.yoavram.pes.filters.ClassFilter;
 import il.ac.tau.yoavram.pes.utils.RandomUtils;
 
 import java.io.ObjectInputStream;
@@ -11,7 +10,7 @@ import java.util.Arrays;
 import org.apache.log4j.Logger;
 
 public class Bacteria implements Serializable {
-	private static final long serialVersionUID = -490159741474792583L;
+	private static final long serialVersionUID = 7195357293980198399L;
 	private static final Logger logger = Logger.getLogger(Bacteria.class);
 
 	private static final double DEFAULT_FITNESS = -1;
@@ -22,18 +21,21 @@ public class Bacteria implements Serializable {
 	private static int nextID = 0;
 	private int id = nextID++;
 
+	protected int numberOfDeleteriousHousekeepingAlleles;
+	protected int numberOfHousekeepingGenes;
 	protected int[] environmentalAlleles;
-	protected int[] housekeepingAlleles;
 	protected double mutationRate;
 	protected double selectionCoefficient;
 	protected double beneficialMutationProbability;
+	private double fitnessThreshold = 0;
+	private double mutationRateModifier = 1;
 
 	protected transient double fitness = DEFAULT_FITNESS;
 	protected transient long update = DEFAULT_UPDATE;
 
 	public Bacteria() {
 		environmentalAlleles = EMPTY_INT_ARRAY;
-		housekeepingAlleles = EMPTY_INT_ARRAY;
+		numberOfDeleteriousHousekeepingAlleles = 0;
 	}
 
 	public Bacteria(Bacteria other) {
@@ -47,13 +49,19 @@ public class Bacteria implements Serializable {
 	 * @param other
 	 */
 	protected void copy(Bacteria other) {
-		environmentalAlleles = Arrays.copyOf(other.environmentalAlleles,
-				other.environmentalAlleles.length);
-		housekeepingAlleles = Arrays.copyOf(other.housekeepingAlleles,
-				other.housekeepingAlleles.length);
+		if (other.environmentalAlleles.length > 0)
+			environmentalAlleles = Arrays.copyOf(other.environmentalAlleles,
+					other.environmentalAlleles.length);
+		else
+			environmentalAlleles = EMPTY_INT_ARRAY;
+
+		numberOfHousekeepingGenes = other.numberOfHousekeepingGenes;
+		numberOfDeleteriousHousekeepingAlleles = other.numberOfDeleteriousHousekeepingAlleles;
 		mutationRate = other.mutationRate;
 		selectionCoefficient = other.selectionCoefficient;
 		beneficialMutationProbability = other.beneficialMutationProbability;
+		fitnessThreshold = other.fitnessThreshold;
+		mutationRateModifier = other.mutationRateModifier;
 
 		fitness = DEFAULT_FITNESS;
 		update = DEFAULT_UPDATE;
@@ -118,19 +126,20 @@ public class Bacteria implements Serializable {
 	}
 
 	public void mutate() {
-		int gene = RandomUtils.nextInt(0, housekeepingAlleles.length
+		int gene = RandomUtils.nextInt(0, numberOfHousekeepingGenes
 				+ environmentalAlleles.length - 1);
-		int newAllele = -1;
 		double rand = RandomUtils.nextDouble();
 
-		if (gene < housekeepingAlleles.length) {
-			if (rand < getBeneficialMutationProbability())
-				newAllele = 0;
-			else
-				newAllele = 1;
-			housekeepingAlleles[gene] = newAllele;
+		if (gene < numberOfHousekeepingGenes) {
+			if (rand < getBeneficialMutationProbability()
+					&& numberOfDeleteriousHousekeepingAlleles > 0) {
+				numberOfDeleteriousHousekeepingAlleles--;
+			} else if (numberOfDeleteriousHousekeepingAlleles < numberOfHousekeepingGenes) {
+				numberOfDeleteriousHousekeepingAlleles++;
+			}
 		} else {
-			gene -= housekeepingAlleles.length;
+			int newAllele = -1;
+			gene -= numberOfHousekeepingGenes;
 			if (rand < getBeneficialMutationProbability())
 				newAllele = getEnvironment().getIdealAllele(gene);
 			else if (rand < 2 * getBeneficialMutationProbability())
@@ -144,30 +153,17 @@ public class Bacteria implements Serializable {
 	public double getFitness() {
 		if (fitness == -1
 				|| getEnvironment().getLastEnvironmentalChange() > update) {
-			fitness = 1;
 			double s = getSelectionCoefficient();
-			for (int gene = 0; gene < housekeepingAlleles.length; gene++) {
-				if (housekeepingAlleles[gene] != 0) {
-					fitness *= (1 - s);
-				}
-			}
+			int deleteriousMutations = numberOfDeleteriousHousekeepingAlleles;
 			for (int gene = 0; gene < environmentalAlleles.length; gene++) {
 				if (getEnvironment().getIdealAllele(gene) != environmentalAlleles[gene]) {
-					fitness *= (1 - s);
+					deleteriousMutations++;
 				}
 			}
+			fitness = Math.pow((1 - s), deleteriousMutations);
 			update = Simulation.getInstance().getTick();
 		}
 		return fitness;
-	}
-
-	public void randomize() {
-		for (int gene = 0; gene < housekeepingAlleles.length; gene++) {
-			housekeepingAlleles[gene] = RandomUtils.nextInt(0, 1);
-		}
-		for (int gene = 0; gene < environmentalAlleles.length; gene++) {
-			environmentalAlleles[gene] = RandomUtils.nextInt(0, 2);
-		}
 	}
 
 	public int getID() {
@@ -192,20 +188,16 @@ public class Bacteria implements Serializable {
 		this.environmentalAlleles = environmentalAlleles;
 	}
 
-	public int[] getHousekeepingAlleles() {
-		return housekeepingAlleles;
-	}
-
-	public void setHousekeepingAlleles(int[] housekeepingAlleles) {
-		this.housekeepingAlleles = housekeepingAlleles;
-	}
-
 	public void setMutationRate(double mutationRate) {
 		this.mutationRate = mutationRate;
 	}
 
 	public double getMutationRate() {
-		return mutationRate;
+		if (isSim() && getFitness() < getFitnessThreshold()) {
+			return getMutationRateModifier() * mutationRate;
+		} else {
+			return mutationRate;
+		}
 	}
 
 	public void setSelectionCoefficient(double selectionCoefficient) {
@@ -230,9 +222,44 @@ public class Bacteria implements Serializable {
 		this.beneficialMutationProbability = beneficialMutationProbability;
 	}
 
-	public static class Filter extends ClassFilter<Bacteria> {
-		public Filter() {
-			setClazz(Bacteria.class);
-		}
+	public int getNumberOfDeleteriousHousekeepingGenes() {
+		return numberOfDeleteriousHousekeepingAlleles;
+	}
+
+	public void setNumberOfDeleteriousHousekeepingGenes(
+			int numberOfDeleteriousHousekeepingGenes) {
+		this.numberOfDeleteriousHousekeepingAlleles = numberOfDeleteriousHousekeepingGenes;
+	}
+
+	public int getNumberOfHousekeepingGenes() {
+		return numberOfHousekeepingGenes;
+	}
+
+	public void setNumberOfHousekeepingGenes(int numberOfHousekeepingGenes) {
+		this.numberOfHousekeepingGenes = numberOfHousekeepingGenes;
+	}
+
+	public void setFitnessThreshold(double fitnessThreshold) {
+		this.fitnessThreshold = fitnessThreshold;
+	}
+
+	public double getFitnessThreshold() {
+		return fitnessThreshold;
+	}
+
+	public void setMutationRateModifier(double mutationRateModifier) {
+		this.mutationRateModifier = mutationRateModifier;
+	}
+
+	public double getMutationRateModifier() {
+		return mutationRateModifier;
+	}
+
+	public boolean isMutator() {
+		return getFitness() < getFitnessThreshold();
+	}
+
+	public boolean isSim() {
+		return getMutationRateModifier() > 1;
 	}
 }
