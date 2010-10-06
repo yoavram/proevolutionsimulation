@@ -16,12 +16,14 @@ import org.apache.log4j.Logger;
 public class SimpleDataGatherer<T> implements DataGatherer<T> {
 	@SuppressWarnings("unused")
 	private static Logger logger = Logger.getLogger(SimpleDataGatherer.class);
+	private static final Number[] EMPTY_NUMBER_ARRAY = new Number[0];
 
 	private List<Aggregator<T>> aggregators;
 	private List<Filter<T>> filters;
 	private Collection<DataListener> listeners;
 	private Model<T> model;
 	private int interval = 1;
+	private List<Number> dataList;
 
 	public SimpleDataGatherer() {
 		aggregators = new ArrayList<Aggregator<T>>();
@@ -108,6 +110,7 @@ public class SimpleDataGatherer<T> implements DataGatherer<T> {
 		for (DataListener dl : listeners) {
 			dl.setDataFieldNames(aggList);
 		}
+		dataList = new ArrayList<Number>(getAggregators().size());
 	}
 
 	@Override
@@ -119,6 +122,7 @@ public class SimpleDataGatherer<T> implements DataGatherer<T> {
 
 	@Override
 	public void gather() {
+		dataList.clear();
 		for (Aggregator<T> agg : getAggregators()) {
 			agg.clear();
 		}
@@ -139,14 +143,12 @@ public class SimpleDataGatherer<T> implements DataGatherer<T> {
 			}
 		}
 
-		List<Number> dataList = new ArrayList<Number>(getAggregators().size());
 		for (Aggregator<T> agg : getAggregators()) {
 			dataList.add(agg.result());
 		}
-		Number[] data = dataList.toArray(new Number[0]);
+		Number[] data = dataList.toArray(EMPTY_NUMBER_ARRAY);
 		for (DataListener listener : getListeners()) {
 			listener.listen(data);
 		}
 	}
-
 }

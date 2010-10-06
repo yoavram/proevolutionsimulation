@@ -7,6 +7,9 @@ public class NumberUtils {
 	private static final NumberFormat numberFormat = NumberFormat
 			.getInstance(Locale.ENGLISH);
 
+	private NumberUtils() {
+	}
+
 	public static NumberFormat getNumberFormat() {
 		return numberFormat;
 	}

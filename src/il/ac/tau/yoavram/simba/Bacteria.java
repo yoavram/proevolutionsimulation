@@ -49,11 +49,10 @@ public class Bacteria implements Serializable {
 	 * @param other
 	 */
 	protected void copy(Bacteria other) {
+		environmentalAlleles = EMPTY_INT_ARRAY;
 		if (other.environmentalAlleles.length > 0)
 			environmentalAlleles = Arrays.copyOf(other.environmentalAlleles,
 					other.environmentalAlleles.length);
-		else
-			environmentalAlleles = EMPTY_INT_ARRAY;
 
 		numberOfHousekeepingGenes = other.numberOfHousekeepingGenes;
 		numberOfDeleteriousHousekeepingAlleles = other.numberOfDeleteriousHousekeepingAlleles;
@@ -73,6 +72,7 @@ public class Bacteria implements Serializable {
 	 * @param other
 	 */
 	protected Bacteria create() {
+		logger.debug("creating new bacteria");
 		return new Bacteria();
 	}
 
