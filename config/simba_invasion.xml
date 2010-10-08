@@ -31,6 +31,7 @@
 		<property name="ID" value="${jobName}.${time}" />
 		<property name="changeEnvironmentOnStartup" value="true" />
 		<property name="fractionOfGenesToChange" value="${fractionOfGenesToChange}" />
+		<property name="environmentalChangeFrequency" value="${environmentalChangeFrequency}" />
 		<property name="invasion">
 			<bean class="il.ac.tau.yoavram.simba.SimInvasion">
 				<property name="invasionRate" value="${invasionRate}" />
@@ -90,7 +91,8 @@
 		<property name="interval" value="${statistics.interval}" />
 		<property name="filters">
 			<list>
-				<bean id="simFilter" class="il.ac.tau.yoavram.simba.statistics.filters.SimBacteriaFilter" />
+				<bean id="simFilter"
+					class="il.ac.tau.yoavram.simba.statistics.filters.SimBacteriaFilter" />
 			</list>
 		</property>
 		<property name="listeners">
