@@ -30,6 +30,8 @@
 		<property name="mutationRate" value="${mutationRate}" />
 		<property name="selectionCoefficient" value="${selectionCoefficient}" />
 		<property name="beneficialMutationProbability" value="${beneficialMutationProbability}" />
+		<property name="fitnessThreshold" value="${fitnessThreshold}" />
+		<property name="mutationRateModifier" value="${mutationRateModifier}" />
 	</bean>
 	<bean id="simbaModel" class="il.ac.tau.yoavram.simba.SimbaModel">
 		<property name="populationSize" value="${populationSize}" />
