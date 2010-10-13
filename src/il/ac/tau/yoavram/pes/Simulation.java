@@ -24,7 +24,7 @@ public class Simulation {
 	private List<DataGatherer<?>> dataGatherers;
 	private List<Terminator> terminators;
 	private Object id;
-	private int tickInterval = 1000;
+	private int tickInterval = 100000;
 
 	public static Simulation getInstance() {
 		return INSTANCE;
@@ -47,7 +47,7 @@ public class Simulation {
 		logger.info("Starting simulation id " + getID());
 		while (running) {
 			if (getTick() % getTickInterval() == 0)
-				logger.debug("tick " + NumberUtils.formatNumber(getTick()));
+				logger.info("tick " + NumberUtils.formatNumber(getTick()));
 			incrementTick();
 
 			getModel().step();
@@ -147,7 +147,10 @@ public class Simulation {
 	}
 
 	public void setTickInterval(int tickInterval) {
-		this.tickInterval = tickInterval;
+		if (tickInterval < 1)
+			this.tickInterval = Integer.MAX_VALUE;
+		else
+			this.tickInterval = tickInterval;
 	}
 
 	public int getTickInterval() {

@@ -56,8 +56,9 @@
 				<bean class="il.ac.tau.yoavram.pes.statistics.listeners.CsvWriterListener">
 					<property name="csvWriter">
 						<bean class="il.ac.tau.yoavram.pes.io.CsvWriter">
-							<property name="filename"
-								value="${output.dir}/${jobName}/${jobName}.${time}" />
+							<property name="filename" value="${jobName}.${time}" />
+							<property name="directory" value="${output.dir}/${jobName}" />
+
 						</bean>
 					</property>
 				</bean>
@@ -66,6 +67,7 @@
 					<property name="showApplet" value="${simulation.block}" />
 					<property name="filename"
 						value="${output.dir}/${jobName}/${jobName}.${time}" />
+
 				</bean>
 			</list>
 		</property>

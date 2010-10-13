@@ -18,13 +18,17 @@ public class CsvWriter implements Closeable {
 	private static final Logger logger = Logger.getLogger(CsvWriter.class);
 	private static final char ROW_SEPARATOR = '\n';
 	private static final char VALUE_SEPARATOR = ',';
-	private static final String COMPRESSION_EXTENSION = ".gzip";
-	private static final String CSV_EXTENISON = "csv";
+	private static final String COMPRESSION_EXTENSION = ".gz";
+	private static final String CSV_EXTENISON = ".csv";
+	private static final String DOT = ".";
+	private static final String TEMP_DIR = "tmp";
 
+	private String directory = null;
 	private String filename = null;
 	private String extension = CSV_EXTENISON;
 	private Date time;
 	private boolean compress = false;
+	private boolean tmpFile = false;
 
 	private OutputStreamWriter writer = null;
 	private boolean newLine = true;
@@ -34,6 +38,30 @@ public class CsvWriter implements Closeable {
 	}
 
 	public void init() throws IOException {
+		if (isWriteTempFile()) {
+			File dir = new File(getDirectory() + File.separator + TEMP_DIR);
+			dir.mkdir();
+			dir.deleteOnExit();
+			file = File.createTempFile(produceFilenamePrefix() + DOT,
+					produceFilenameSuffix(), dir);
+			file.deleteOnExit();
+			logger.info("Writing to temporary file " + file.getAbsolutePath());
+		} else {
+			file = new File(getDirectory() + File.separator
+					+ produceFilenamePrefix() + produceFilenameSuffix());
+			logger.info("Writing to file " + file.getAbsolutePath());
+		}
+
+		Files.createParentDirs(file);
+		if (isCompress()) {
+			writer = new GZIPFileWriter(file);
+		} else {
+			writer = new FileWriter(file);
+		}
+
+	}
+
+	private String produceFilenamePrefix() {
 		if (getFilename().isEmpty()) {
 			throw new IllegalArgumentException("Filename is empty");
 		}
@@ -42,21 +70,15 @@ public class CsvWriter implements Closeable {
 			fname = fname + "." + TimeUtils.formatDate(getTime());
 		}
 
-		if (!getExtension().isEmpty()) {
-			fname = fname + "." + getExtension();
-		}
-		if (isCompress()) {
-			fname = fname + COMPRESSION_EXTENSION;
-		}
-		file = new File(fname);
-		Files.createParentDirs(file);
-		if (isCompress()) {
-			writer = new GZIPFileWriter(fname);
-		} else {
-			writer = new FileWriter(fname);
-		}
+		return fname;
+	}
 
-		logger.info("Writing to file " + file.getAbsolutePath());
+	private String produceFilenameSuffix() {
+		String suffix = getExtension();
+		if (isCompress()) {
+			suffix = suffix + COMPRESSION_EXTENSION;
+		}
+		return suffix;
 	}
 
 	public void writeRow(String[] row) {
@@ -97,7 +119,7 @@ public class CsvWriter implements Closeable {
 		newLine = true;
 
 	}
-	
+
 	public void flush() {
 		try {
 			writer.flush();
@@ -108,6 +130,17 @@ public class CsvWriter implements Closeable {
 
 	@Override
 	public void close() {
+		if (isWriteTempFile()) {
+			File finalFile = new File(getDirectory() + File.separator
+					+ produceFilenamePrefix() + produceFilenameSuffix());
+			try {
+				Files.copy(file, finalFile);
+				logger.info("Copied temporary file to "
+						+ finalFile.getAbsolutePath());
+			} catch (IOException e) {
+				logger.warn("Failed copying temp file: " + e);
+			}
+		}
 		if (writer != null) {
 			flush();
 		}
@@ -123,6 +156,8 @@ public class CsvWriter implements Closeable {
 	}
 
 	public void setExtension(String extension) {
+		if (!extension.startsWith(DOT))
+			extension = DOT + extension;
 		this.extension = extension;
 	}
 
@@ -146,4 +181,19 @@ public class CsvWriter implements Closeable {
 		return compress;
 	}
 
+	public void setWriteTempFile(boolean tmpFile) {
+		this.tmpFile = tmpFile;
+	}
+
+	public boolean isWriteTempFile() {
+		return tmpFile;
+	}
+
+	public String getDirectory() {
+		return directory;
+	}
+
+	public void setDirectory(String directory) {
+		this.directory = directory;
+	}
 }
