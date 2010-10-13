@@ -25,6 +25,7 @@ public class Simulation {
 	private List<Terminator> terminators;
 	private Object id;
 	private int tickInterval = 100000;
+	private boolean blockAtEnd = false;
 
 	public static Simulation getInstance() {
 		return INSTANCE;
@@ -77,6 +78,14 @@ public class Simulation {
 				dataG.close();
 			} catch (IOException e) {
 				logger.warn("Error closing " + dataG.toString() + ": " + e);
+			}
+		}
+		if (isBlockAtEnd()) {
+			System.out.println("Press any key to continue...");
+			try {
+				System.in.read();
+			} catch (IOException e) {
+				// nothing TO DO here
 			}
 		}
 	}
@@ -155,5 +164,13 @@ public class Simulation {
 
 	public int getTickInterval() {
 		return tickInterval;
+	}
+
+	public void setBlockAtEnd(boolean blockAtEnd) {
+		this.blockAtEnd = blockAtEnd;
+	}
+
+	public boolean isBlockAtEnd() {
+		return blockAtEnd;
 	}
 }

@@ -16,6 +16,7 @@
 				<ref bean="bacteriaDataGatherer" />
 			</list>
 		</property>
+		<property name="blockAtEnd" value="${simulation.block}" />
 		<property name="ID" value="${jobName}.${time}" />
 	</bean>
 	<bean id="environment" class="il.ac.tau.yoavram.simba.Environment">

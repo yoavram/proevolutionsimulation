@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+           http://www.springframework.org/schema/beans/spring-beans-3.0.xsd"
+	default-init-method="init" default-destroy-method="destroy">
+	<bean id="simulation" class="il.ac.tau.yoavram.pes.Simulation">
+		<property name="terminators">
+			<list>
+				<ref bean="difEqModel" />
+			</list>
+		</property>
+		<property name="model" ref="difEqModel" />
+		<property name="dataGatherers">
+			<list>
+				<!--<ref bean="difEqGatherer" /> -->
+			</list>
+		</property>
+		<property name="tickInterval" value="10" />
+		<property name="blockAtEnd" value="${simulation.block}" />
+		<property name="ID" value="${jobName}.${time}" />
+	</bean>
+	<bean id="difEqModel" class="il.ac.tau.yoavram.simba.DifferenceEquationsModel"
+		scope="prototype">
+		<property name="numberOfStates" value="${n}" />
+		<property name="ID" value="${jobName}.${time}" />
+		<property name="mutationRateModifier" value="${tau}" />
+		<property name="mutationRate" value="${mu}" />
+		<property name="deleteriousMutationRate" value="${gamma}" />
+		<property name="beneficialMutationRate" value="${phi}" />
+		<property name="selectionCoefficient" value="${s}" />
+		<property name="terminateInterval" value="${terminateInterval}" />
+		<property name="errorThreshold" value="${errorThreshold}"></property>
+		<property name="equilibriumStepsThreshold" value="${equilibriumStepsThreshold}" />
+		<property name="mutationThreshold" value="${pi}" />
+	</bean>
+	<!--<bean id="difEqGatherer" class="il.ac.tau.yoavram.simba.statistics.DifferenceEquationsGatherer"> 
+		<property name="model" ref="difEqModel" /> <property name="interval" value="${statistics.interval}" 
+		/> <property name="listeners"> <list> <bean class="il.ac.tau.yoavram.pes.statistics.listeners.CsvWriterListener"> 
+		<property name="csvWriter"> <bean class="il.ac.tau.yoavram.pes.io.CsvWriter"> 
+		<property name="filename" value="${jobName}.${time}" /> <property name="directory" 
+		value="${output.dir}" /> <property name="writeTempFile" value="true" /> </bean> 
+		</property> </bean> <bean class="il.ac.tau.yoavram.pes.statistics.listeners.ChartDrawer"> 
+		<property name="title" value="${jobName}.${time}" /> <property name="showApplet" 
+		value="${simulation.block}" /> <property name="filename" value="${output.dir}/${jobName}.${time}" 
+		/> </bean> </list> </property> </bean> -->
+</beans>

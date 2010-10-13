@@ -10,8 +10,9 @@
 			value="D:/yoavram/proevolution/results/pes2010/ben mut rate 0.5/output/" />
 		<property name="writer">
 			<bean class="il.ac.tau.yoavram.pes.io.CsvWriter">
-				<property name="filename"
-					value="D:/yoavram/proevolution/results/pes2010/ben mut rate 0.5/output/sim_freq" />
+				<property name="filename" value="sim_freq" />
+				<property name="directory"
+					value="D:/yoavram/proevolution/results/pes2010/ben mut rate 0.5/output" />
 			</bean>
 		</property>
 	</bean>
