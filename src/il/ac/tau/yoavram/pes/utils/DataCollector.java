@@ -17,7 +17,7 @@ import com.google.common.collect.Lists;
 
 public class DataCollector {
 	private static final String USAGE_STRING = "Usage: "
-			+ FilesDeleter.class.getSimpleName()
+			+ DataCollector.class.getSimpleName()
 			+ " <xml spring configuration>\n\txml spring configuration must be in classpath\n";
 	private static final int TICKS_COLUMN = 0;
 	private FileFilter filter = FileFilterUtils.orFileFilter(
