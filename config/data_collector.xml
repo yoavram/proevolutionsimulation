@@ -15,6 +15,8 @@
 					value="D:/yoavram/proevolution/results/pes2010/ben mut rate 0.5/output" />
 			</bean>
 		</property>
+		<property name="ticks" value="40000000" />
+		<property name="column" value="1" />
 	</bean>
 </beans>
 	
