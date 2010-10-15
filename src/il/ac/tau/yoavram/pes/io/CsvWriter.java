@@ -40,6 +40,7 @@ public class CsvWriter implements Closeable {
 	public void init() throws IOException {
 		if (isWriteTempFile()) {
 			File dir = new File(getDirectory() + File.separator + TEMP_DIR);
+			Files.createParentDirs(dir);
 			dir.mkdir();
 			dir.deleteOnExit();
 			file = File.createTempFile(produceFilenamePrefix() + DOT,
