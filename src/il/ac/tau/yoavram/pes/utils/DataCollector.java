@@ -25,7 +25,7 @@ public class DataCollector {
 			FileFilterUtils.directoryFileFilter());
 	private String path;
 	private CsvWriter writer;
-	private int ticks;
+	private int ticks=0;
 	private int column;
 
 	public static void main(String[] args) throws IOException {
@@ -70,9 +70,15 @@ public class DataCollector {
 		} else {
 			CsvReader reader = new CsvReader(path, true);
 			String[] row = reader.lastRow();
-			if (row != null && row.length > 0
-					&& Integer.valueOf(row[TICKS_COLUMN]).equals(ticks)) {
-				values.add(row[column]);
+			if (ticks != 0) {
+				if (row != null && row.length > column
+						&& Integer.valueOf(row[TICKS_COLUMN]).equals(ticks)) {
+					values.add(row[column]);
+				}
+			} else {
+				if (row != null && row.length > column) {
+					values.add(row[column]);
+				}
 			}
 		}
 	}

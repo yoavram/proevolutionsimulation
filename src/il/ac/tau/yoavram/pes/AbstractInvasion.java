@@ -29,9 +29,9 @@ public abstract class AbstractInvasion<T, E extends T> implements
 	}
 
 	public void setInvasionRate(double invasionRate) {
-		if (invasionRate <= 0 || invasionRate > 1) {
+		if (invasionRate < 0 || invasionRate > 1) {
 			throw new IllegalArgumentException(
-					"Invasion rate value must be >0 and <=1, it is "
+					"Invasion rate value must be >= 0 and <= 1, it is "
 							+ invasionRate);
 		}
 		this.invasionRate = invasionRate;
