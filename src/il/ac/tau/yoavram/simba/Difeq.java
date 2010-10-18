@@ -37,6 +37,7 @@ public class Difeq {
 		properties.load(Difeq.class.getClassLoader().getResourceAsStream(
 				"dif_eq.properties"));
 		difeq.setParameters(properties);
+		System.out.println("Running with properties: " + properties.toString());
 		difeq.go();
 	}
 
@@ -87,7 +88,7 @@ public class Difeq {
 				muArr[i] = tau.multiply(mu);
 		}
 
-		BigDecimal[] prev = new BigDecimal[n];
+		//BigDecimal[] prev = new BigDecimal[n];
 		BigDecimal[] sel = new BigDecimal[n];
 
 		int iter = 0;
@@ -96,7 +97,7 @@ public class Difeq {
 
 		while (dist.compareTo(errorThreshold) > 0 && iter < maxIter) {
 			iter++;
-			prev = Arrays.copyOf(current, n);
+		//	prev = Arrays.copyOf(current, n);
 
 			// selection
 			for (int i = 0; i < n; i++) {

@@ -6,6 +6,8 @@ import il.ac.tau.yoavram.pes.io.CsvWriter;
 import java.io.File;
 import java.io.FileFilter;
 import java.io.IOException;
+import java.math.BigDecimal;
+import java.math.MathContext;
 import java.util.List;
 
 import org.apache.commons.io.filefilter.FileFilterUtils;
@@ -13,6 +15,7 @@ import org.apache.commons.io.filefilter.WildcardFileFilter;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
+import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 
 public class DataCollector {
@@ -25,8 +28,7 @@ public class DataCollector {
 			FileFilterUtils.directoryFileFilter());
 	private String path;
 	private CsvWriter writer;
-	private int ticks=0;
-	private int column;
+	private Collector collector;
 
 	public static void main(String[] args) throws IOException {
 		if (args.length != 1) {
@@ -69,17 +71,9 @@ public class DataCollector {
 			}
 		} else {
 			CsvReader reader = new CsvReader(path, true);
-			String[] row = reader.lastRow();
-			if (ticks != 0) {
-				if (row != null && row.length > column
-						&& Integer.valueOf(row[TICKS_COLUMN]).equals(ticks)) {
-					values.add(row[column]);
-				}
-			} else {
-				if (row != null && row.length > column) {
-					values.add(row[column]);
-				}
-			}
+			String val = collector.collect(reader);
+			if (val != null)
+				values.add(val);
 		}
 	}
 
@@ -109,19 +103,87 @@ public class DataCollector {
 		this.writer = writer;
 	}
 
-	public int getTicks() {
-		return ticks;
+	public void setCollector(Collector collector) {
+		this.collector = collector;
 	}
 
-	public void setTicks(int ticks) {
-		this.ticks = ticks;
+	public Collector getCollector() {
+		return collector;
 	}
 
-	public int getColumn() {
-		return column;
+	public interface Collector {
+		public String collect(CsvReader reader);
 	}
 
-	public void setColumn(int column) {
-		this.column = column;
+	public static class LastRow implements Collector {
+		private int ticks = 0;
+		private int column = 0;
+
+		@Override
+		public String collect(CsvReader reader) {
+			String[] row = reader.lastRow();
+			String ret = null;
+			if (ticks != 0) {
+				if (row != null && row.length > column
+						&& Integer.valueOf(row[TICKS_COLUMN]).equals(ticks)) {
+					ret = row[column];
+				}
+			} else {
+				if (row != null && row.length > column) {
+					ret = row[column];
+				}
+			}
+			return ret;
+		}
+
+		public int getTicks() {
+			return ticks;
+		}
+
+		public void setTicks(int ticks) {
+			this.ticks = ticks;
+		}
+
+		public int getColumn() {
+			return column;
+		}
+
+		public void setColumn(int column) {
+			this.column = column;
+		}
+
+	}
+
+	public static class Average implements Collector {
+		private int column = 0;
+
+		public int getColumn() {
+			return column;
+		}
+
+		public void setColumn(int column) {
+			this.column = column;
+		}
+
+		@Override
+		public String collect(CsvReader reader) {
+			String[] row = null;
+			String ret = null;
+			BigDecimal sum = BigDecimal.ZERO;
+			int count = 0;
+			while ((row = reader.nextRow()) != null) {
+				if (row.length > column && !Strings.isNullOrEmpty(row[column])) {
+					BigDecimal data = new BigDecimal(row[column]);
+					sum = sum.add(data);
+					count++;
+				}
+			}
+			if (count > 0) {
+				BigDecimal avg = sum.divide(new BigDecimal(count),
+						MathContext.DECIMAL128);
+				ret = avg.toString();
+			}
+			return ret;
+		}
 	}
 }

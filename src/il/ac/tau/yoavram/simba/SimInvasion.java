@@ -9,7 +9,7 @@ public class SimInvasion extends AbstractInvasion<Bacteria, Bacteria> {
 	private double mutationRateModifier;
 
 	@Override
-	protected Bacteria transform(Bacteria bacteria) {
+	public Bacteria transform(Bacteria bacteria) {
 		bacteria.setFitnessThreshold(getFitnessThreshold());
 		bacteria.setMutationRateModifier(getMutationRateModifier());
 		return bacteria;
