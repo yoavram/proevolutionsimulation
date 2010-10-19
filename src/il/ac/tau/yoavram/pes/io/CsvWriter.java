@@ -131,6 +131,10 @@ public class CsvWriter implements Closeable {
 
 	@Override
 	public void close() {
+		if (writer != null) {
+			flush();
+		}
+		Closeables.closeQuietly(writer);
 		if (isWriteTempFile()) {
 			File finalFile = new File(getDirectory() + File.separator
 					+ produceFilenamePrefix() + produceFilenameSuffix());
@@ -142,10 +146,6 @@ public class CsvWriter implements Closeable {
 				logger.warn("Failed copying temp file: " + e);
 			}
 		}
-		if (writer != null) {
-			flush();
-		}
-		Closeables.closeQuietly(writer);
 	}
 
 	public String getFilename() {
