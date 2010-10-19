@@ -260,6 +260,11 @@ public class Bacteria implements Serializable {
 	}
 
 	public boolean isSim() {
-		return getMutationRateModifier() > 1;
+		return getMutationRateModifier() > 1 && getFitnessThreshold() > 0
+				&& getFitnessThreshold() < 1;
+	}
+
+	public boolean isCm() {
+		return getMutationRateModifier() > 1 && getFitnessThreshold() == 1;
 	}
 }
