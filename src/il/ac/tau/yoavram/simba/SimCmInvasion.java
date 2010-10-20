@@ -24,7 +24,7 @@ public class SimCmInvasion implements Invasion<Bacteria, Bacteria> {
 					Bacteria e = simInvasion.transform(population.get(i));
 					population.set(i, e);
 				} else {
-					Bacteria e = simInvasion.transform(population.get(i));
+					Bacteria e = cmInvasion.transform(population.get(i));
 					population.set(i, e);
 				}
 			}
