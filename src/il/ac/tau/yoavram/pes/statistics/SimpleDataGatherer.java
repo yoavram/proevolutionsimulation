@@ -16,14 +16,14 @@ import org.apache.log4j.Logger;
 public class SimpleDataGatherer<T> implements DataGatherer<T> {
 	@SuppressWarnings("unused")
 	private static Logger logger = Logger.getLogger(SimpleDataGatherer.class);
-	private static final Number[] EMPTY_NUMBER_ARRAY = new Number[0];
+	protected static final Number[] EMPTY_NUMBER_ARRAY = new Number[0];
 
 	private List<Aggregator<T>> aggregators;
 	private List<Filter<T>> filters;
 	private Collection<DataListener> listeners;
 	private Model<T> model;
 	private int interval = 1;
-	private List<Number> dataList;
+	protected List<Number> dataList;
 
 	public SimpleDataGatherer() {
 		aggregators = new ArrayList<Aggregator<T>>();

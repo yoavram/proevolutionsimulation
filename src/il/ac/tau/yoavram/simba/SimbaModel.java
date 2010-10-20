@@ -2,6 +2,7 @@ package il.ac.tau.yoavram.simba;
 
 import il.ac.tau.yoavram.pes.Invasion;
 import il.ac.tau.yoavram.pes.SerializableModel;
+import il.ac.tau.yoavram.pes.Simulation;
 import il.ac.tau.yoavram.pes.utils.RandomUtils;
 
 import java.util.List;
@@ -26,6 +27,8 @@ public class SimbaModel extends SerializableModel<Bacteria> {
 	private List<List<Bacteria>> populations = null;
 	private boolean changeEnvironmentOnStartup = false;
 	private Invasion<Bacteria, ? extends Bacteria> invasion = null;
+
+	private transient double period;
 
 	@Override
 	public void init() {
@@ -52,7 +55,11 @@ public class SimbaModel extends SerializableModel<Bacteria> {
 					+ getInvasion().getInvaderName());
 			setPopulations(getInvasion().invade(getPopulations()));
 		}
-
+		// this is a workaround...
+		if (environmentalChangeFrequency < 0) {
+			double freq = Math.abs(environmentalChangeFrequency);
+			period = Math.ceil(1 / freq);
+		}
 	}
 
 	@Override
@@ -82,6 +89,11 @@ public class SimbaModel extends SerializableModel<Bacteria> {
 				&& RandomUtils.nextDouble() < getEnvironmentalChangeFrequency()) {
 			logger.debug("Changing the environment");
 			getEnvironment().change(getFractionOfGenesToChange());
+		} else if (getEnvironmentalChangeFrequency() < 0) {
+			if (Simulation.getInstance().getTick() % period == 0) {
+				logger.debug("Changing the environment");
+				getEnvironment().change(getFractionOfGenesToChange());
+			}
 		}
 	}
 
@@ -98,15 +110,15 @@ public class SimbaModel extends SerializableModel<Bacteria> {
 		return environment;
 	}
 
-	private double getFractionOfGenesToChange() {
+	public double getFractionOfGenesToChange() {
 		return fractionOfGenesToChange;
 	}
 
-	private double getEnvironmentalChangeFrequency() {
+	public double getEnvironmentalChangeFrequency() {
 		return environmentalChangeFrequency;
 	}
 
-	private int getPopulationSize() {
+	public int getPopulationSize() {
 		return populationSize;
 	}
 

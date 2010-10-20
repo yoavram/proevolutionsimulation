@@ -28,6 +28,8 @@ public class Simulation {
 	private boolean blockAtEnd = false;
 
 	public static Simulation getInstance() {
+		if (INSTANCE == null)
+			INSTANCE = new Simulation();
 		return INSTANCE;
 	}
 
@@ -90,7 +92,7 @@ public class Simulation {
 		}
 	}
 
-	private void incrementTick() {
+	public void incrementTick() {
 		tick++;
 	}
 

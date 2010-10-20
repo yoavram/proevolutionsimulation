@@ -44,6 +44,17 @@ public class NumberUtils {
 		public int compare(BigDecimal o1, BigDecimal o2) {
 			return o1.compareTo(o2);
 		}
+	}
 
+	public static Comparator<Number> createNaturalNumberComparator() {
+		return new NaturalNumberComparator();
+	}
+
+	public static class NaturalNumberComparator implements Comparator<Number> {
+
+		@Override
+		public int compare(Number o1, Number o2) {
+			return Double.compare(o1.doubleValue(), o2.doubleValue());
+		}
 	}
 }

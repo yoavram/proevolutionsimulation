@@ -10,7 +10,6 @@ public class RandomUtils {
 			Poisson.makeDefaultGenerator());
 
 	private RandomUtils() {
-
 	}
 
 	public static double nextDouble() {
@@ -27,7 +26,10 @@ public class RandomUtils {
 
 	public static int nextInt() {
 		return nextInt(0, Integer.MAX_VALUE);
+	}
 
+	public static boolean coinToss() {
+		return nextDouble() < 0.5;
 	}
 
 }

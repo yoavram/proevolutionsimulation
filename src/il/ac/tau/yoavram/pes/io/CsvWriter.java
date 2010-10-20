@@ -132,9 +132,11 @@ public class CsvWriter implements Closeable {
 	@Override
 	public void close() {
 		if (writer != null) {
-			flush();
+			if (!newLine) {
+				newRow();
+			}
+			Closeables.closeQuietly(writer);
 		}
-		Closeables.closeQuietly(writer);
 		if (isWriteTempFile()) {
 			File finalFile = new File(getDirectory() + File.separator
 					+ produceFilenamePrefix() + produceFilenameSuffix());
