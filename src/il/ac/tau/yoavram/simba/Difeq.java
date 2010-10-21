@@ -1,13 +1,21 @@
 package il.ac.tau.yoavram.simba;
 
+import il.ac.tau.yoavram.pes.io.CsvWriter;
 import il.ac.tau.yoavram.pes.utils.NumberUtils;
+import il.ac.tau.yoavram.pes.utils.TimeUtils;
 
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.Writer;
 import java.math.BigDecimal;
 import java.math.MathContext;
 import java.math.RoundingMode;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.Properties;
+import java.util.logging.Logger;
+
+import org.apache.log4j.PropertyConfigurator;
 
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
@@ -17,51 +25,56 @@ public class Difeq {
 	private static final BigDecimal ONE = BigDecimal.ONE;
 	private static final BigDecimal TWO = ONE.add(ONE);
 	private static final BigDecimal TEN = BigDecimal.TEN;
+	private static final BigDecimal HUNDRED = TEN.multiply(TEN);
+	private static final BigDecimal TENTH = ONE.divide(TEN);
+	private static final BigDecimal HUNDREDTH = ONE.divide(HUNDRED);
+	private static final BigDecimal THOUSAND = TEN.multiply(HUNDRED);
+	private static final BigDecimal THOUSANDTH = ONE.divide(THOUSAND);
+	private static final BigDecimal FIVE = TEN.divide(TWO);
+	private static final BigDecimal FIFTH = ONE.divide(FIVE);
+	private static final BigDecimal HALF = ONE.divide(TWO);
+
 	private static final MathContext MC = new MathContext(100,
 			RoundingMode.HALF_UP);
 
-	private int n = 5;
-	private BigDecimal tau = new BigDecimal("10");
-	private BigDecimal pi = ZERO;
-	private BigDecimal mu = new BigDecimal("0.01");
-	private BigDecimal gamma = new BigDecimal("0.001");
-	private BigDecimal phi = new BigDecimal("0.0001");
-	private BigDecimal psi = ONE.subtract(gamma).subtract(phi);
-	private BigDecimal s = new BigDecimal("0.1");
-	private BigDecimal errorThreshold = ONE.divide(TEN.pow(20), MC);
-	private int maxIter = 100000;
+	private static final String log4jConfigFilename = "log4j.properties";
+
+	private int n;
+	private BigDecimal tau;
+	private BigDecimal pi;
+	private BigDecimal mu;
+	private BigDecimal gamma;
+	private BigDecimal phi;
+	private BigDecimal psi;
+	private BigDecimal s;
+	private BigDecimal errorThreshold;
+	private int maxIter;
+
+	private String jobName = "difeq";
 
 	public static void main(String[] args) throws IOException {
 		Difeq difeq = new Difeq();
-		Properties properties = new Properties();
-		properties.load(Difeq.class.getClassLoader().getResourceAsStream(
-				"dif_eq.properties"));
-		difeq.setParameters(properties);
-		System.out.println("Running with properties: " + properties.toString());
-		difeq.go();
+		difeq.setParameters("dif_eq.properties");
+		difeq.start();
 	}
 
-	public void go() {
-		Multimap<BigDecimal, Integer> meansmap = HashMultimap.create();
+	public void start() throws IOException {
+		CsvWriter writer = createCsvWriter();
+
+		for (int i = 0; i < n; i++) {
+			writer.writeCell(i);
+		}
+		writer.newRow();
+
 		for (int i = 0; i < n; i++) {
 			pi = new BigDecimal(i);
 			BigDecimal mean = equilibrium();
-			meansmap.put(mean, i);
+			writer.writeCell(mean);
 		}
-		BigDecimal[] means = meansmap.keys().toArray(new BigDecimal[0]);
-		Arrays.sort(means);
-		for (BigDecimal key : means) {
-			System.out.print(meansmap.get(key).toString().replace("[", "")
-					.replace("]", "")
-					+ ", ");
-		}
+		writer.newRow();
 		System.out.println();
-		System.out.println(Arrays.toString(means));
-		for (int i = 1; i < means.length; i++) {
-			System.out.print(means[i].divide(means[i - 1], MC)
-					.toEngineeringString() + ", ");
-		}
-		System.out.println();
+
+		writer.close();
 	}
 
 	public BigDecimal equilibrium() {
@@ -88,7 +101,7 @@ public class Difeq {
 				muArr[i] = tau.multiply(mu);
 		}
 
-		//BigDecimal[] prev = new BigDecimal[n];
+		// BigDecimal[] prev = new BigDecimal[n];
 		BigDecimal[] sel = new BigDecimal[n];
 
 		int iter = 0;
@@ -97,7 +110,7 @@ public class Difeq {
 
 		while (dist.compareTo(errorThreshold) > 0 && iter < maxIter) {
 			iter++;
-		//	prev = Arrays.copyOf(current, n);
+			// prev = Arrays.copyOf(current, n);
 
 			// selection
 			for (int i = 0; i < n; i++) {
@@ -141,7 +154,7 @@ public class Difeq {
 		long tock = System.currentTimeMillis();
 		System.out.println("Finished with " + NumberUtils.formatNumber(iter)
 				+ " iterations, distance " + dist.toEngineeringString()
-				+ " in " + (tock - tick) + " millisecs");
+				+ " in " + (tock - tick) + " millisecs: " + pi + " - " + meanW);
 		return meanW;
 	}
 
@@ -196,7 +209,15 @@ public class Difeq {
 		return d;
 	}
 
+	public void setParameters(String propertiesFilename) throws IOException {
+		Properties properties = new Properties();
+		properties.load(Difeq.class.getClassLoader().getResourceAsStream(
+				propertiesFilename));
+		setParameters(properties);
+	}
+
 	public void setParameters(Properties properties) {
+		System.out.println("set parameters: " + properties.toString());
 		n = Integer.valueOf(properties.getProperty("n"));
 		tau = parseProperty(properties, "tau");
 		mu = parseProperty(properties, "mu");
@@ -211,7 +232,33 @@ public class Difeq {
 	public BigDecimal parseProperty(Properties properties, String property) {
 		return new BigDecimal(properties.getProperty(property),
 				MathContext.UNLIMITED);
-
 	}
 
+	private Logger createLogger() throws IOException {
+		Logger logger = Logger.getLogger(jobName);
+		Properties log4jProps = loadPropertiesFromClasspath(new Properties(),
+				log4jConfigFilename);
+		String logFilename = "difeq-" + jobName + ".log";
+		log4jProps.setProperty("log4j.appender.FILE.File", logFilename);
+		PropertyConfigurator.configure(log4jProps);
+		logger.info("logging to " + logFilename);
+		return logger;
+	}
+
+	private CsvWriter createCsvWriter() throws IOException {
+		CsvWriter w = new CsvWriter();
+		w.setDirectory("output/difeq");
+		w.setFilename("difeq");
+		w.setTime(new Date());
+		w.init();
+		return w;
+	}
+
+	private Properties loadPropertiesFromClasspath(Properties props,
+			String filename) throws IOException {
+		InputStream stream = this.getClass().getClassLoader()
+				.getResourceAsStream(filename);
+		props.load(stream);
+		return props;
+	}
 }
