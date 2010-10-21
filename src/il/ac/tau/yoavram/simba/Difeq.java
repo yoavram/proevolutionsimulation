@@ -2,23 +2,17 @@ package il.ac.tau.yoavram.simba;
 
 import il.ac.tau.yoavram.pes.io.CsvWriter;
 import il.ac.tau.yoavram.pes.utils.NumberUtils;
-import il.ac.tau.yoavram.pes.utils.TimeUtils;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.Writer;
 import java.math.BigDecimal;
 import java.math.MathContext;
 import java.math.RoundingMode;
-import java.util.Arrays;
 import java.util.Date;
 import java.util.Properties;
 import java.util.logging.Logger;
 
 import org.apache.log4j.PropertyConfigurator;
-
-import com.google.common.collect.HashMultimap;
-import com.google.common.collect.Multimap;
 
 public class Difeq {
 	private static final BigDecimal ZERO = BigDecimal.ZERO;
@@ -54,12 +48,21 @@ public class Difeq {
 
 	public static void main(String[] args) throws IOException {
 		Difeq difeq = new Difeq();
-		difeq.setParameters("dif_eq.properties");
+		if (args.length > 0)
+			difeq.setParameters(new DifeqCommandLineParser(args));
+		else
+			difeq.setParameters("dif_eq.properties");
 		difeq.start();
 	}
 
 	public void start() throws IOException {
-		CsvWriter writer = createCsvWriter();
+		String params = "n=" + n + " tau=" + tau + " mu=" + mu + " gamma="
+				+ gamma + " phi=" + phi + " err=" + errorThreshold + " iter="
+				+ maxIter;
+		CsvWriter writer = createCsvWriter(params);
+		writer.writeCell(params);
+		writer.newRow();
+		System.out.println(params);
 
 		for (int i = 0; i < n; i++) {
 			writer.writeCell(i);
@@ -229,6 +232,18 @@ public class Difeq {
 		maxIter = Integer.valueOf(properties.getProperty("maxIter"));
 	}
 
+	public void setParameters(DifeqCommandLineParser parser) {
+		n = parser.getN();
+		tau = parser.getTau();
+		mu = parser.getMu();
+		gamma = parser.getGamma();
+		phi = parser.getPhi();
+		psi = ONE.subtract(gamma).subtract(phi);
+		s = parser.getS();
+		errorThreshold = parser.getErr();
+		maxIter = parser.getIter();
+	}
+
 	public BigDecimal parseProperty(Properties properties, String property) {
 		return new BigDecimal(properties.getProperty(property),
 				MathContext.UNLIMITED);
@@ -245,10 +260,10 @@ public class Difeq {
 		return logger;
 	}
 
-	private CsvWriter createCsvWriter() throws IOException {
+	private CsvWriter createCsvWriter(String id) throws IOException {
 		CsvWriter w = new CsvWriter();
 		w.setDirectory("output/difeq");
-		w.setFilename("difeq");
+		w.setFilename("difeq_" + id);
 		w.setTime(new Date());
 		w.init();
 		return w;
