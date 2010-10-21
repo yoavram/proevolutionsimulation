@@ -263,7 +263,7 @@ public class Difeq {
 	private CsvWriter createCsvWriter(String id) throws IOException {
 		CsvWriter w = new CsvWriter();
 		w.setDirectory("output/difeq");
-		w.setFilename("difeq_" + id);
+		w.setFilename("difeq_" + id.replace(' ', '_'));
 		w.setTime(new Date());
 		w.init();
 		return w;
