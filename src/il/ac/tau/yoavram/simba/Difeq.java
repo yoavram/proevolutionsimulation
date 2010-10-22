@@ -60,15 +60,15 @@ public class Difeq {
 				+ gamma + " phi=" + phi + " err=" + errorThreshold + " iter="
 				+ maxIter;
 		CsvWriter writer = createCsvWriter(params);
-		writer.writeCell(params);
-		writer.newRow();
 		System.out.println(params);
 
+		writer.writeCell("params");
 		for (int i = 0; i < n; i++) {
 			writer.writeCell(i);
 		}
 		writer.newRow();
 
+		writer.writeCell(params);
 		for (int i = 0; i < n; i++) {
 			pi = new BigDecimal(i);
 			BigDecimal mean = equilibrium();
@@ -86,73 +86,39 @@ public class Difeq {
 		for (int i = 0; i < n; i++) {
 			current[i] = ONE.divide(N);
 		}
-		// sanity check
-		if (sum(current).compareTo(BigDecimal.ONE) != 0)
-			throw new RuntimeException("Frequencies must sum to 1");
 
-		BigDecimal[] w = new BigDecimal[n];
-		for (int i = 0; i < n; i++) {
-			w[i] = ONE.subtract(s).pow(i);
-		}
+		sanityCheckStochasticVector(current, "frequencies");
+		sanityCheckProbability(mu.multiply(tau).multiply(gamma),
+				"Deleterious mutation probability");
+		sanityCheckProbability(mu.multiply(tau).multiply(phi),
+				"Beneficial mutation probability");
+
+		BigDecimal[] w = createSelectionVector();
 		BigDecimal meanW = innerProduct(current, w);
-
-		BigDecimal[] muArr = new BigDecimal[n];
-		for (int i = 0; i < n; i++) {
-			if (i < pi.intValue())
-				muArr[i] = mu;
-			else
-				muArr[i] = tau.multiply(mu);
-		}
-
-		// BigDecimal[] prev = new BigDecimal[n];
-		BigDecimal[] sel = new BigDecimal[n];
+		BigDecimal[][] M = createMutationMatrix();
+	//	printMatrix(M);
 
 		int iter = 0;
-		BigDecimal dist = BigDecimal.valueOf(Double.MAX_VALUE);
+		BigDecimal dist = BigDecimal.valueOf(Integer.MAX_VALUE);
 		long tick = System.currentTimeMillis();
 
 		while (dist.compareTo(errorThreshold) > 0 && iter < maxIter) {
 			iter++;
-			// prev = Arrays.copyOf(current, n);
 
 			// selection
 			for (int i = 0; i < n; i++) {
-				sel[i] = current[i].multiply(w[i]).divide(meanW, MC);
+				current[i] = current[i].multiply(w[i]).divide(meanW, MC);
 			}
-			// mutation TODO make sure it sums for 1 for i=0,1,n-1,n
-			for (int i = 0; i < n; i++) {
-				BigDecimal m = get(muArr, i - 2);
-				current[i] = get(sel, i - 2).multiply(m.pow(2)).multiply(
-						gamma.pow(2));
+			//sanityCheckStochasticVector(current, "freqs after selection");
 
-				m = get(muArr, i - 1);
-				current[i] = current[i].add(get(sel, i - 1).multiply(
-						TWO.multiply(m.pow(2)).multiply(gamma).multiply(psi)
-								.add(m.multiply(gamma))));
-
-				m = get(muArr, i);
-				current[i] = current[i].add(get(sel, i).multiply(
-						ONE.subtract(m)
-								.subtract(m.pow(2))
-								.add(m.multiply(psi))
-								.add(m.pow(2).multiply(
-										TWO.multiply(gamma).multiply(phi)
-												.add(psi.pow(2))))));
-
-				m = get(muArr, i + 1);
-				current[i] = current[i].add(get(sel, i + 1).multiply(
-						TWO.multiply(m.pow(2)).multiply(phi).multiply(psi)
-								.add(m.multiply(phi))));
-
-				m = get(muArr, i + 2);
-				current[i] = current[i].add(get(sel, i + 2).multiply(
-						m.pow(2).multiply(phi.pow(2))));
-			}
+			current = matrixOperation(M, current);
+		//	sanityCheckStochasticVector(current, "freqs after mutation");
 
 			BigDecimal oldMeanW = meanW;
 			meanW = innerProduct(current, w);
+			sanityCheckProbability(meanW, "mean fitness");
+
 			dist = oldMeanW.subtract(meanW).abs();
-			// dist = distanceLInf(current, prev);
 		}
 		long tock = System.currentTimeMillis();
 		System.out.println("Finished with " + NumberUtils.formatNumber(iter)
@@ -161,11 +127,76 @@ public class Difeq {
 		return meanW;
 	}
 
-	public BigDecimal get(BigDecimal[] arr, int ind) {
-		if (ind < 0 || ind >= arr.length)
-			return ZERO;
-		else
-			return arr[ind];
+	public BigDecimal[] createSelectionVector() {
+		BigDecimal[] w = new BigDecimal[n];
+		for (int i = 0; i < n; i++) {
+			w[i] = ONE.subtract(s).pow(i);
+		}
+		return w;
+	}
+
+	public BigDecimal[][] createMutationMatrix() {
+		BigDecimal[][] M = new BigDecimal[n][n];
+		for (int j = 0; j < n; j++) {
+			BigDecimal m = j < pi.intValue() ? mu : mu.multiply(tau);
+			BigDecimal[] mm = new BigDecimal[5];
+			mm[4] = m.pow(2).multiply(gamma.pow(2));
+			sanityCheckProbability(mm[4], j + "->" + (j + 2));
+			mm[0] = m.pow(2).multiply(phi.pow(2));
+			sanityCheckProbability(mm[0], j + "->" + (j - 2));
+			mm[3] = TWO.multiply(m.pow(2)).multiply(gamma).multiply(psi)
+					.add(m.multiply(gamma));
+			sanityCheckProbability(mm[3], j + "->" + (j + 1));
+			mm[1] = TWO.multiply(m.pow(2)).multiply(phi).multiply(psi)
+					.add(m.multiply(phi));
+			sanityCheckProbability(mm[1], j + "->" + (j - 1));
+			mm[2] = ZERO;
+
+			BigDecimal stay = ONE;
+			for (int i = 0; i < n; i++) {
+				if (j - i >= -2 && 2 >= j - i && j != i) {
+					M[i][j] = mm[j - i + 2];
+					stay = stay.subtract(mm[j - i + 2]);
+				} else {
+					M[i][j] = ZERO;
+				}
+			}
+			M[j][j] = stay;
+		}
+		return M;
+	}
+
+	public void sanityCheckStochasticVector(BigDecimal[] v, String name) {
+		if (sum(v).subtract(ONE, MC).compareTo(ZERO) != 0) {
+			throw new RuntimeException("sum of '" + name
+					+ "' frequencies must be 1, it is: " + sum(v));
+		}
+	}
+
+	public void sanityCheckProbability(BigDecimal p, String name) {
+		// sanity check
+		if (p.compareTo(ZERO) < 0 || p.compareTo(ONE) > 0) {
+			throw new RuntimeException(name + " mus't be 0<x<1, it is " + p);
+		}
+	}
+
+	public BigDecimal[] matrixOperation(BigDecimal[][] m, BigDecimal[] v) {
+		// not checking dimensions, assuming square matrix
+		BigDecimal[] u = new BigDecimal[v.length];
+		for (int i = 0; i < v.length; i++) {
+			u[i] = innerProduct(m[i], v);
+		}
+		return u;
+	}
+
+	public void printMatrix(BigDecimal[][] m) {
+		for (int i = 0; i < m.length; i++) {
+			for (int j = 0; j < m[i].length; j++) {
+				System.out.print(m[i][j]);
+				System.out.print(", ");
+			}
+			System.out.println();
+		}
 	}
 
 	public BigDecimal innerProduct(BigDecimal[] arr1, BigDecimal[] arr2) {
