@@ -1,37 +1,34 @@
 package il.ac.tau.yoavram.simba;
 
+import il.ac.tau.yoavram.math.LinearAlgebra;
 import il.ac.tau.yoavram.pes.io.CsvWriter;
 import il.ac.tau.yoavram.pes.utils.NumberUtils;
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.math.BigDecimal;
 import java.math.MathContext;
 import java.math.RoundingMode;
 import java.util.Date;
 import java.util.Properties;
-import java.util.logging.Logger;
-
-import org.apache.log4j.PropertyConfigurator;
 
 public class Difeq {
 	private static final BigDecimal ZERO = BigDecimal.ZERO;
 	private static final BigDecimal ONE = BigDecimal.ONE;
 	private static final BigDecimal TWO = ONE.add(ONE);
-	private static final BigDecimal TEN = BigDecimal.TEN;
-	private static final BigDecimal HUNDRED = TEN.multiply(TEN);
-	private static final BigDecimal TENTH = ONE.divide(TEN);
-	private static final BigDecimal HUNDREDTH = ONE.divide(HUNDRED);
-	private static final BigDecimal THOUSAND = TEN.multiply(HUNDRED);
-	private static final BigDecimal THOUSANDTH = ONE.divide(THOUSAND);
-	private static final BigDecimal FIVE = TEN.divide(TWO);
-	private static final BigDecimal FIFTH = ONE.divide(FIVE);
-	private static final BigDecimal HALF = ONE.divide(TWO);
+	// private static final BigDecimal TEN = BigDecimal.TEN;
+	// private static final BigDecimal HUNDRED = TEN.multiply(TEN);
+	// private static final BigDecimal TENTH = ONE.divide(TEN);
+	// private static final BigDecimal HUNDREDTH = ONE.divide(HUNDRED);
+	// private static final BigDecimal THOUSAND = TEN.multiply(HUNDRED);
+	// private static final BigDecimal THOUSANDTH = ONE.divide(THOUSAND);
+	// private static final BigDecimal FIVE = TEN.divide(TWO);
+	// private static final BigDecimal FIFTH = ONE.divide(FIVE);
+	// private static final BigDecimal HALF = ONE.divide(TWO);
 
-	private static final MathContext MC = new MathContext(100,
-			RoundingMode.HALF_UP);
+	private static final MathContext MC = new MathContext(50,
+			RoundingMode.HALF_EVEN);
 
-	private static final String log4jConfigFilename = "log4j.properties";
+	// private static final String log4jConfigFilename = "log4j.properties";
 
 	private int n;
 	private BigDecimal tau;
@@ -44,7 +41,9 @@ public class Difeq {
 	private BigDecimal errorThreshold;
 	private int maxIter;
 
-	private String jobName = "difeq";
+	private BigDecimal[] w;
+
+	// private String jobName = "difeq";
 
 	public static void main(String[] args) throws IOException {
 		Difeq difeq = new Difeq();
@@ -59,11 +58,13 @@ public class Difeq {
 		String params = "n=" + n + " tau=" + tau + " mu=" + mu + " gamma="
 				+ gamma + " phi=" + phi + " err=" + errorThreshold + " iter="
 				+ maxIter;
+		w = createSelectionVector();
+
 		CsvWriter writer = createCsvWriter(params);
 		System.out.println(params);
 
 		writer.writeCell("params");
-		for (int i = 0; i < n; i++) {
+		for (int i = 0; i < n + 1; i++) {
 			writer.writeCell(i);
 		}
 		writer.newRow();
@@ -82,9 +83,9 @@ public class Difeq {
 
 	public BigDecimal equilibrium() {
 		BigDecimal[] current = new BigDecimal[n];
-		BigDecimal N = new BigDecimal(n);
+		BigDecimal A = ONE.divide(BigDecimal.valueOf(n));
 		for (int i = 0; i < n; i++) {
-			current[i] = ONE.divide(N);
+			current[i] = A;
 		}
 
 		sanityCheckStochasticVector(current, "frequencies");
@@ -93,32 +94,32 @@ public class Difeq {
 		sanityCheckProbability(mu.multiply(tau).multiply(phi),
 				"Beneficial mutation probability");
 
-		BigDecimal[] w = createSelectionVector();
-		BigDecimal meanW = innerProduct(current, w);
+		BigDecimal meanW = LinearAlgebra.innerProduct(current, w);
 		BigDecimal[][] M = createMutationMatrix();
-	//	printMatrix(M);
+		// printMatrix(M);
 
 		int iter = 0;
 		BigDecimal dist = BigDecimal.valueOf(Integer.MAX_VALUE);
 		long tick = System.currentTimeMillis();
 
-		while (dist.compareTo(errorThreshold) > 0 && iter < maxIter) {
+		while (dist.compareTo(errorThreshold) > 0 && maxIter > iter) {
 			iter++;
+			if (iter % 100 == 0)
+				System.out.println(iter + " " + dist);
 
 			// selection
-			for (int i = 0; i < n; i++) {
-				current[i] = current[i].multiply(w[i]).divide(meanW, MC);
-			}
-			//sanityCheckStochasticVector(current, "freqs after selection");
+			current = LinearAlgebra.vectorProduct(current, w,
+					ONE.divide(meanW, MC));
+			// sanityCheckStochasticVector(current, "freqs after selection");
 
-			current = matrixOperation(M, current);
-		//	sanityCheckStochasticVector(current, "freqs after mutation");
+			current = LinearAlgebra.unsafeMatrixOperationSparse(M, current);
+			// sanityCheckStochasticVector(current, "freqs after mutation");
 
 			BigDecimal oldMeanW = meanW;
-			meanW = innerProduct(current, w);
+			meanW = LinearAlgebra.innerProduct(current, w);
 			sanityCheckProbability(meanW, "mean fitness");
 
-			dist = oldMeanW.subtract(meanW).abs();
+			dist = oldMeanW.subtract(meanW, MC).abs();
 		}
 		long tock = System.currentTimeMillis();
 		System.out.println("Finished with " + NumberUtils.formatNumber(iter)
@@ -167,9 +168,9 @@ public class Difeq {
 	}
 
 	public void sanityCheckStochasticVector(BigDecimal[] v, String name) {
-		if (sum(v).subtract(ONE, MC).compareTo(ZERO) != 0) {
+		if (LinearAlgebra.sum(v).subtract(ONE, MC).compareTo(ZERO) != 0) {
 			throw new RuntimeException("sum of '" + name
-					+ "' frequencies must be 1, it is: " + sum(v));
+					+ "' frequencies must be 1, it is: " + LinearAlgebra.sum(v));
 		}
 	}
 
@@ -178,69 +179,6 @@ public class Difeq {
 		if (p.compareTo(ZERO) < 0 || p.compareTo(ONE) > 0) {
 			throw new RuntimeException(name + " mus't be 0<x<1, it is " + p);
 		}
-	}
-
-	public BigDecimal[] matrixOperation(BigDecimal[][] m, BigDecimal[] v) {
-		// not checking dimensions, assuming square matrix
-		BigDecimal[] u = new BigDecimal[v.length];
-		for (int i = 0; i < v.length; i++) {
-			u[i] = innerProduct(m[i], v);
-		}
-		return u;
-	}
-
-	public void printMatrix(BigDecimal[][] m) {
-		for (int i = 0; i < m.length; i++) {
-			for (int j = 0; j < m[i].length; j++) {
-				System.out.print(m[i][j]);
-				System.out.print(", ");
-			}
-			System.out.println();
-		}
-	}
-
-	public BigDecimal innerProduct(BigDecimal[] arr1, BigDecimal[] arr2) {
-		if (arr1.length != arr2.length)
-			throw new IllegalArgumentException(
-					"Arrays lengths must agree: arr1 length " + arr1.length
-							+ ", arr2 length " + arr2.length);
-		BigDecimal res = ZERO;
-		for (int i = 0; i < arr1.length; i++) {
-			res = res.add(arr1[i].multiply(arr2[i]));
-		}
-		return res;
-	}
-
-	public BigDecimal sum(BigDecimal[] array) {
-		BigDecimal sum = ZERO;
-		for (int i = 0; i < array.length; i++) {
-			sum = sum.add(array[i]);
-		}
-		return sum;
-	}
-
-	public BigDecimal distanceLInf(BigDecimal[] arr1, BigDecimal[] arr2) {
-		if (arr1.length != arr2.length)
-			throw new IllegalArgumentException(
-					"Arrays lengths must agree: arr1 length " + arr1.length
-							+ ", arr2 length " + arr2.length);
-		BigDecimal d = ZERO;
-		for (int i = 0; i < arr1.length; i++) {
-			d = arr1[i].subtract(arr2[i]).abs().max(d);
-		}
-		return d;
-	}
-
-	public BigDecimal distanceL1(BigDecimal[] arr1, BigDecimal[] arr2) {
-		if (arr1.length != arr2.length)
-			throw new IllegalArgumentException(
-					"Arrays lengths must agree: arr1 length " + arr1.length
-							+ ", arr2 length " + arr2.length);
-		BigDecimal d = ZERO;
-		for (int i = 0; i < arr1.length; i++) {
-			d = d.add(arr1[i].subtract(arr2[i]).abs());
-		}
-		return d;
 	}
 
 	public void setParameters(String propertiesFilename) throws IOException {
@@ -280,16 +218,15 @@ public class Difeq {
 				MathContext.UNLIMITED);
 	}
 
-	private Logger createLogger() throws IOException {
-		Logger logger = Logger.getLogger(jobName);
-		Properties log4jProps = loadPropertiesFromClasspath(new Properties(),
-				log4jConfigFilename);
-		String logFilename = "difeq-" + jobName + ".log";
-		log4jProps.setProperty("log4j.appender.FILE.File", logFilename);
-		PropertyConfigurator.configure(log4jProps);
-		logger.info("logging to " + logFilename);
-		return logger;
-	}
+	/*
+	 * private Logger createLogger() throws IOException { Logger logger =
+	 * Logger.getLogger(jobName); Properties log4jProps =
+	 * loadPropertiesFromClasspath(new Properties(), log4jConfigFilename);
+	 * String logFilename = "difeq-" + jobName + ".log";
+	 * log4jProps.setProperty("log4j.appender.FILE.File", logFilename);
+	 * PropertyConfigurator.configure(log4jProps); logger.info("logging to " +
+	 * logFilename); return logger; }
+	 */
 
 	private CsvWriter createCsvWriter(String id) throws IOException {
 		CsvWriter w = new CsvWriter();
@@ -300,11 +237,10 @@ public class Difeq {
 		return w;
 	}
 
-	private Properties loadPropertiesFromClasspath(Properties props,
-			String filename) throws IOException {
-		InputStream stream = this.getClass().getClassLoader()
-				.getResourceAsStream(filename);
-		props.load(stream);
-		return props;
-	}
+	/*
+	 * private Properties loadPropertiesFromClasspath(Properties props, String
+	 * filename) throws IOException { InputStream stream =
+	 * this.getClass().getClassLoader() .getResourceAsStream(filename);
+	 * props.load(stream); return props; }
+	 */
 }
