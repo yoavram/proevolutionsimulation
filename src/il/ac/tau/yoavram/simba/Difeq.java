@@ -89,7 +89,7 @@ public class Difeq {
 
 		writer.writeCell(params);
 		w = createSelectionVector();
-		for (int i = 0; i < n; i++) {
+		for (int i = 0; i < n+1; i++) {
 			pi = new BigDecimal(i);
 			BigDecimal mean = equilibrium();
 			writer.writeCell(mean);
