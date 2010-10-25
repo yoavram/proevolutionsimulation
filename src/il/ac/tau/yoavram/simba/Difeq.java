@@ -5,15 +5,18 @@ import il.ac.tau.yoavram.pes.io.CsvWriter;
 import il.ac.tau.yoavram.pes.utils.NumberUtils;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.math.BigDecimal;
 import java.math.MathContext;
 import java.math.RoundingMode;
 import java.util.Date;
 import java.util.Properties;
 
-import javax.swing.text.html.HTMLDocument.HTMLReader.PreAction;
+import org.apache.log4j.Logger;
+import org.apache.log4j.PropertyConfigurator;
 
 public class Difeq {
+	private static Logger logger;
 	private static final BigDecimal ZERO = BigDecimal.ZERO;
 	private static final BigDecimal ONE = BigDecimal.ONE;
 	private static final BigDecimal TWO = ONE.add(ONE);
@@ -29,7 +32,7 @@ public class Difeq {
 
 	private static MathContext MC = new MathContext(50, RoundingMode.HALF_EVEN);
 
-	// private static final String log4jConfigFilename = "log4j.properties";
+	private static final String log4jConfigFilename = "log4j.properties";
 
 	private int n;
 	private BigDecimal tau;
@@ -56,7 +59,7 @@ public class Difeq {
 		difeq.start();
 	}
 
-	public void start() throws IOException {
+	public void start() {
 		if (precision > 0) {
 			MC = new MathContext(precision, RoundingMode.HALF_EVEN);
 			errorThreshold = new BigDecimal("1e-" + precision);
@@ -64,11 +67,19 @@ public class Difeq {
 		String params = "n=" + n + " tau=" + tau + " mu=" + mu + " gamma="
 				+ gamma + " phi=" + phi + " err=" + errorThreshold + " iter="
 				+ maxIter;
-		
-		w = createSelectionVector();
-
-		CsvWriter writer = createCsvWriter(params);
-		System.out.println(params);
+		try {
+			logger = createLogger(params);
+		} catch (IOException e) {
+			System.err.println("Failed creating logger for " + params + ": "
+					+ e);
+		}
+		CsvWriter writer = null;
+		try {
+			writer = createCsvWriter(params);
+		} catch (IOException e) {
+			logger.error(e);
+		}
+		logger.info(params);
 
 		writer.writeCell("params");
 		for (int i = 0; i < n + 1; i++) {
@@ -77,14 +88,13 @@ public class Difeq {
 		writer.newRow();
 
 		writer.writeCell(params);
+		w = createSelectionVector();
 		for (int i = 0; i < n; i++) {
 			pi = new BigDecimal(i);
 			BigDecimal mean = equilibrium();
 			writer.writeCell(mean);
 		}
 		writer.newRow();
-		System.out.println();
-
 		writer.close();
 	}
 
@@ -112,7 +122,7 @@ public class Difeq {
 		while (dist.compareTo(errorThreshold) > 0 && maxIter > iter) {
 			iter++;
 			if (iter % 100 == 0)
-				System.out.println(iter + " " + dist);
+				logger.info(iter + " " + dist);
 
 			// selection
 			current = LinearAlgebra.vectorProduct(current, w,
@@ -129,9 +139,10 @@ public class Difeq {
 			dist = oldMeanW.subtract(meanW, MC).abs();
 		}
 		long tock = System.currentTimeMillis();
-		System.out.println("Finished with " + NumberUtils.formatNumber(iter)
+		logger.info("Finished with " + NumberUtils.formatNumber(iter)
 				+ " iterations, distance " + dist.toEngineeringString()
-				+ " in " + (tock - tick) + " millisecs: " + pi + " - " + meanW);
+				+ " in " + (tock - tick) + " millisecs: pi " + pi);// + " - " +
+																	// meanW);
 		return meanW;
 	}
 
@@ -219,7 +230,7 @@ public class Difeq {
 		s = parser.getS();
 		errorThreshold = parser.getErr();
 		maxIter = parser.getIter();
-		precision=parser.getPrecision();
+		precision = parser.getPrecision();
 	}
 
 	public BigDecimal parseProperty(Properties properties, String property) {
@@ -227,15 +238,16 @@ public class Difeq {
 				MathContext.UNLIMITED);
 	}
 
-	/*
-	 * private Logger createLogger() throws IOException { Logger logger =
-	 * Logger.getLogger(jobName); Properties log4jProps =
-	 * loadPropertiesFromClasspath(new Properties(), log4jConfigFilename);
-	 * String logFilename = "difeq-" + jobName + ".log";
-	 * log4jProps.setProperty("log4j.appender.FILE.File", logFilename);
-	 * PropertyConfigurator.configure(log4jProps); logger.info("logging to " +
-	 * logFilename); return logger; }
-	 */
+	private Logger createLogger(String id) throws IOException {
+		Logger logger = Logger.getLogger(id);
+		Properties log4jProps = loadPropertiesFromClasspath(new Properties(),
+				log4jConfigFilename);
+		String logFilename = "log/difeq/difeq-" + id + ".log";
+		log4jProps.setProperty("log4j.appender.FILE.File", logFilename);
+		PropertyConfigurator.configure(log4jProps);
+		logger.info("logging to " + logFilename);
+		return logger;
+	}
 
 	private CsvWriter createCsvWriter(String id) throws IOException {
 		CsvWriter w = new CsvWriter();
@@ -246,10 +258,12 @@ public class Difeq {
 		return w;
 	}
 
-	/*
-	 * private Properties loadPropertiesFromClasspath(Properties props, String
-	 * filename) throws IOException { InputStream stream =
-	 * this.getClass().getClassLoader() .getResourceAsStream(filename);
-	 * props.load(stream); return props; }
-	 */
+	private Properties loadPropertiesFromClasspath(Properties props,
+			String filename) throws IOException {
+		InputStream stream = this.getClass().getClassLoader()
+				.getResourceAsStream(filename);
+		props.load(stream);
+		return props;
+	}
+
 }
