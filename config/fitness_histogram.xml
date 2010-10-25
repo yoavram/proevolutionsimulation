@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+           http://www.springframework.org/schema/beans/spring-beans-3.0.xsd"
+	default-init-method="init" default-destroy-method="close">
+
+	<bean class="il.ac.tau.yoavram.simba.FitnessHistogramCollector">
+		<property name="listener">
+			<bean class="il.ac.tau.yoavram.pes.statistics.listeners.CsvWriterListener">
+				<property name="csvWriter">
+					<bean class="il.ac.tau.yoavram.pes.io.CsvWriter">
+						<property name="filename"
+							value="ess.mu.0.001.pop.100000.2010-Oct-05_14-31-54-901_IST.ser" />
+						<property name="directory" value="serialization" />
+					</bean>
+				</property>
+			</bean>
+		</property>
+		<property name="fractionOfGenesToChange" value="0.008" />
+		<property name="model">
+			<bean id="simbaModel" class="il.ac.tau.yoavram.simba.SimbaModel"
+				factory-bean="modelFactory" factory-method="deserialize">
+			</bean>
+		</property>
+		<!--<property name="filter"></property> -->
+	</bean>
+	<bean class="il.ac.tau.yoavram.pes.SerializableModel.Factory" id="modelFactory">
+		<property name="filename"
+			value="serialization/ess.mu.0.001.pop.100000.2010-Oct-05_14-31-54-901_IST.ser" />
+	</bean>
+</beans>
+	

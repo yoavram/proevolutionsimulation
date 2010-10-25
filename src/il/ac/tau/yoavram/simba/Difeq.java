@@ -11,6 +11,8 @@ import java.math.RoundingMode;
 import java.util.Date;
 import java.util.Properties;
 
+import javax.swing.text.html.HTMLDocument.HTMLReader.PreAction;
+
 public class Difeq {
 	private static final BigDecimal ZERO = BigDecimal.ZERO;
 	private static final BigDecimal ONE = BigDecimal.ONE;
@@ -25,8 +27,7 @@ public class Difeq {
 	// private static final BigDecimal FIFTH = ONE.divide(FIVE);
 	// private static final BigDecimal HALF = ONE.divide(TWO);
 
-	private static final MathContext MC = new MathContext(50,
-			RoundingMode.HALF_EVEN);
+	private static MathContext MC = new MathContext(50, RoundingMode.HALF_EVEN);
 
 	// private static final String log4jConfigFilename = "log4j.properties";
 
@@ -40,6 +41,7 @@ public class Difeq {
 	private BigDecimal s;
 	private BigDecimal errorThreshold;
 	private int maxIter;
+	private int precision;
 
 	private BigDecimal[] w;
 
@@ -55,9 +57,14 @@ public class Difeq {
 	}
 
 	public void start() throws IOException {
+		if (precision > 0) {
+			MC = new MathContext(precision, RoundingMode.HALF_EVEN);
+			errorThreshold = new BigDecimal("1e-" + precision);
+		}
 		String params = "n=" + n + " tau=" + tau + " mu=" + mu + " gamma="
 				+ gamma + " phi=" + phi + " err=" + errorThreshold + " iter="
 				+ maxIter;
+		
 		w = createSelectionVector();
 
 		CsvWriter writer = createCsvWriter(params);
@@ -199,6 +206,7 @@ public class Difeq {
 		s = parseProperty(properties, "s");
 		errorThreshold = parseProperty(properties, "errorThreshold");
 		maxIter = Integer.valueOf(properties.getProperty("maxIter"));
+		precision = Integer.valueOf(properties.getProperty("precision"));
 	}
 
 	public void setParameters(DifeqCommandLineParser parser) {
