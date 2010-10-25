@@ -68,10 +68,13 @@ public class DifeqCommandLineParser {
 		Option iter = OptionBuilder.hasArg().withLongOpt("iter")
 				.withDescription("Maximum number of iterations > 1")
 				.create('i');
+		Option precision = OptionBuilder.hasArg().withLongOpt("precision")
+		.withDescription("Number of digits after the dot > 1")
+		.create('r');
 
 		options.addOption(h).addOption(n).addOption(s).addOption(tau)
 				.addOption(mu).addOption(gamma).addOption(phi).addOption(err)
-				.addOption(iter);
+				.addOption(iter).addOption(precision);
 		return options;
 	}
 
@@ -113,5 +116,10 @@ public class DifeqCommandLineParser {
 
 	public int getIter() {
 		return Integer.valueOf(cmd.getOptionValue('i'));
+	}
+
+	public int getPrecision() {
+		return Integer.valueOf(cmd.getOptionValue('r'));
+
 	}
 }

@@ -219,6 +219,7 @@ public class Difeq {
 		s = parser.getS();
 		errorThreshold = parser.getErr();
 		maxIter = parser.getIter();
+		precision=parser.getPrecision();
 	}
 
 	public BigDecimal parseProperty(Properties properties, String property) {
