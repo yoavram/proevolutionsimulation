@@ -68,7 +68,7 @@ public class Difeq {
 				+ gamma + " phi=" + phi + " err=" + errorThreshold + " iter="
 				+ maxIter;
 		try {
-			logger = createLogger(params);
+			logger = createLogger(params.replace(' ', '_'));
 		} catch (IOException e) {
 			System.err.println("Failed creating logger for " + params + ": "
 					+ e);
