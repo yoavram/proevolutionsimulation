@@ -254,6 +254,7 @@ public class Difeq {
 		w.setDirectory("output/difeq");
 		w.setFilename("difeq_" + id.replace(' ', '_'));
 		w.setTime(new Date());
+		w.setWriteTempFile(true);
 		w.init();
 		return w;
 	}
