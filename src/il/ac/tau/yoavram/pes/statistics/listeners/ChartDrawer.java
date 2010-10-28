@@ -38,6 +38,10 @@ public class ChartDrawer implements DataListener {
 	private static final int HEIGHT = 768;
 	private static final String DEFAULT_OUTPUT_FILE_EXTENSION = ".png";
 	private static final String DEFAULT_INPUT_FILE_EXTENSION = ".csv";
+	private static final FilenameFilter DIR_OR_INPUT_FILE_FILTER = FileFilterUtils
+			.orFileFilter(FileFilterUtils
+					.suffixFileFilter(DEFAULT_INPUT_FILE_EXTENSION),
+					FileFilterUtils.directoryFileFilter());
 
 	private ApplicationFrame appFrame;
 	private JFreeChart chart;
@@ -168,19 +172,14 @@ public class ChartDrawer implements DataListener {
 		}
 
 		File input = new File(args[0]);
-		File output = null;
+
 		int linesToRead = 0;
 
 		if (input.isDirectory()) {
-			System.out.println("Iterating " + DEFAULT_INPUT_FILE_EXTENSION
-					+ " files in directory " + input.getAbsolutePath());
-			for (File file : input.listFiles((FilenameFilter) FileFilterUtils
-					.suffixFileFilter(DEFAULT_INPUT_FILE_EXTENSION))) {
-				output = new File(FilenameUtils.removeExtension(file
-						.getAbsolutePath()) + DEFAULT_OUTPUT_FILE_EXTENSION);
-				readFile(file, linesToRead, output);
-			}
+			readDir(input);
+
 		} else {
+			File output = null;
 			if (args.length > 1) {
 				linesToRead = Integer.valueOf(args[1]);
 			}
@@ -189,6 +188,19 @@ public class ChartDrawer implements DataListener {
 				output = new File(args[2]);
 			}
 			readFile(input, linesToRead, output);
+		}
+	}
+
+	public static void readDir(File dir) throws IOException {
+		System.out.println("Iterating directory " + dir.getAbsolutePath());
+		for (File file : dir.listFiles(DIR_OR_INPUT_FILE_FILTER)) {
+			if (file.isDirectory()) {
+				readDir(file);
+			} else {
+				File output = new File(FilenameUtils.removeExtension(file
+						.getAbsolutePath()) + DEFAULT_OUTPUT_FILE_EXTENSION);
+				readFile(file, 0, output);
+			}
 		}
 	}
 

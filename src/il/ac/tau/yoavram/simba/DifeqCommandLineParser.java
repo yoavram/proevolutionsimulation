@@ -55,14 +55,14 @@ public class DifeqCommandLineParser {
 				.withDescription("Selection coefficient, 0<s<1").create('s');
 		Option tau = OptionBuilder.hasArg().withLongOpt("tau")
 				.withDescription("Mutation rate modifier 0<=tau").create('t');
-		Option mu = OptionBuilder.hasArg().withLongOpt("mu")
-				.withDescription("Mutation probability, 0<mu<1").create('m');
+		Option pi = OptionBuilder.hasArg().withLongOpt("pi")
+				.withDescription("Fitness threshold, 0<=pi<=n+1").create('p');
 		Option gamma = OptionBuilder.hasArg().withLongOpt("gamma")
 				.withDescription("Deleterious mutation probability, 0<gamma<1")
 				.create('g');
 		Option phi = OptionBuilder.hasArg().withLongOpt("phi")
 				.withDescription("Beneficial mutation probability, 0<phi<1")
-				.create('p');
+				.create('f');
 		Option err = OptionBuilder.hasArg().withLongOpt("err")
 				.withDescription("error threshold < 1").create('e');
 		Option iter = OptionBuilder.hasArg().withLongOpt("iter")
@@ -73,7 +73,7 @@ public class DifeqCommandLineParser {
 		.create('r');
 
 		options.addOption(h).addOption(n).addOption(s).addOption(tau)
-				.addOption(mu).addOption(gamma).addOption(phi).addOption(err)
+				.addOption(pi).addOption(gamma).addOption(phi).addOption(err)
 				.addOption(iter).addOption(precision);
 		return options;
 	}
@@ -107,6 +107,10 @@ public class DifeqCommandLineParser {
 	}
 
 	public BigDecimal getPhi() {
+		return getOptionValue('f');
+	}
+	
+	public BigDecimal getPi() {
 		return getOptionValue('p');
 	}
 

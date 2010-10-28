@@ -193,6 +193,24 @@ public class LinearAlgebra {
 		return d;
 	}
 
+	public static BigDecimal[][] transpose(BigDecimal[][] m) {
+		int n = m.length;
+		// check m is square
+		for (int i = 0; i < n; i++) {
+			if (m[i].length != n)
+				throw new IllegalArgumentException(
+						"Transpose only works for square matrix");
+		}
+		BigDecimal[][] t = new BigDecimal[n][];
+		for (int j = 0; j < n; j++) {
+			t[j] = new BigDecimal[n];
+			for (int i = 0; i < n; i++) {
+				t[j][i] = m[i][j];
+			}
+		}
+		return t;
+	}
+
 	public static void checkLength(BigDecimal[] v, BigDecimal[] u) {
 		if (v.length != u.length)
 			throw new IllegalArgumentException(
