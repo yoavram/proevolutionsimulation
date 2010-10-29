@@ -4,19 +4,19 @@ import il.ac.tau.yoavram.math.LinearAlgebra;
 import il.ac.tau.yoavram.pes.utils.NumberUtils;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.PrintWriter;
 import java.math.BigDecimal;
 import java.math.MathContext;
 import java.math.RoundingMode;
 import java.util.Properties;
 
+import org.apache.commons.io.FileUtils;
 import org.apache.log4j.Logger;
 import org.apache.log4j.PropertyConfigurator;
 
 import com.google.common.base.Joiner;
+import com.google.common.collect.Lists;
 
 public class Difeq {
 	private static Logger logger;
@@ -56,9 +56,8 @@ public class Difeq {
 		}
 
 		String params = fieldJoiner.join(keyValJoiner.join("n", n),
-				keyValJoiner.join("n", n), keyValJoiner.join("s", s),
-				keyValJoiner.join("tau", tau), keyValJoiner.join("pi", pi),
-				keyValJoiner.join("gamma", gamma),
+				keyValJoiner.join("s", s), keyValJoiner.join("tau", tau),
+				keyValJoiner.join("pi", pi), keyValJoiner.join("gamma", gamma),
 				keyValJoiner.join("phi", phi),
 				keyValJoiner.join("precision", precision),
 				keyValJoiner.join("iter", maxIter));
@@ -69,22 +68,25 @@ public class Difeq {
 			System.err.println("Failed creating logger for " + params + ": "
 					+ e);
 		}
-		File file = new File("output/difeq/" + "difeq_"
-				+ params.replace(' ', '_'));
-		PrintWriter writer = null;
-		try {
-			writer = new PrintWriter(file);
-		} catch (FileNotFoundException e) {
-			logger.error(e);
-			System.exit(1);
-		}
-		logger.info("writing to " + file.getAbsolutePath());
 
-		writer.println(params);
 		BigDecimal meanW = equilibrium();
+
 		logger.info(meanW);
-		writer.println(meanW.round(MC).toString());
-		writer.close();
+		File file = new File("output/difeq/" + "difeq_" + params + ".csv");
+
+		String header = fieldJoiner.join("n", "s", "tau", "pi", "gamma", "phi",
+				"precision", "iter", "meanW");
+
+		String output = fieldJoiner.join(n, s, tau, pi, gamma, phi, precision,
+				maxIter, meanW);
+
+		try {
+			FileUtils.writeLines(file, Lists.newArrayList(header, output));
+			logger.info("Writing to " + file.getAbsolutePath());
+		} catch (IOException e) {
+			logger.error("Failed writing to " + file.getAbsolutePath() + ": "
+					+ e);
+		}
 	}
 
 	public BigDecimal equilibrium() {
