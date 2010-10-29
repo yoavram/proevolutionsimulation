@@ -16,6 +16,8 @@ import java.util.Properties;
 import org.apache.log4j.Logger;
 import org.apache.log4j.PropertyConfigurator;
 
+import com.google.common.base.Joiner;
+
 public class Difeq {
 	private static Logger logger;
 	private static final BigDecimal ZERO = BigDecimal.ZERO;
@@ -23,16 +25,17 @@ public class Difeq {
 	private static final BigDecimal TWO = ONE.add(ONE);
 
 	private static MathContext MC = new MathContext(50, RoundingMode.HALF_EVEN);
-
+	private static Joiner fieldJoiner = Joiner.on(',');
+	private static Joiner keyValJoiner = Joiner.on('-');
 	private static final String log4jConfigFilename = "log4j.properties";
 
 	private int n;
+	private BigDecimal s;
 	private BigDecimal tau;
 	private BigDecimal pi;
 	private BigDecimal gamma;
 	private BigDecimal phi;
 	// private BigDecimal psi;
-	private BigDecimal s;
 	private BigDecimal errorThreshold;
 	private int maxIter;
 	private int precision;
@@ -51,9 +54,15 @@ public class Difeq {
 			MC = new MathContext(precision, RoundingMode.HALF_EVEN);
 			errorThreshold = new BigDecimal("1e-" + precision);
 		}
-		String params = "n-" + n + " tau-" + tau + " pi-" + pi + " gamma-"
-				+ gamma + " phi-" + phi + " err-" + errorThreshold + " iter-"
-				+ maxIter;
+
+		String params = fieldJoiner.join(keyValJoiner.join("n", n),
+				keyValJoiner.join("n", n), keyValJoiner.join("s", s),
+				keyValJoiner.join("tau", tau), keyValJoiner.join("pi", pi),
+				keyValJoiner.join("gamma", gamma),
+				keyValJoiner.join("phi", phi),
+				keyValJoiner.join("precision", precision),
+				keyValJoiner.join("iter", maxIter));
+
 		try {
 			logger = createLogger(params.replace(' ', '_'));
 		} catch (IOException e) {
@@ -209,7 +218,7 @@ public class Difeq {
 		phi = parseProperty(properties, "phi");
 		pi = parseProperty(properties, "pi");
 		s = parseProperty(properties, "s");
-		errorThreshold = parseProperty(properties, "errorThreshold");
+		// errorThreshold = parseProperty(properties, "errorThreshold");
 		maxIter = Integer.valueOf(properties.getProperty("maxIter"));
 		precision = Integer.valueOf(properties.getProperty("precision"));
 	}
@@ -221,7 +230,7 @@ public class Difeq {
 		phi = parser.getPhi();
 		pi = parser.getPi();
 		s = parser.getS();
-		errorThreshold = parser.getErr();
+		// errorThreshold = parser.getErr();
 		maxIter = parser.getIter();
 		precision = parser.getPrecision();
 	}

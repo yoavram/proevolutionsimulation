@@ -63,8 +63,8 @@ public class DifeqCommandLineParser {
 		Option phi = OptionBuilder.hasArg().withLongOpt("phi")
 				.withDescription("Beneficial mutation probability, 0<phi<1")
 				.create('f');
-		Option err = OptionBuilder.hasArg().withLongOpt("err")
-				.withDescription("error threshold < 1").create('e');
+	/*	Option err = OptionBuilder.hasArg().withLongOpt("err")
+				.withDescription("error threshold < 1").create('e');*/
 		Option iter = OptionBuilder.hasArg().withLongOpt("iter")
 				.withDescription("Maximum number of iterations > 1")
 				.create('i');
@@ -73,7 +73,7 @@ public class DifeqCommandLineParser {
 		.create('r');
 
 		options.addOption(h).addOption(n).addOption(s).addOption(tau)
-				.addOption(pi).addOption(gamma).addOption(phi).addOption(err)
+				.addOption(pi).addOption(gamma).addOption(phi)//.addOption(err)
 				.addOption(iter).addOption(precision);
 		return options;
 	}
@@ -114,9 +114,9 @@ public class DifeqCommandLineParser {
 		return getOptionValue('p');
 	}
 
-	public BigDecimal getErr() {
+/*	public BigDecimal getErr() {
 		return getOptionValue('e');
-	}
+	}*/
 
 	public int getIter() {
 		return Integer.valueOf(cmd.getOptionValue('i'));
