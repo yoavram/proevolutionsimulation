@@ -193,7 +193,7 @@ public class Bacteria implements Serializable {
 	}
 
 	public double getMutationRate() {
-		if (isSim() && getFitness() < getFitnessThreshold()) {
+		if ((isSim() && getFitness() < getFitnessThreshold()) || isCm()) {
 			return getMutationRateModifier() * mutationRate;
 		} else {
 			return mutationRate;
