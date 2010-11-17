@@ -2,6 +2,11 @@ package il.ac.tau.yoavram.pes.filters;
 
 public class ClassNameFilter<T> implements Filter<T> {
 	private String className;
+	
+	public ClassNameFilter() {}
+	public ClassNameFilter(String className) {
+		setClassName(className);
+	}
 
 	@Override
 	public boolean filter(T filtrate) {

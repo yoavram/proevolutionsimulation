@@ -1,24 +1,23 @@
 package il.ac.tau.yoavram.pes.terminators;
 
 import il.ac.tau.yoavram.pes.Model;
+import il.ac.tau.yoavram.pes.filters.Filter;
 
 import java.util.List;
 
-import org.apache.log4j.Logger;
-
-public class ExtinctionTerminator extends AbstractTerminator implements
+public class ExtinctionTerminator<T> extends AbstractTerminator implements
 		Terminator {
-	private static final Logger logger = Logger
-			.getLogger(ExtinctionTerminator.class);
+	/*private static final Logger logger = Logger
+			.getLogger(ExtinctionTerminator.class);*/
 
-	Model<?> model;
-	Class<?> clazz;
+	Model<T> model;
+	Filter<T> filter;
 
 	@Override
 	public boolean terminate() {
-		for (List<?> population : getModel().getPopulations()) {
-			for (Object obj : population) {
-				if (clazz.equals(obj.getClass())) {
+		for (List<T> population : getModel().getPopulations()) {
+			for (T t : population) {
+				if (filter.filter(t)) {
 					return false;
 				}
 			}
@@ -27,31 +26,20 @@ public class ExtinctionTerminator extends AbstractTerminator implements
 		return true;
 	}
 
-	public Model<?> getModel() {
+	public Model<T> getModel() {
 		return model;
 	}
 
-	public void setModel(Model<?> model) {
+	public void setModel(Model<T> model) {
 		this.model = model;
 	}
 
-	public Class<?> getClazz() {
-		return clazz;
+	public Filter<T> getFilter() {
+		return filter;
 	}
 
-	public void setClazz(Class<?> clazz) {
-		this.clazz = clazz;
+	public void setFilter(Filter<T> filter) {
+		this.filter = filter;
 	}
 
-	public String getClazzName() {
-		return clazz.getName();
-	}
-
-	public void setClazzName(String clazzName) {
-		try {
-			setClazz(Class.forName(clazzName));
-		} catch (ClassNotFoundException e) {
-			logger.error("Can't find a class named '" + clazzName + "': " + e);
-		}
-	}
 }

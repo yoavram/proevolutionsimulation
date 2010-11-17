@@ -1,6 +1,13 @@
 package il.ac.tau.yoavram.pes.filters;
 
 public class ClassFilter<T> implements Filter<T> {
+	
+	public ClassFilter() {
+	}
+
+	public ClassFilter(Class<? extends T> clazz) {
+		setClazz(clazz);
+	}
 
 	private Class<? extends T> clazz;
 
