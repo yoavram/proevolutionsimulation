@@ -23,6 +23,9 @@ public class Difeq {
 	private static final BigDecimal ZERO = BigDecimal.ZERO;
 	private static final BigDecimal ONE = BigDecimal.ONE;
 	private static final BigDecimal TWO = ONE.add(ONE);
+	private static final BigDecimal HALF = ONE.divide(TWO);
+	private static final BigDecimal G = new BigDecimal("1000"); // genome size
+	private static final BigDecimal ONE_OVER_G = ONE.divide(G);
 
 	private static MathContext MC = new MathContext(50, RoundingMode.HALF_EVEN);
 	private static Joiner fieldJoiner = Joiner.on(',');
@@ -71,7 +74,7 @@ public class Difeq {
 
 		BigDecimal meanW = equilibrium();
 
-		logger.info(meanW);
+		logger.info(meanW.round(MC).toString());
 		File file = new File("output/difeq/" + "difeq_" + params + ".csv");
 
 		String header = fieldJoiner.join("n", "s", "tau", "pi", "gamma", "phi",
@@ -106,10 +109,10 @@ public class Difeq {
 
 		BigDecimal[] w = createSelectionVector();
 		BigDecimal meanW = LinearAlgebra.innerProduct(current, w);
-		BigDecimal[][] M = createMutationMatrix();
-		/*
-		 * logger.info("Mutation matrix:"); logger.info(M);
-		 */
+		BigDecimal[][] M = createMutationMatrix2();
+
+		System.out.println("Mutation matrix:");
+		LinearAlgebra.printMatrix(M);
 
 		int iter = 0;
 		BigDecimal dist = BigDecimal.valueOf(Double.MAX_VALUE);
@@ -165,6 +168,43 @@ public class Difeq {
 			mm[3] = TWO.multiply(gammaStar).multiply(psi);
 			sanityCheckProbability(mm[3], j + "->" + (j + 1));
 			mm[1] = TWO.multiply(phiStar).multiply(psi);
+			sanityCheckProbability(mm[1], j + "->" + (j - 1));
+			mm[2] = ZERO;
+
+			BigDecimal stay = ONE;
+			for (int i = 0; i < n; i++) {
+				if (j - i >= -2 && 2 >= j - i && j != i) {
+					M[i][j] = mm[j - i + 2];
+					stay = stay.subtract(mm[j - i + 2]);
+				} else {
+					M[i][j] = ZERO;
+				}
+			}
+			M[j][j] = stay;
+		}
+		sanityCheckStochasticMatrix(LinearAlgebra.transpose(M),
+				"Transpose of Transition matrix");
+		return M;
+	}
+
+	public BigDecimal[][] createMutationMatrix2() {
+		BigDecimal[][] M = new BigDecimal[n][n];
+		for (int j = 0; j < n; j++) {
+			BigDecimal gammaStar = j < pi.intValue() ? gamma : gamma
+					.multiply(tau);
+			BigDecimal phiStar = j < pi.intValue() ? phi : phi.multiply(tau);
+			BigDecimal psi = ONE.subtract(gammaStar).subtract(phiStar);
+
+			BigDecimal J = new BigDecimal(j);
+
+			BigDecimal[] mm = new BigDecimal[5];
+			mm[4] = gammaStar.pow(2).multiply(G.subtract(J).multiply(ONE_OVER_G)).multiply(G.subtract(J.add(ONE)).multiply(ONE_OVER_G));
+			sanityCheckProbability(mm[4], j + "->" + (j + 2));
+			mm[0] = phiStar.pow(2).multiply(J.multiply(ONE_OVER_G)).multiply(J.subtract(ONE).multiply(ONE_OVER_G));
+			sanityCheckProbability(mm[0], j + "->" + (j - 2));
+			mm[3] = TWO.multiply(gammaStar).multiply(gammaStar.multiply(G.subtract(J).multiply(ONE_OVER_G)).multiply(J.add(HALF).multiply(ONE_OVER_G)).add(psi));
+			sanityCheckProbability(mm[3], j + "->" + (j + 1));
+			mm[1] = TWO.multiply(phiStar).multiply(phiStar.multiply(J.multiply(ONE_OVER_G)).multiply(G.subtract(J).add(HALF).multiply(ONE_OVER_G)).add(psi));
 			sanityCheckProbability(mm[1], j + "->" + (j - 1));
 			mm[2] = ZERO;
 

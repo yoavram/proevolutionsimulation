@@ -31,6 +31,7 @@ public class CsvCollector extends DirectoryWalker {
 	public void start() {
 		File startDirectory = new File(getPath());
 		try {
+			values = Lists.newArrayList();
 			walk(startDirectory, null);
 		} catch (IOException e) {
 			System.err.println(e);
@@ -64,7 +65,7 @@ public class CsvCollector extends DirectoryWalker {
 	@Override
 	protected void handleDirectoryStart(File directory, int depth,
 			Collection results) throws IOException {
-		values = Lists.newArrayList();
+
 		System.out.println(directory.getName());
 	}
 
@@ -76,7 +77,7 @@ public class CsvCollector extends DirectoryWalker {
 			writer.writeCell(directory.getName());
 			writer.writeCell(values.size());
 			writer.writeRow(values.toArray());
-			values = null;
+			values.clear();
 		}
 	}
 
