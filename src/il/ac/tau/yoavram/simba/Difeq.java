@@ -109,7 +109,7 @@ public class Difeq {
 
 		BigDecimal[] w = createSelectionVector();
 		BigDecimal meanW = LinearAlgebra.innerProduct(current, w);
-		BigDecimal[][] M = createMutationMatrix2();
+		BigDecimal[][] M = createMutationMatrix();
 
 		System.out.println("Mutation matrix:");
 		LinearAlgebra.printMatrix(M);
@@ -171,16 +171,40 @@ public class Difeq {
 			sanityCheckProbability(mm[1], j + "->" + (j - 1));
 			mm[2] = ZERO;
 
-			BigDecimal stay = ONE;
 			for (int i = 0; i < n; i++) {
-				if (j - i >= -2 && 2 >= j - i && j != i) {
+				if (Math.abs(j - i) <= 2 && i != j) {
 					M[i][j] = mm[j - i + 2];
-					stay = stay.subtract(mm[j - i + 2]);
 				} else {
 					M[i][j] = ZERO;
 				}
 			}
-			M[j][j] = stay;
+			if (j == 0) {
+				M[j][j] = ONE.subtract(phiStar.pow(2)).subtract(
+						TWO.multiply(phiStar).multiply(psi));
+			} else if (j == 1) {
+				M[j][j] = ONE.subtract(
+						TWO.multiply(psi).multiply(ONE.subtract(psi)))
+						.subtract(phiStar.pow(2));
+			} else if (j == n - 2) {
+				M[j][j] = ONE.subtract(
+						TWO.multiply(psi).multiply(ONE.subtract(psi)))
+						.subtract(gammaStar.pow(2));
+			} else if (j == n - 1) {
+				M[j][j] = ONE.subtract(gammaStar.pow(2)).subtract(
+						TWO.multiply(gammaStar).multiply(psi));
+			} else {
+				M[j][j] = psi.pow(2).add(
+						TWO.multiply(phiStar).multiply(gammaStar));
+			}
+
+			/*
+			 * mm[2] = ZERO;
+			 * 
+			 * BigDecimal stay = ONE; for (int i = 0; i < n; i++) { if (j - i >=
+			 * -2 && 2 >= j - i && j != i) { M[i][j] = mm[j - i + 2]; stay =
+			 * stay.subtract(mm[j - i + 2]); } else { M[i][j] = ZERO; } }
+			 * M[j][j] = stay;
+			 */
 		}
 		sanityCheckStochasticMatrix(LinearAlgebra.transpose(M),
 				"Transpose of Transition matrix");
@@ -198,13 +222,23 @@ public class Difeq {
 			BigDecimal J = new BigDecimal(j);
 
 			BigDecimal[] mm = new BigDecimal[5];
-			mm[4] = gammaStar.pow(2).multiply(G.subtract(J).multiply(ONE_OVER_G)).multiply(G.subtract(J.add(ONE)).multiply(ONE_OVER_G));
+			mm[4] = gammaStar.pow(2)
+					.multiply(G.subtract(J).multiply(ONE_OVER_G))
+					.multiply(G.subtract(J.add(ONE)).multiply(ONE_OVER_G));
 			sanityCheckProbability(mm[4], j + "->" + (j + 2));
-			mm[0] = phiStar.pow(2).multiply(J.multiply(ONE_OVER_G)).multiply(J.subtract(ONE).multiply(ONE_OVER_G));
+			mm[0] = phiStar.pow(2).multiply(J.multiply(ONE_OVER_G))
+					.multiply(J.subtract(ONE).multiply(ONE_OVER_G));
 			sanityCheckProbability(mm[0], j + "->" + (j - 2));
-			mm[3] = TWO.multiply(gammaStar).multiply(gammaStar.multiply(G.subtract(J).multiply(ONE_OVER_G)).multiply(J.add(HALF).multiply(ONE_OVER_G)).add(psi));
+			mm[3] = TWO.multiply(gammaStar).multiply(
+					gammaStar.multiply(G.subtract(J).multiply(ONE_OVER_G))
+							.multiply(J.add(HALF).multiply(ONE_OVER_G))
+							.add(psi));
 			sanityCheckProbability(mm[3], j + "->" + (j + 1));
-			mm[1] = TWO.multiply(phiStar).multiply(phiStar.multiply(J.multiply(ONE_OVER_G)).multiply(G.subtract(J).add(HALF).multiply(ONE_OVER_G)).add(psi));
+			mm[1] = TWO.multiply(phiStar).multiply(
+					phiStar.multiply(J.multiply(ONE_OVER_G))
+							.multiply(
+									G.subtract(J).add(HALF)
+											.multiply(ONE_OVER_G)).add(psi));
 			sanityCheckProbability(mm[1], j + "->" + (j - 1));
 			mm[2] = ZERO;
 
@@ -234,7 +268,7 @@ public class Difeq {
 	public void sanityCheckStochasticMatrix(BigDecimal[][] m, String name) {
 		for (int i = 0; i < m.length; i++) {
 			BigDecimal[] v = m[i];
-			sanityCheckStochasticVector(v, m + " column " + i);
+			sanityCheckStochasticVector(v, name + " column " + i);
 		}
 	}
 
