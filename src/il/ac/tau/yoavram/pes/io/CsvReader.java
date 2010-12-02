@@ -67,7 +67,7 @@ public class CsvReader implements Closeable {
 				} else {
 					readable = new FileReader(file);
 				}
-				//logger.info("Reading from " + file.getAbsolutePath());
+				// logger.info("Reading from " + file.getAbsolutePath());
 			} catch (FileNotFoundException e) {
 				logger.error("Failed opening file " + file.getAbsolutePath()
 						+ ": " + e);
@@ -170,6 +170,8 @@ public class CsvReader implements Closeable {
 	}
 
 	public String getFilename() {
+		if (filename == null && file != null)
+			return file.getAbsolutePath();
 		return filename;
 	}
 

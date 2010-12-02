@@ -18,7 +18,7 @@ public class LineSizer {
 		writer.setFilename("_" + file.getName().replace(".csv", ""));
 		writer.init();
 
-		MathContext mc = new MathContext(10);
+		MathContext mc = new MathContext(100);
 		// write header
 		writer.writeRow(reader.firstRow());
 
