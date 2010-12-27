@@ -1,6 +1,7 @@
 package il.ac.tau.yoavram.math;
 
 import java.math.BigDecimal;
+import java.util.Arrays;
 
 public class LinearAlgebra {
 
@@ -216,5 +217,11 @@ public class LinearAlgebra {
 			throw new IllegalArgumentException(
 					"Vector lengths must agree: u length " + v.length
 							+ ", v length " + u.length);
+	}
+	
+	public static void fillMatrix(BigDecimal[][] m, BigDecimal value) {
+		for (int i = 0 ; i < m.length ; i++) {
+			Arrays.fill(m[i], value);
+		}
 	}
 }

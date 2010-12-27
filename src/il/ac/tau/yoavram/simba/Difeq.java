@@ -154,64 +154,57 @@ public class Difeq {
 
 	public BigDecimal[][] createMutationMatrix() {
 		BigDecimal[][] M = new BigDecimal[n][n];
-		for (int j = 0; j < n; j++) {
-			BigDecimal gammaStar = j < pi.intValue() ? gamma : gamma
+		LinearAlgebra.fillMatrix(M, BigDecimal.ZERO);
+		/*
+		 * we do the matrix like in the paper and then transpose it at the end
+		 * since the code uses left-hand multiplication (Mv)
+		 */
+		for (int i = 0; i < n; i++) {
+			BigDecimal gammaStar = i < pi.intValue() ? gamma : gamma
 					.multiply(tau);
-			BigDecimal phiStar = j < pi.intValue() ? phi : phi.multiply(tau);
+			BigDecimal phiStar = i < pi.intValue() ? phi : phi.multiply(tau);
 			BigDecimal psi = ONE.subtract(gammaStar).subtract(phiStar);
 
-			BigDecimal[] mm = new BigDecimal[5];
-			mm[4] = gammaStar.pow(2);
-			sanityCheckProbability(mm[4], j + "->" + (j + 2));
-			mm[0] = phiStar.pow(2);
-			sanityCheckProbability(mm[0], j + "->" + (j - 2));
-			mm[3] = TWO.multiply(gammaStar).multiply(psi);
-			sanityCheckProbability(mm[3], j + "->" + (j + 1));
-			mm[1] = TWO.multiply(phiStar).multiply(psi);
-			sanityCheckProbability(mm[1], j + "->" + (j - 1));
-			mm[2] = ZERO;
-
-			for (int i = 0; i < n; i++) {
-				if (Math.abs(j - i) <= 2 && i != j) {
-					M[i][j] = mm[j - i + 2];
-				} else {
-					M[i][j] = ZERO;
-				}
-			}
-			if (j == 0) {
-				M[j][j] = ONE.subtract(phiStar.pow(2)).subtract(
-						TWO.multiply(phiStar).multiply(psi));
-			} else if (j == 1) {
-				M[j][j] = ONE.subtract(
-						TWO.multiply(psi).multiply(ONE.subtract(psi)))
-						.subtract(phiStar.pow(2));
-			} else if (j == n - 2) {
-				M[j][j] = ONE.subtract(
-						TWO.multiply(psi).multiply(ONE.subtract(psi)))
-						.subtract(gammaStar.pow(2));
-			} else if (j == n - 1) {
-				M[j][j] = ONE.subtract(gammaStar.pow(2)).subtract(
-						TWO.multiply(gammaStar).multiply(psi));
-			} else {
-				M[j][j] = psi.pow(2).add(
+			if (i == 0) {
+				M[0][1] = TWO.multiply(gammaStar).multiply(psi);
+				M[0][2] = gammaStar.pow(2);
+				M[0][0] = ONE.subtract(M[0][1]).subtract(M[0][2]);
+			} else if (i == 1) {
+				M[1][0] = TWO.multiply(phiStar.multiply(psi)).add(
+						phiStar.pow(2));
+				M[1][2] = TWO.multiply(gammaStar).multiply(psi);
+				M[1][3] = gammaStar.pow(2);
+				M[1][1] = psi.pow(2).add(
 						TWO.multiply(phiStar).multiply(gammaStar));
+
+			} else if (i == (n - 2)) {
+				M[n - 2][n - 4] = phiStar.pow(2);
+				M[n - 2][n - 3] = TWO.multiply(phiStar).multiply(psi);
+				M[n - 2][n - 2] = psi.pow(2).add(
+						TWO.multiply(phiStar).multiply(gammaStar));
+				M[n - 2][n - 1] = TWO.multiply(gammaStar.multiply(psi)).add(
+						gammaStar.pow(2));
+			} else if (i == (n - 1)) {
+				M[n - 1][n - 3] = phiStar.pow(2);
+				M[n - 1][n - 2] = TWO.multiply(phiStar).multiply(psi);
+				M[n - 1][n - 1] = ONE.subtract(M[n - 1][n - 2]).subtract(
+						M[n - 1][n - 3]);
+			} else {
+				M[i][i - 2] = phiStar.pow(2);
+				M[i][i - 1] = TWO.multiply(phiStar).multiply(psi);
+				M[i][i] = psi.pow(2).add(
+						TWO.multiply(phiStar).multiply(gammaStar));
+				M[i][i + 1] = TWO.multiply(gammaStar).multiply(psi);
+				M[i][i + 2] = gammaStar.pow(2);
 			}
 
-			/*
-			 * mm[2] = ZERO;
-			 * 
-			 * BigDecimal stay = ONE; for (int i = 0; i < n; i++) { if (j - i >=
-			 * -2 && 2 >= j - i && j != i) { M[i][j] = mm[j - i + 2]; stay =
-			 * stay.subtract(mm[j - i + 2]); } else { M[i][j] = ZERO; } }
-			 * M[j][j] = stay;
-			 */
 		}
-		sanityCheckStochasticMatrix(LinearAlgebra.transpose(M),
-				"Transpose of Transition matrix");
-		return M;
+		sanityCheckStochasticMatrix(M, "Transition matrix");
+		return LinearAlgebra.transpose(M);
 	}
 
 	public BigDecimal[][] createMutationMatrix2() {
+		// TODO this should be fixed like 1
 		BigDecimal[][] M = new BigDecimal[n][n];
 		for (int j = 0; j < n; j++) {
 			BigDecimal gammaStar = j < pi.intValue() ? gamma : gamma
