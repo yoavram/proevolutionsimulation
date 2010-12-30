@@ -160,6 +160,14 @@ public class ChartDrawer implements DataListener {
 		return showApplet;
 	}
 
+	public JFreeChart getChart() {
+		return chart;
+	}
+
+	public void setChart(JFreeChart chart) {
+		this.chart = chart;
+	}
+
 	public static void main(String[] args) throws IOException {
 		if (args.length < 1) {
 			System.err

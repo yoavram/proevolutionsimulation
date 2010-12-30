@@ -13,6 +13,7 @@ public class Average implements Collector {
 	private static final Logger logger = Logger.getLogger(Average.class);
 	private int column = 0;
 	private int rows = 0;
+	private boolean onlyPositives = false;
 
 	@Override
 	public String collect(CsvReader reader) {
@@ -24,13 +25,16 @@ public class Average implements Collector {
 			if (row.length > column && !Strings.isNullOrEmpty(row[column])) {
 				try {
 					BigDecimal data = new BigDecimal(row[column]);
-					sum = sum.add(data);
+					if (!isOnlyPositives() || data.compareTo(BigDecimal.ZERO) != 0) {
+						sum = sum.add(data);
+						count++;
+					}
 				} catch (NumberFormatException e) {
 					logger.error("couldn't parse '" + row[column] + "' in "
 							+ reader.getFilename() + ", row " + count);
 					return ret;
 				}
-				count++;
+
 			}
 		}
 		if ((rows == 0 && count > 0) || (rows == count)) {
@@ -56,5 +60,15 @@ public class Average implements Collector {
 	public void setColumn(int column) {
 		this.column = column;
 	}
+
+	public void setOnlyPositives(boolean onlyPositives) {
+		this.onlyPositives = onlyPositives;
+	}
+
+	public boolean isOnlyPositives() {
+		return onlyPositives;
+	}
+
+	
 
 }
