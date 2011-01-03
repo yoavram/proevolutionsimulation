@@ -54,6 +54,7 @@ public class CsvCollector extends DirectoryWalker {
 			if (val != null) {
 				values.add(val);
 			}
+			reader.close();
 		}
 	}
 
