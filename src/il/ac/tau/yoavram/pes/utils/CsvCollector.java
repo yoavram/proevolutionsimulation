@@ -43,7 +43,14 @@ public class CsvCollector extends DirectoryWalker {
 			throws IOException {
 		if (getFilter().accept(file)) {
 			CsvReader reader = new CsvReader(file, true);
-			String val = getCollector().collect(reader);
+			String val = null;
+			try {
+				val = getCollector().collect(reader);
+			} catch (Exception e) {
+				System.err.println("Exception while collecting from file "
+						+ file.getAbsolutePath() + ": " + e);
+				e.printStackTrace(System.err);
+			}
 			if (val != null) {
 				values.add(val);
 			}
