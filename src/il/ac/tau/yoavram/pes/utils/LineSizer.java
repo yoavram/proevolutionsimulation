@@ -24,7 +24,9 @@ public class LineSizer {
 
 		for (String[] row = reader.nextRow(); row != null; row = reader
 				.nextRow()) {
-			BigDecimal d = new BigDecimal(row[row.length - 1], mc);
+			String s = row[row.length - 1];
+			s = s.substring(0, 200);
+			BigDecimal d = new BigDecimal(s, mc);
 			row[row.length - 1] = d.toString();
 			writer.writeRow(row);
 		}
