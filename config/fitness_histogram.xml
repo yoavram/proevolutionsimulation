@@ -11,7 +11,7 @@
 				<property name="csvWriter">
 					<bean class="il.ac.tau.yoavram.pes.io.CsvWriter">
 						<property name="filename"
-							value="ess.mu.0.001.pop.100000.2010-Oct-05_14-31-54-901_IST.ser" />
+							value="ess.mu.0.005.pop.100000.2010-Oct-05_14-31-48-437_IST.ser" />
 						<property name="directory" value="serialization" />
 					</bean>
 				</property>
@@ -27,7 +27,7 @@
 	</bean>
 	<bean class="il.ac.tau.yoavram.pes.SerializableModel.Factory" id="modelFactory">
 		<property name="filename"
-			value="serialization/ess.mu.0.001.pop.100000.2010-Oct-05_14-31-54-901_IST.ser" />
+			value="serialization/ess.mu.0.005.pop.100000.2010-Oct-05_14-31-48-437_IST.ser" />
 	</bean>
 </beans>
 	
