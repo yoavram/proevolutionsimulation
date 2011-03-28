@@ -18,14 +18,14 @@ public class LineSizer {
 		writer.setFilename("_" + file.getName().replace(".csv", ""));
 		writer.init();
 
-		MathContext mc = new MathContext(100);
+		MathContext mc = new MathContext(400);
 		// write header
 		writer.writeRow(reader.firstRow());
 
 		for (String[] row = reader.nextRow(); row != null; row = reader
 				.nextRow()) {
 			String s = row[row.length - 1];
-			s = s.substring(0, 200);
+			s = s.substring(0, 500);
 			BigDecimal d = new BigDecimal(s, mc);
 			row[row.length - 1] = d.toString();
 			writer.writeRow(row);
