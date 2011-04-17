@@ -1,3 +1,26 @@
+/*
+ *  proevolutionsimulation: an agent-based simulation framework for evolutionary biology
+ *  Copyright 2010 Yoav Ram <yoavram@post.tau.ac.il>
+ *
+ *  This file is part of proevolutionsimulation.
+ *
+ *  proevolutionsimulation is free software: you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License (GNU GPL v3) as published by
+ *  the Free Software Foundation.
+ *   
+ *  proevolutionsimulation is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details. You are allowed to modify this code, link it with other code 
+ *  and release it, as long as you keep the same license. 
+ *  
+ *  The content license is Creative Commons 3.0 BY-SA. 
+ *   *
+ *  You should have received a copy of the GNU General Public License
+ *  along with proevolutionsimulation.  If not, see <http://www.gnu.org/licenses/>.
+ *  
+ */
+
 package il.ac.tau.yoavram.pes;
 
 import il.ac.tau.yoavram.pes.statistics.DataGatherer;
@@ -12,7 +35,29 @@ import org.apache.log4j.Logger;
 
 import com.google.common.collect.Lists;
 
-/*
+/**
+ * This class controls a single simulation. It contains the {@link Model}, which has the logic of the simulation; 
+ * the {@link DataGatherer}s that collect and save statistics; the {@link Terminator}s that control the stopping conditions of the simulations; 
+ * and the timing of the simulation.
+ * <p>
+ * Simulation fulfills the Singleton pattern and therefore can be obtained by any other class by calling <code>Simulation.getInstance()</code>.
+ * <p>
+ * An instance should be created by a runner, such as the {@link SpringRunner}</br>
+ * The flow of a simulation is as follows:
+ * <ul>
+ * <li>1 initiation</li>
+ * <li>2 time increment</li>
+ * <li>3 one model step</li>
+ * <li>4 all {@link DataGatherer}s gather data</li>
+ * <li>5 all {@link Terminator}s are checked for stopping condition<ul>
+ * 	<li>5.1 if any terminator was positive for termination, proceed to 6</li>
+ *  <li>5.2 otherwise return to (2)</li>
+ *  </ul>
+ * <li>6 finish simulaiton and close all gatherers</li>
+ * </ul>
+ * 
+ * @author yoavram
+ * @version Alfred
  */
 public class Simulation {
 	private static Logger logger = Logger.getLogger(Simulation.class);

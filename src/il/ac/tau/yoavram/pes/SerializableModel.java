@@ -1,3 +1,25 @@
+/*
+ *  proevolutionsimulation: an agent-based simulation framework for evolutionary biology
+ *  Copyright 2010 Yoav Ram <yoavram@post.tau.ac.il>
+ *
+ *  This file is part of proevolutionsimulation.
+ *
+ *  proevolutionsimulation is free software: you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License (GNU GPL v3) as published by
+ *  the Free Software Foundation.
+ *   
+ *  proevolutionsimulation is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details. You are allowed to modify this code, link it with other code 
+ *  and release it, as long as you keep the same license. 
+ *  
+ *  The content license is Creative Commons 3.0 BY-SA. 
+ *  
+ *  You should have received a copy of the GNU General Public License
+ *  along with proevolutionsimulation.  If not, see <http://www.gnu.org/licenses/>.
+ *  
+ */
 package il.ac.tau.yoavram.pes;
 
 import il.ac.tau.yoavram.pes.io.Serialization;
@@ -10,6 +32,28 @@ import org.apache.log4j.Logger;
 
 import com.google.common.base.Strings;
 
+/**
+ * This abstract implementation of {@link Model} adds serialization
+ * capabilities.</br> Serializaiton is done using the {@link Serialization}
+ * static class.</br> As of the writing of this doc (subject to changes in
+ * {@link Serialization}), model is serialized using Java built-in
+ * serialization, and then compressed using Java built-in GZIP compression.</br>
+ * Any class that extends this abstract class must make sure that all it's
+ * members are {@link Serializable}</br> Users are encouraged to test the
+ * serialization and deserialization of their models.</br>
+ * <p>
+ * Deserialization can be done in two ways:</br> 1) call the static method
+ * <code>deserialize(filename)</code>.</br> 2) create an instance of
+ * {@link SerializableModel.Factory} and call it's
+ * <code>deserialize(filename)</code> method.</br> There is no difference
+ * between these methods and they co-exist for comfort. I had some problems
+ * running the static method from Spring and therefore used the factory instance
+ * method.</br>
+ * 
+ * @author user
+ * 
+ * @param <T>
+ */
 public abstract class SerializableModel<T extends Object> implements Model<T>,
 		Serializable {
 
@@ -33,8 +77,16 @@ public abstract class SerializableModel<T extends Object> implements Model<T>,
 		}
 	}
 
+	/**
+	 * Model will be serialized to the filename specified by <code>setDir</code>
+	 * , <code>setFilename</code>, and <code>setExtension</code>. Default
+	 * extensions is '.ser'.</br> If no filename is specified then the model's
+	 * ID will be used (<code>getID</code>).
+	 * 
+	 * @return the filepath to which the model was serialized
+	 */
 	public String serialize() {
-		String serString = getDir()+File.separator;
+		String serString = getDir() + File.separator;
 		if (Strings.isNullOrEmpty(getFilename())) {
 			serString += getID().toString();
 		} else {

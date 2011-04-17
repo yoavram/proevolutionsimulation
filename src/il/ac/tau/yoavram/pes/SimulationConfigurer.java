@@ -1,3 +1,25 @@
+/*
+ *  proevolutionsimulation: an agent-based simulation framework for evolutionary biology
+ *  Copyright 2010 Yoav Ram <yoavram@post.tau.ac.il>
+ *
+ *  This file is part of proevolutionsimulation.
+ *
+ *  proevolutionsimulation is free software: you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License (GNU GPL v3) as published by
+ *  the Free Software Foundation.
+ *   
+ *  proevolutionsimulation is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details. You are allowed to modify this code, link it with other code 
+ *  and release it, as long as you keep the same license. 
+ *  
+ *  The content license is Creative Commons 3.0 BY-SA. 
+ *  
+ *  You should have received a copy of the GNU General Public License
+ *  along with proevolutionsimulation.  If not, see <http://www.gnu.org/licenses/>.
+ *  
+ */
 package il.ac.tau.yoavram.pes;
 
 import il.ac.tau.yoavram.pes.utils.DelayedLogger;
@@ -14,6 +36,30 @@ import org.apache.commons.cli.CommandLine;
 import org.apache.log4j.Logger;
 import org.apache.log4j.PropertyConfigurator;
 
+/**
+ * This class is used to configure a {@link Simulation}, using user files and
+ * parameters.</br> Files and parameters are given as <code>String[] args</code>
+ * , typically at commandline.</br> Then the configurer uses a command line
+ * parser to parse the args, read parameters from properties file, initiate
+ * loggers, etc.</br>
+ * <p>
+ * The complete syntax can be evaluated by running SpringRunner without any
+ * arguments or calling this constructor with and empty string array.</br> As of
+ * 31/03/2011, the syntax is:</br>
+ * 
+ * <pre>
+ * usage: java SpringRunner [-f {file}] [-h] [-l {file}] [-p {property=value}] -x {file}
+ *  -f,--pfile <file>                  properties filename
+ *  -h,--help                          print this message
+ *  -l,--log <file>                    log4j config filename
+ *  -p,--properties <property=value>   properties (override properties file)
+ *  -x,--xml <file>                    Spring XML configuration file
+ * </pre>
+ * 
+ * 
+ * @author yoavram
+ * 
+ */
 public class SimulationConfigurer {
 	private static final DelayedLogger logger = new DelayedLogger(
 			Logger.getLogger(SimulationConfigurer.class));

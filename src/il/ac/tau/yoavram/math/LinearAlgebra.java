@@ -3,6 +3,13 @@ package il.ac.tau.yoavram.math;
 import java.math.BigDecimal;
 import java.util.Arrays;
 
+/**
+ * Contains some static methods to perform standard linear algebra procedures on
+ * vectors and matrices.
+ * 
+ * @author yoavram
+ * 
+ */
 public class LinearAlgebra {
 
 	/**
@@ -218,9 +225,9 @@ public class LinearAlgebra {
 					"Vector lengths must agree: u length " + v.length
 							+ ", v length " + u.length);
 	}
-	
+
 	public static void fillMatrix(BigDecimal[][] m, BigDecimal value) {
-		for (int i = 0 ; i < m.length ; i++) {
+		for (int i = 0; i < m.length; i++) {
 			Arrays.fill(m[i], value);
 		}
 	}

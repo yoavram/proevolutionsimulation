@@ -1,3 +1,25 @@
+/*
+ *  proevolutionsimulation: an agent-based simulation framework for evolutionary biology
+ *  Copyright 2010 Yoav Ram <yoavram@post.tau.ac.il>
+ *
+ *  This file is part of proevolutionsimulation.
+ *
+ *  proevolutionsimulation is free software: you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License (GNU GPL v3) as published by
+ *  the Free Software Foundation.
+ *   
+ *  proevolutionsimulation is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details. You are allowed to modify this code, link it with other code 
+ *  and release it, as long as you keep the same license. 
+ *  
+ *  The content license is Creative Commons 3.0 BY-SA. 
+ *  
+ *  You should have received a copy of the GNU General Public License
+ *  along with proevolutionsimulation.  If not, see <http://www.gnu.org/licenses/>.
+ *  
+ */
 package il.ac.tau.yoavram.pes;
 
 import java.io.FileNotFoundException;
@@ -10,8 +32,9 @@ import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 /**
- * 
- * @author Yoav
+ * This class runs a {@link Simulation} that is configured using a Spring XML file from the classpath (usually the config folder).
+ * @author yoavram
+ * @version Alfred
  * 
  */
 public abstract class SpringRunner {
@@ -19,7 +42,7 @@ public abstract class SpringRunner {
 
 	/**
 	 * @param args
-	 *            see {@link SimulationConfigurer}
+	 *            see {@link PesCommandLineParser}
 	 * @throws IOException
 	 * @throws FileNotFoundException
 	 */
