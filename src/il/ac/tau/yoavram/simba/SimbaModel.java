@@ -12,7 +12,7 @@ import org.apache.log4j.Logger;
 import com.google.common.collect.Lists;
 
 /**
- * @author Yoav
+ * @author yoavram
  * 
  */
 public class SimbaModel extends SerializableModel<Bacteria> {
@@ -66,8 +66,7 @@ public class SimbaModel extends SerializableModel<Bacteria> {
 	public void step() {
 		// kill random bacteria
 		int kill = randomBacteriaIndex();
-		getPopulations().get(0).get(kill).die();
-		getPopulations().get(0).remove(kill);
+		getPopulations().get(0).remove(kill).die();
 		logger.debug("Killed bacteria " + kill);
 
 		// reproduce random fit bacteria

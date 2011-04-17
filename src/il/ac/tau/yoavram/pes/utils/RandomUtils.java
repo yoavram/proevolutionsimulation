@@ -32,4 +32,22 @@ public class RandomUtils {
 		return nextDouble() < 0.5;
 	}
 
+	/**
+	 * Knuth shuffle.
+	 * 
+	 * @param unshuffled
+	 *            int array
+	 * 
+	 * @see <a
+	 *      href=http://en.wikipedia.org/wiki/Fisher%E2%80%93Yates_shuffle>wiki
+	 *      </a>
+	 */
+	public static void shuffleArray(int[] array) {
+		for (int i = array.length - 1; i > 0; i--) {
+			int j = nextInt(0, i);
+			int tmp = array[j];
+			array[j] = array[i];
+			array[i] = tmp;
+		}
+	}
 }

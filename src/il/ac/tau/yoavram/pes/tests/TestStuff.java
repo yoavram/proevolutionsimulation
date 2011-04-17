@@ -7,6 +7,12 @@ import java.util.Calendar;
 import java.util.List;
 
 public class TestStuff {
+	
+	public static void main(String[] args) {
+		
+	}
+	
+	
 	//@org.junit.Test
 	public void testList() {
 		List<Integer> list = new ArrayList<Integer>();
