@@ -3,7 +3,7 @@ package il.ac.tau.yoavram.simba;
 import il.ac.tau.yoavram.pes.Simulation;
 import il.ac.tau.yoavram.pes.filters.Filter;
 import il.ac.tau.yoavram.pes.statistics.listeners.DataListener;
-import il.ac.tau.yoavram.pes.utils.SprinUtils;
+import il.ac.tau.yoavram.pes.utils.SpringUtils;
 
 import java.util.List;
 
@@ -24,7 +24,7 @@ public class FitnessHistogramCollector {
 	private double fractionOfGenesToChange = 0;
 
 	public static void main(String[] args) {
-		FitnessHistogramCollector collector = SprinUtils.getBean(args,
+		FitnessHistogramCollector collector = SpringUtils.getBean(args,
 				FitnessHistogramCollector.class);
 		collector.start();
 	}

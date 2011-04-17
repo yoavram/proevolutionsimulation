@@ -1,7 +1,7 @@
-package il.ac.tau.yoavram.simba;
+package il.ac.tau.yoavram.simba.difeq;
 
-import il.ac.tau.yoavram.pes.io.AbstractCsvSorter;
-import il.ac.tau.yoavram.simba.DifeqCsvSorter.DifeqDataSet;
+import il.ac.tau.yoavram.pes.io.csv.AbstractCsvSorter;
+import il.ac.tau.yoavram.simba.difeq.DifeqCsvSorter.DifeqDataSet;
 
 import java.io.IOException;
 import java.math.BigDecimal;

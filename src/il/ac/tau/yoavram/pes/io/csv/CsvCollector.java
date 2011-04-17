@@ -1,8 +1,7 @@
-package il.ac.tau.yoavram.pes.utils;
+package il.ac.tau.yoavram.pes.io.csv;
 
-import il.ac.tau.yoavram.pes.io.CsvReader;
-import il.ac.tau.yoavram.pes.io.CsvWriter;
 import il.ac.tau.yoavram.pes.statistics.collectors.Collector;
+import il.ac.tau.yoavram.pes.utils.SpringUtils;
 
 import java.io.File;
 import java.io.FileFilter;
@@ -23,7 +22,7 @@ public class CsvCollector extends DirectoryWalker {
 	private String path;
 
 	public static void main(String[] args) throws IOException {
-		CsvCollector collector = SprinUtils.getBean(args, CsvCollector.class);
+		CsvCollector collector = SpringUtils.getBean(args, CsvCollector.class);
 		System.out.println("Start to collect " + collector.getPath());
 		collector.start();
 	}

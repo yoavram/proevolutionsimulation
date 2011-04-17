@@ -1,4 +1,4 @@
-package il.ac.tau.yoavram.simba;
+package il.ac.tau.yoavram.simba.difeq;
 
 import il.ac.tau.yoavram.math.LinearAlgebra;
 import il.ac.tau.yoavram.pes.utils.NumberUtils;

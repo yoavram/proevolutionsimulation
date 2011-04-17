@@ -1,6 +1,6 @@
 package il.ac.tau.yoavram.pes.statistics.listeners;
 
-import il.ac.tau.yoavram.pes.io.CsvReader;
+import il.ac.tau.yoavram.pes.io.csv.CsvReader;
 import il.ac.tau.yoavram.pes.utils.NumberUtils;
 
 import java.io.File;

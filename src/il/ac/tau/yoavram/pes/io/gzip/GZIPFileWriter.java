@@ -1,4 +1,4 @@
-package il.ac.tau.yoavram.pes.io;
+package il.ac.tau.yoavram.pes.io.gzip;
 
 import java.io.File;
 import java.io.FileDescriptor;

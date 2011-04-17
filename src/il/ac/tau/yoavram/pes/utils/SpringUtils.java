@@ -3,7 +3,7 @@ package il.ac.tau.yoavram.pes.utils;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
-public class SprinUtils {
+public class SpringUtils {
 	public static <T> T getBean(String[] args, Class<T> clazz) {
 		if (args.length != 1) {
 			String usage = "Usage: "

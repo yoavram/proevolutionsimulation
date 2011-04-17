@@ -1,7 +1,8 @@
 package il.ac.tau.yoavram.pes.tests;
 
-import static org.junit.Assert.*;
-import il.ac.tau.yoavram.pes.io.CsvReader;
+import static org.junit.Assert.assertArrayEquals;
+import static org.junit.Assert.assertEquals;
+import il.ac.tau.yoavram.pes.io.csv.CsvReader;
 
 import java.io.FileNotFoundException;
 

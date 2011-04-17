@@ -1,5 +1,6 @@
-package il.ac.tau.yoavram.pes.io;
+package il.ac.tau.yoavram.pes.io.csv;
 
+import il.ac.tau.yoavram.pes.io.gzip.GZIPFileWriter;
 import il.ac.tau.yoavram.pes.utils.TimeUtils;
 
 import java.io.Closeable;

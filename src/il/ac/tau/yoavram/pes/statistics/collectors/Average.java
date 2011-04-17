@@ -1,6 +1,6 @@
 package il.ac.tau.yoavram.pes.statistics.collectors;
 
-import il.ac.tau.yoavram.pes.io.CsvReader;
+import il.ac.tau.yoavram.pes.io.csv.CsvReader;
 
 import java.math.BigDecimal;
 import java.math.MathContext;

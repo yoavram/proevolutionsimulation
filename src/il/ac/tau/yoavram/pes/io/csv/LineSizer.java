@@ -1,7 +1,4 @@
-package il.ac.tau.yoavram.pes.utils;
-
-import il.ac.tau.yoavram.pes.io.CsvReader;
-import il.ac.tau.yoavram.pes.io.CsvWriter;
+package il.ac.tau.yoavram.pes.io.csv;
 
 import java.io.File;
 import java.io.IOException;

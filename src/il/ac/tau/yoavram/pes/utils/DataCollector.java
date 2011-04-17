@@ -1,7 +1,8 @@
 package il.ac.tau.yoavram.pes.utils;
 
-import il.ac.tau.yoavram.pes.io.CsvReader;
-import il.ac.tau.yoavram.pes.io.CsvWriter;
+import il.ac.tau.yoavram.pes.io.csv.CsvCollector;
+import il.ac.tau.yoavram.pes.io.csv.CsvReader;
+import il.ac.tau.yoavram.pes.io.csv.CsvWriter;
 import il.ac.tau.yoavram.pes.statistics.collectors.Collector;
 
 import java.io.File;
@@ -30,7 +31,7 @@ public class DataCollector {
 	private Collector collector;
 
 	public static void main(String[] args) throws IOException {
-		DataCollector collector = SprinUtils.getBean(args, DataCollector.class);
+		DataCollector collector = SpringUtils.getBean(args, DataCollector.class);
 		System.out.println("Start to collect " + collector.getPath()
 				+ " with filter "
 				+ collector.getFilter().getClass().getSimpleName());

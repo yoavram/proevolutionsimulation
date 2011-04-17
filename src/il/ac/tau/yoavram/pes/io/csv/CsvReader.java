@@ -1,4 +1,6 @@
-package il.ac.tau.yoavram.pes.io;
+package il.ac.tau.yoavram.pes.io.csv;
+
+import il.ac.tau.yoavram.pes.io.gzip.GZIPFileReader;
 
 import java.io.Closeable;
 import java.io.File;

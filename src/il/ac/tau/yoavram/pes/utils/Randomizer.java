@@ -5,6 +5,12 @@ import java.util.concurrent.LinkedBlockingQueue;
 
 import cern.jet.random.Uniform;
 
+/**
+ * 
+ * @author yoavram
+ * @deprecated use {@link RandomUtils}
+ *
+ */
 public class Randomizer extends Thread {
 	private static int COUNTER = 0;
 	private static final int CAPACITY = 100000;

@@ -1,6 +1,6 @@
 package il.ac.tau.yoavram.pes.statistics.listeners;
 
-import il.ac.tau.yoavram.pes.io.CsvWriter;
+import il.ac.tau.yoavram.pes.io.csv.CsvWriter;
 
 import java.io.IOException;
 import java.util.List;

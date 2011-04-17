@@ -1,17 +1,15 @@
-package il.ac.tau.yoavram.simba;
+package il.ac.tau.yoavram.simba.difeq;
 
-import il.ac.tau.yoavram.pes.io.CsvReader;
-import il.ac.tau.yoavram.pes.io.CsvWriter;
+import il.ac.tau.yoavram.pes.io.csv.CsvReader;
+import il.ac.tau.yoavram.pes.io.csv.CsvWriter;
 import il.ac.tau.yoavram.pes.statistics.listeners.ChartDrawer;
 import il.ac.tau.yoavram.pes.statistics.listeners.CsvWriterListener;
 import il.ac.tau.yoavram.pes.statistics.listeners.DataListener;
-import il.ac.tau.yoavram.pes.utils.NumberUtils;
-import il.ac.tau.yoavram.simba.DifeqCsvSorter.DifeqDataSet;
+import il.ac.tau.yoavram.simba.difeq.DifeqCsvSorter.DifeqDataSet;
 
 import java.io.File;
 import java.io.IOException;
 import java.math.BigDecimal;
-import java.util.Arrays;
 import java.util.Comparator;
 
 import org.apache.log4j.Logger;
@@ -47,10 +45,12 @@ public class DifeqFigurer {
 			dataset = new DifeqDataSet(row, 10);
 			a1[dataset.pi] = dataset.meanW;
 		}
-	/*	BigDecimal[] a2 = Arrays.copyOfRange(a1, 2, a1.length);
-		Arrays.sort(a2, NumberUtils.createNaturalBigDecimalComparator());
-		BigDecimal m = a2[0];*/
-		BigDecimal nm =a1[a1.length- 1];
+		/*
+		 * BigDecimal[] a2 = Arrays.copyOfRange(a1, 2, a1.length);
+		 * Arrays.sort(a2, NumberUtils.createNaturalBigDecimalComparator());
+		 * BigDecimal m = a2[0];
+		 */
+		BigDecimal nm = a1[a1.length - 1];
 		DataListener listener = createWriter(dataset);
 		reader.close();
 		// double[] a2 = new double[a1.length];
@@ -58,8 +58,8 @@ public class DifeqFigurer {
 			BigDecimal b = a1[pi].subtract(nm);
 			b = b.multiply(e60);
 			System.out.println(pi + ": " + b.toString());
-			//if (b.compareTo(BigDecimal.ZERO) > 0)
-				listener.listen(new Number[] { pi, b });
+			// if (b.compareTo(BigDecimal.ZERO) > 0)
+			listener.listen(new Number[] { pi, b });
 			// a2[pi] = b.doubleValue();
 		}
 
@@ -70,7 +70,8 @@ public class DifeqFigurer {
 	public DataListener createWriter(DifeqDataSet dataset) throws IOException {
 		CsvWriter w = new CsvWriter();
 		w.setDirectory(reader.getFile().getParent());
-		w.setFilename("scaled_" + reader.getFile().getName().replace(".csv", ""));
+		w.setFilename("scaled_"
+				+ reader.getFile().getName().replace(".csv", ""));
 		w.init();
 
 		CsvWriterListener l = new CsvWriterListener();
