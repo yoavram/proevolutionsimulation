@@ -232,7 +232,7 @@ public class SimpleBacteria implements Serializable, Bacteria {
 	}
 
 	protected Environment getEnvironment() {
-		return Environment.getInstance();
+		return SimpleEnvironment.getInstance();
 	}
 
 	public int[] getEnvironmentalAlleles() {
