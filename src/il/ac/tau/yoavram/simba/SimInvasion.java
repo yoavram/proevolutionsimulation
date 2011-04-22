@@ -2,14 +2,14 @@ package il.ac.tau.yoavram.simba;
 
 import il.ac.tau.yoavram.pes.AbstractInvasion;
 
-public class SimInvasion extends AbstractInvasion<Bacteria, Bacteria> {
+public class SimInvasion extends AbstractInvasion<SimpleBacteria, SimpleBacteria> {
 	// private static final Logger logger = Logger.getLogger(SimInvasion.class);
 
 	private double fitnessThreshold;
 	private double mutationRateModifier;
 
 	@Override
-	public Bacteria transform(Bacteria bacteria) {
+	public SimpleBacteria transform(SimpleBacteria bacteria) {
 		bacteria.setFitnessThreshold(getFitnessThreshold());
 		bacteria.setMutationRateModifier(getMutationRateModifier());
 		return bacteria;
@@ -33,7 +33,7 @@ public class SimInvasion extends AbstractInvasion<Bacteria, Bacteria> {
 
 	@Override
 	public String getInvaderName() {
-		return Bacteria.class.getSimpleName() + " mutationRateModifier "
+		return SimpleBacteria.class.getSimpleName() + " mutationRateModifier "
 				+ getMutationRateModifier() + " fitnessThreshold "
 				+ getFitnessThreshold();
 	}

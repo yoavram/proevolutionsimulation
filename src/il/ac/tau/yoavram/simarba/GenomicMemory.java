@@ -2,11 +2,20 @@ package il.ac.tau.yoavram.simarba;
 
 import il.ac.tau.yoavram.pes.utils.RandomUtils;
 
+import java.io.ObjectInputStream;
+import java.io.Serializable;
 import java.util.LinkedList;
 
 import com.google.common.collect.Lists;
 
-public class GenomicMemory {
+/**
+ * 
+ * @author yoavram
+ * @version Charles
+ */
+public class GenomicMemory implements Serializable {
+
+	private static final long serialVersionUID = 3082455981812409957L;
 
 	private static GenomicMemory INSTANCE = null;
 	private int capacity = 0;
@@ -19,6 +28,11 @@ public class GenomicMemory {
 
 	public static GenomicMemory getInstance() {
 		return INSTANCE;
+	}
+
+	private void readObject(ObjectInputStream ois) throws Exception {
+		ois.defaultReadObject();
+		INSTANCE = this;
 	}
 
 	public void addGenome(int[] genome) {

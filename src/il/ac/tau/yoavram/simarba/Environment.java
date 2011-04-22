@@ -112,6 +112,14 @@ public class Environment implements Serializable {
 		return alleles[gene];
 	}
 
+	/**
+	 * 
+	 * @return a copy of the ideal alleles
+	 */
+	public int[] getIdealAlleles() {
+		return Arrays.copyOf(alleles, alleles.length);
+	}
+
 	public int getGeneType(int gene) {
 		return geneTypes[gene];
 	}

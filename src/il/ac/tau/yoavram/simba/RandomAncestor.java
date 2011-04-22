@@ -2,7 +2,7 @@ package il.ac.tau.yoavram.simba;
 
 import il.ac.tau.yoavram.pes.utils.RandomUtils;
 
-public class RandomAncestor extends Bacteria {
+public class RandomAncestor extends SimpleBacteria {
 	private static final long serialVersionUID = 2055347433087760819L;
 
 	private int numberOfEnvironmentalGenes;

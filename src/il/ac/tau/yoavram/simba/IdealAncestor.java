@@ -1,6 +1,6 @@
 package il.ac.tau.yoavram.simba;
 
-public class IdealAncestor extends Bacteria {
+public class IdealAncestor extends SimpleBacteria {
 	private static final long serialVersionUID = 8192172491310782942L;
 	private int numberOfEnvironmentalGenes;
 

@@ -1,30 +1,32 @@
-package il.ac.tau.yoavram.simba;
+package il.ac.tau.yoavram.simarba;
 
 import il.ac.tau.yoavram.pes.Invasion;
 import il.ac.tau.yoavram.pes.utils.RandomUtils;
 
 import java.util.List;
 
-public class SimCmInvasion implements Invasion<SimpleBacteria, SimpleBacteria> {
-	// private static final Logger logger =
-	// Logger.getLogger(SimCmInvasion.class);
+public class SimCmInvasion implements
+		Invasion<TransformableBacteria, TransformableBacteria> {
 	private double invasionRate;
 	protected SimInvasion simInvasion = new SimInvasion();
 	protected SimInvasion cmInvasion = new SimInvasion();
 
 	public void init() {
-		cmInvasion.setFitnessThreshold(1.0);
+		cmInvasion.setMutationFitnessThreshold(1.0);
 	}
 
 	@Override
-	public List<List<SimpleBacteria>> invade(List<List<SimpleBacteria>> populations) {
-		for (List<SimpleBacteria> population : populations) {
+	public List<List<TransformableBacteria>> invade(
+			List<List<TransformableBacteria>> populations) {
+		for (List<TransformableBacteria> population : populations) {
 			for (int i = 0; i < population.size(); i++) {
 				if (RandomUtils.nextDouble() < getInvasionRate()) {
-					SimpleBacteria e = simInvasion.transform(population.get(i));
+					TransformableBacteria e = simInvasion.transform(population
+							.get(i));
 					population.set(i, e);
 				} else {
-					SimpleBacteria e = cmInvasion.transform(population.get(i));
+					TransformableBacteria e = cmInvasion.transform(population
+							.get(i));
 					population.set(i, e);
 				}
 			}
@@ -32,12 +34,12 @@ public class SimCmInvasion implements Invasion<SimpleBacteria, SimpleBacteria> {
 		return populations;
 	}
 
-	public double getFitnessThreshold() {
-		return simInvasion.getFitnessThreshold();
+	public double getMutationFitnessThreshold() {
+		return simInvasion.getMutationFitnessThreshold();
 	}
 
-	public void setFitnessThreshold(double fitnessThreshold) {
-		simInvasion.setFitnessThreshold(fitnessThreshold);
+	public void setMutationFitnessThreshold(double fitnessThreshold) {
+		simInvasion.setMutationFitnessThreshold(fitnessThreshold);
 	}
 
 	public double getSimMutationRateModifier() {
@@ -58,10 +60,10 @@ public class SimCmInvasion implements Invasion<SimpleBacteria, SimpleBacteria> {
 
 	@Override
 	public String getInvaderName() {
-		return SimpleBacteria.class.getSimpleName() + " SIM mutationRateModifier "
-				+ getSimMutationRateModifier() + " fitnessThreshold "
-				+ getFitnessThreshold() + " CM mutationRateModifier "
-				+ getCmMutationRateModifier();
+		return TransformableBacteria.class.getSimpleName()
+				+ " SIM mutationRateModifier " + getSimMutationRateModifier()
+				+ " mutationFitnessThreshold " + getMutationFitnessThreshold()
+				+ " CM mutationRateModifier " + getCmMutationRateModifier();
 	}
 
 	@Override

@@ -2,24 +2,25 @@ package il.ac.tau.yoavram.simarba;
 
 import il.ac.tau.yoavram.pes.Simulation;
 import il.ac.tau.yoavram.pes.utils.RandomUtils;
+import il.ac.tau.yoavram.simba.Bacteria;
 
 import java.io.ObjectInputStream;
-import java.io.Serializable;
 import java.util.Arrays;
 
 import org.apache.log4j.Logger;
 
 /**
- * Modified from {@link il.ac.tau.yoavram.simba.Bacteria}. Added transformation
- * and explicit genome for all genes, including HK genes.
+ * Modified from {@link il.ac.tau.yoavram.simba.SimpleBacteria}. Added
+ * transformation and explicit genome for all genes, including HK genes.
  * 
  * @author yoavram
  * @version Charles
  */
-public class TransformableBacteria implements Serializable {
+public class TransformableBacteria implements Bacteria {
 	private static final long serialVersionUID = -7309784949905839395L;
 
-	private static final Logger logger = Logger.getLogger(TransformableBacteria.class);
+	private static final Logger logger = Logger
+			.getLogger(TransformableBacteria.class);
 
 	private static final double DEFAULT_FITNESS = -1;
 	private static final long DEFAULT_UPDATE = Long.MAX_VALUE;
@@ -130,12 +131,14 @@ public class TransformableBacteria implements Serializable {
 		TransformableBacteria child = spawn();
 		int numOfMutations = RandomUtils.nextPoisson(getMutationRate());
 		if (numOfMutations > 0) {
-			logger.debug(String.format("New organism %d has %d mutations",
+			logger.debug(String.format("New Bacteria %d has %d mutations",
 					getID(), numOfMutations));
+
+			while (numOfMutations-- > 0) {
+				child.mutate();
+			}
 		}
-		for (int i = 0; i < numOfMutations; i++) {
-			child.mutate();
-		}
+
 		return child;
 	}
 
@@ -175,6 +178,7 @@ public class TransformableBacteria implements Serializable {
 	/**
 	 * @see <a href=http://dx.doi.org/10.1038%2Fnrmicro844>review</a>
 	 */
+	@Override
 	public void transform() {
 		int[] otherAlleles = GenomicMemory.getInstance().getRandomGenome();
 		if (otherAlleles == null) {
