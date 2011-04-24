@@ -27,7 +27,7 @@ import org.apache.log4j.Logger;
  * @author yoavram
  * @version Charles
  */
-public class Environment implements Serializable {
+public class Environment implements il.ac.tau.yoavram.simba.Environment {
 	private static final long serialVersionUID = 6584044267519864446L;
 
 	private static final Logger logger = Logger.getLogger(Environment.class);
@@ -60,10 +60,10 @@ public class Environment implements Serializable {
 		geneTypes = new int[getNumberOfHousekeepingGenes()
 				+ getNumberOfEnvironmentalGenes()];
 		// 0 is HK
-		Arrays.fill(geneTypes, 0, 0, getNumberOfHousekeepingGenes() - 1);
+		Arrays.fill(geneTypes, 0, getNumberOfHousekeepingGenes(), 0);
 		// 1 is ENV
-		Arrays.fill(geneTypes, 1, getNumberOfHousekeepingGenes(),
-				alleles.length);
+		Arrays.fill(geneTypes, getNumberOfHousekeepingGenes(),
+				geneTypes.length, 1);
 		// shuffle genes
 		RandomUtils.shuffleArray(geneTypes);
 

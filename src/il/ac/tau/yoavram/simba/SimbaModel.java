@@ -33,8 +33,9 @@ public class SimbaModel extends SerializableModel<Bacteria> {
 	@Override
 	public void init() {
 		if (getPopulations() == null) {
-			logger.debug("Inhabiting the population with decendents of "
-					+ getAncestor().getID());
+			logger.debug(String.format(
+					"Inhabiting the population with decendents of %s %d",
+					getAncestor().getClass().getName(), getAncestor().getID()));
 			List<Bacteria> pop = Lists.newArrayList();
 			for (int i = 0; i < getPopulationSize(); i++) {
 				pop.add(getAncestor().reproduce());
@@ -45,14 +46,15 @@ public class SimbaModel extends SerializableModel<Bacteria> {
 			logger.debug("Population already inhibited");
 		}
 		if (isChangeEnvironmentOnStartup()) {
-			logger.info("Changing environment by "
-					+ getFractionOfGenesToChange() + "%");
+			logger.info(String.format("Changing %f of the environment",
+					getFractionOfGenesToChange()));
 			getEnvironment().change(getFractionOfGenesToChange());
 		}
 		if (getInvasion() != null) {
-			logger.info("Invading the populations with "
-					+ getInvasion().getInvasionRate() * 100 + "% "
-					+ getInvasion().getInvaderName());
+			logger.info(String.format(
+					"Invading the populations with invasion %s with rate %f",
+					getInvasion().getInvaderName(), getInvasion()
+							.getInvasionRate()));
 			setPopulations(getInvasion().invade(getPopulations()));
 		}
 		// this is a workaround...
@@ -67,7 +69,7 @@ public class SimbaModel extends SerializableModel<Bacteria> {
 		// kill random bacteria
 		int kill = randomBacteriaIndex();
 		getPopulations().get(0).remove(kill).die();
-		logger.debug("Killed bacteria " + kill);
+		logger.debug(String.format("Killed bacteria %d", kill));
 
 		// reproduce random fit bacteria
 		int tries = 0;
@@ -77,9 +79,9 @@ public class SimbaModel extends SerializableModel<Bacteria> {
 					|| tries++ > getPopulationSize()) {
 				Bacteria child = mother.reproduce();
 				getPopulations().get(0).add(child);
-				logger.debug("Reproduced " + mother.getClass().getSimpleName()
-						+ mother.getID() + ", child is "
-						+ child.getClass().getSimpleName() + child.getID());
+				logger.debug(String.format("Reproduced %s %d, child is %s %d",
+						mother.getClass().getSimpleName(), mother.getID(),
+						child.getClass().getSimpleName(), child.getID()));
 			}
 		}
 
@@ -96,11 +98,11 @@ public class SimbaModel extends SerializableModel<Bacteria> {
 		}
 	}
 
-	private Bacteria randomBacteria() {
+	protected Bacteria randomBacteria() {
 		return getPopulations().get(0).get(randomBacteriaIndex());
 	}
 
-	private int randomBacteriaIndex() {
+	protected int randomBacteriaIndex() {
 		return RandomUtils.nextInt(0, getPopulations().get(0).size() - 1);
 	}
 

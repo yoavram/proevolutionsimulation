@@ -43,7 +43,10 @@ public class GenomicMemory implements Serializable {
 	}
 
 	public int[] getRandomGenome() {
-		return memory.remove(RandomUtils.nextInt(0, memory.size() - 1));
+		if (memory.size() > 0)
+			return memory.remove(RandomUtils.nextInt(0, memory.size() - 1));
+		else
+			return null;
 	}
 
 	public void clear() {

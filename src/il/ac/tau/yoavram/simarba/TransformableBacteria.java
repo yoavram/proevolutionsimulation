@@ -36,7 +36,7 @@ public class TransformableBacteria implements Bacteria {
 
 	private int[] alleles;
 	private double mutationRate;
-	private double transformationRate;
+	private double transformationRate; // transformations per cell per generation
 	private double mutationFitnessThreshold = 0;
 	private double transformationFitnessThreshold = 0;
 	private double mutationRateModifier = 1;
@@ -84,7 +84,6 @@ public class TransformableBacteria implements Bacteria {
 	 * @param other
 	 */
 	protected TransformableBacteria create() {
-		logger.debug("Creating new bacteria");
 		return new TransformableBacteria();
 	}
 
@@ -132,7 +131,7 @@ public class TransformableBacteria implements Bacteria {
 		int numOfMutations = RandomUtils.nextPoisson(getMutationRate());
 		if (numOfMutations > 0) {
 			logger.debug(String.format("New Bacteria %d has %d mutations",
-					getID(), numOfMutations));
+					child.getID(), numOfMutations));
 
 			while (numOfMutations-- > 0) {
 				child.mutate();
