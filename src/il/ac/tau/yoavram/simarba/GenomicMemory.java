@@ -5,8 +5,11 @@ import il.ac.tau.yoavram.pes.utils.RandomUtils;
 import java.io.ObjectInputStream;
 import java.io.Serializable;
 import java.util.LinkedList;
+import java.util.SortedMap;
 
 import com.google.common.collect.Lists;
+import com.google.common.collect.MapMaker;
+import com.google.common.collect.Maps;
 
 /**
  * 
@@ -19,11 +22,11 @@ public class GenomicMemory implements Serializable {
 
 	private static GenomicMemory INSTANCE = null;
 	private int capacity = 0;
-	private LinkedList<int[]> memory;
+	private SortedMap<Long, Integer[]> memory;
 
 	public GenomicMemory() {
 		INSTANCE = this;
-		memory = Lists.newLinkedList();
+		memory = new MapMaker();//TODO
 	}
 
 	public static GenomicMemory getInstance() {

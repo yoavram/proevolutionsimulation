@@ -36,7 +36,8 @@ public class TransformableBacteria implements Bacteria {
 
 	private int[] alleles;
 	private double mutationRate;
-	private double transformationRate; // transformations per cell per generation
+	private double transformationRate; // transformations per cell per
+										// generation
 	private double mutationFitnessThreshold = 0;
 	private double transformationFitnessThreshold = 0;
 	private double mutationRateModifier = 1;
@@ -60,9 +61,13 @@ public class TransformableBacteria implements Bacteria {
 	 * @param other
 	 */
 	protected void copy(TransformableBacteria other) {
-		alleles = EMPTY_INT_ARRAY;
-		if (other.alleles.length > 0)
+		if (other.alleles.length == this.alleles.length) {
+			for (int gene = 0; gene < alleles.length; gene++) {
+				alleles[gene] = other.alleles[gene];
+			}
+		} else if (other.alleles.length > 0) {
 			alleles = Arrays.copyOf(other.alleles, other.alleles.length);
+		}
 
 		mutationRate = other.mutationRate;
 		transformationRate = other.transformationRate;
@@ -106,10 +111,11 @@ public class TransformableBacteria implements Bacteria {
 	}
 
 	public void die() {
-		setTrash();
 		if (GenomicMemory.getInstance() != null) {
 			GenomicMemory.getInstance().addGenome(alleles);
 		}
+		setTrash();
+
 	}
 
 	public TransformableBacteria spawn() {
@@ -158,6 +164,13 @@ public class TransformableBacteria implements Bacteria {
 
 	}
 
+	/**
+	 * draw 2 rv to assign start (min) and stop (max+1) point from uniform dist
+	 * 0-alleles.length-1. expected length of recombination is n/3 where n is
+	 * genome length (http://www.jstor.org/stable/2583917)
+	 * 
+	 * @param otherAlleles
+	 */
 	public void recombinate(int[] otherAlleles) {
 		if (alleles.length != otherAlleles.length) {
 			String msg = "Can't recombinate genomes of different sizes: "
@@ -165,10 +178,13 @@ public class TransformableBacteria implements Bacteria {
 			logger.error(msg);
 			throw new IllegalArgumentException(msg);
 		}
-		int start = RandomUtils.nextInt(0, alleles.length - 1);
-		int stop = RandomUtils.nextInt(start + 1, alleles.length);
+		int x1 = RandomUtils.nextInt(0, alleles.length - 1);
+		int x2 = RandomUtils.nextInt(0, alleles.length - 1);
 
-		for (int gene = start; gene < stop; gene++) {
+		int start = Math.min(x1, x2);
+		int stop = Math.max(x1, x2);
+
+		for (int gene = start; gene <= stop; gene++) {
 			alleles[gene] = otherAlleles[gene];
 		}
 		logger.debug(String.format("Recombinated %d alleles", (stop - start)));
