@@ -8,8 +8,11 @@ public class RandomUtils {
 			Uniform.makeDefaultGenerator());
 	private static Poisson poisson = new Poisson(0.0,
 			Poisson.makeDefaultGenerator());
-	/*private static Binomial binomial = new Binomial(0, 0,
-			Binomial.makeDefaultGenerator());*/
+
+	/*
+	 * private static Binomial binomial = new Binomial(0, 0,
+	 * Binomial.makeDefaultGenerator());
+	 */
 
 	private RandomUtils() {
 	}
@@ -17,6 +20,14 @@ public class RandomUtils {
 	public static double nextDouble() {
 		return uniform.nextDouble();
 	}
+
+	/**
+	 * inclusive
+	 * 
+	 * @param from
+	 * @param to
+	 * @return
+	 */
 
 	public static int nextInt(int from, int to) {
 		return uniform.nextIntFromTo(from, to);

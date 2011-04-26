@@ -4,7 +4,6 @@ import il.ac.tau.yoavram.pes.Simulation;
 import il.ac.tau.yoavram.pes.utils.RandomUtils;
 
 import java.io.ObjectInputStream;
-import java.io.Serializable;
 import java.util.Arrays;
 
 import org.apache.commons.lang.NotImplementedException;

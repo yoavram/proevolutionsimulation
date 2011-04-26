@@ -5,7 +5,6 @@ import il.ac.tau.yoavram.pes.utils.RandomUtils;
 import il.ac.tau.yoavram.simba.Bacteria;
 
 import java.io.ObjectInputStream;
-import java.util.Arrays;
 
 import org.apache.log4j.Logger;
 
@@ -61,13 +60,10 @@ public class TransformableBacteria implements Bacteria {
 	 * @param other
 	 */
 	protected void copy(TransformableBacteria other) {
-		if (other.alleles.length == this.alleles.length) {
-			for (int gene = 0; gene < alleles.length; gene++) {
-				alleles[gene] = other.alleles[gene];
-			}
-		} else if (other.alleles.length > 0) {
-			alleles = Arrays.copyOf(other.alleles, other.alleles.length);
+		if (alleles == null || alleles.length != other.alleles.length) {
+			alleles = new int[other.alleles.length];
 		}
+		System.arraycopy(other.alleles, 0, alleles, 0, alleles.length);
 
 		mutationRate = other.mutationRate;
 		transformationRate = other.transformationRate;
@@ -182,11 +178,10 @@ public class TransformableBacteria implements Bacteria {
 		int x2 = RandomUtils.nextInt(0, alleles.length - 1);
 
 		int start = Math.min(x1, x2);
-		int stop = Math.max(x1, x2);
+		int stop = Math.max(x1, x2) + 1;
 
-		for (int gene = start; gene <= stop; gene++) {
-			alleles[gene] = otherAlleles[gene];
-		}
+		System.arraycopy(otherAlleles, start, alleles, start, stop - start);
+
 		logger.debug(String.format("Recombinated %d alleles", (stop - start)));
 	}
 

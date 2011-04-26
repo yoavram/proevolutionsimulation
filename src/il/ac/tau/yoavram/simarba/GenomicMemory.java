@@ -5,11 +5,8 @@ import il.ac.tau.yoavram.pes.utils.RandomUtils;
 import java.io.ObjectInputStream;
 import java.io.Serializable;
 import java.util.LinkedList;
-import java.util.SortedMap;
 
 import com.google.common.collect.Lists;
-import com.google.common.collect.MapMaker;
-import com.google.common.collect.Maps;
 
 /**
  * 
@@ -21,12 +18,18 @@ public class GenomicMemory implements Serializable {
 	private static final long serialVersionUID = 3082455981812409957L;
 
 	private static GenomicMemory INSTANCE = null;
+
 	private int capacity = 0;
-	private SortedMap<Long, Integer[]> memory;
+	private LinkedList<int[]> memory;
+	private transient int[] recycle;
 
 	public GenomicMemory() {
 		INSTANCE = this;
-		memory = new MapMaker();//TODO
+	}
+
+	public void init() {
+		memory = Lists.newLinkedList();
+		recycle = null;
 	}
 
 	public static GenomicMemory getInstance() {
@@ -39,21 +42,36 @@ public class GenomicMemory implements Serializable {
 	}
 
 	public void addGenome(int[] genome) {
-		memory.push(genome);
+		int len = genome.length;
+		if (recycle == null || recycle.length != len) {
+			recycle = new int[len];
+		}
+		System.arraycopy(genome, 0, recycle, 0, len);
+		memory.add(recycle);
+		recycle = null;
 		while (memory.size() > getCapacity()) {
-			memory.removeLast();
+			recycle = memory.removeFirst();
 		}
 	}
 
+	/**
+	 * returns a random genome from the memory.
+	 * 
+	 * @return a genome. please do not use this array - only copy from it, as it
+	 *         will be reused in the memory.
+	 */
 	public int[] getRandomGenome() {
-		if (memory.size() > 0)
-			return memory.remove(RandomUtils.nextInt(0, memory.size() - 1));
-		else
+		if (memory.size() < 1) {
 			return null;
+		}
+		int rand = RandomUtils.nextInt(0, memory.size() - 1);
+		recycle = memory.remove(rand);
+		return recycle;
 	}
 
 	public void clear() {
 		memory.clear();
+		recycle = null;
 	}
 
 	public void setCapacity(int capacity) {
@@ -62,5 +80,9 @@ public class GenomicMemory implements Serializable {
 
 	public int getCapacity() {
 		return capacity;
+	}
+
+	public int size() {
+		return memory.size();
 	}
 }
