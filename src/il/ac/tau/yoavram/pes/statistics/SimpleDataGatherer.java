@@ -21,6 +21,8 @@ public class SimpleDataGatherer<T> implements DataGatherer<T> {
 	private List<Aggregator<T>> aggregators;
 	private List<Filter<T>> filters;
 	private Collection<DataListener> listeners;
+	private Collection<DataListener> finalListeners;
+
 	private Model<T> model;
 	private int interval = 1;
 	protected List<Number> dataList;
@@ -50,6 +52,12 @@ public class SimpleDataGatherer<T> implements DataGatherer<T> {
 	}
 
 	@Override
+	public DataGatherer<T> addFinalListener(DataListener listener) {
+		finalListeners.add(listener);
+		return this;
+	}
+
+	@Override
 	public List<Aggregator<T>> getAggregators() {
 		return aggregators;
 	}
@@ -62,6 +70,11 @@ public class SimpleDataGatherer<T> implements DataGatherer<T> {
 	@Override
 	public Collection<DataListener> getListeners() {
 		return listeners;
+	}
+
+	@Override
+	public Collection<DataListener> getFinalListeners() {
+		return finalListeners;
 	}
 
 	@Override
@@ -79,6 +92,13 @@ public class SimpleDataGatherer<T> implements DataGatherer<T> {
 	@Override
 	public DataGatherer<T> setListeners(Collection<DataListener> listeners) {
 		this.listeners = listeners;
+		return this;
+	}
+
+	@Override
+	public DataGatherer<T> setFinalListeners(
+			Collection<DataListener> finalListeners) {
+		this.finalListeners = finalListeners;
 		return this;
 	}
 
@@ -115,6 +135,11 @@ public class SimpleDataGatherer<T> implements DataGatherer<T> {
 
 	@Override
 	public void close() throws IOException {
+		Number[] data = dataList.toArray(EMPTY_NUMBER_ARRAY);
+		for (DataListener listener : getFinalListeners()) {
+			listener.listen(data);
+			listener.close();
+		}
 		for (DataListener listener : getListeners()) {
 			listener.close();
 		}

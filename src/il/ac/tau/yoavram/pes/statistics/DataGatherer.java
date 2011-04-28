@@ -30,6 +30,12 @@ public interface DataGatherer<T> extends Closeable {
 
 	DataGatherer<T> setModel(Model<T> model);
 
+	DataGatherer<T> addFinalListener(DataListener listener);
+
+	Collection<DataListener> getFinalListeners();
+
+	DataGatherer<T> setFinalListeners(Collection<DataListener> listeners);
+	
 	Model<T> getModel();
 
 	DataGatherer<T> setInterval(int interval);

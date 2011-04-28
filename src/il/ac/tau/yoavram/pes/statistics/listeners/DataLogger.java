@@ -20,6 +20,10 @@ public class DataLogger implements DataListener {
 	}
 
 	@Override
+	public void init() {
+	}
+
+	@Override
 	public void close() throws IOException {
 	}
 
