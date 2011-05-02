@@ -15,7 +15,6 @@ import com.google.common.collect.Lists;
  * @version Charles
  */
 public class GenomicMemory implements Serializable {
-
 	private static final long serialVersionUID = 3082455981812409957L;
 
 	private static GenomicMemory INSTANCE = null;

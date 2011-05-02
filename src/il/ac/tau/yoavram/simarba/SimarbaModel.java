@@ -11,9 +11,7 @@ import org.apache.log4j.Logger;
  * @version Charles
  */
 public class SimarbaModel extends SimbaModel {
-
-	private static final long serialVersionUID = 864378378066751467L;
-
+	private static final long serialVersionUID = -855542231005863606L;
 	private static final Logger logger = Logger.getLogger(SimarbaModel.class);
 
 	private GenomicMemory genomicMemory = null; // for serialization

@@ -1,6 +1,8 @@
 package il.ac.tau.yoavram.simba;
 
-public interface Bacteria {
+import java.io.Serializable;
+
+public interface Bacteria extends Serializable{
 
 	public abstract void die();
 
