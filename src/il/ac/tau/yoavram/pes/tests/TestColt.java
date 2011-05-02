@@ -4,10 +4,6 @@ import il.ac.tau.yoavram.pes.utils.Randomizer;
 
 import java.util.Random;
 
-/*import org.apache.commons.math.distribution.PoissonDistribution;
- import org.apache.commons.math.distribution.PoissonDistributionImpl;
- import org.apache.commons.math.random.MersenneTwister;
- */
 import org.junit.Before;
 import org.junit.Test;
 
@@ -15,6 +11,7 @@ import cern.jet.random.Poisson;
 import cern.jet.random.Uniform;
 
 @org.junit.Ignore
+@SuppressWarnings("deprecation")
 public class TestColt {
 
 	Uniform coltUniform;

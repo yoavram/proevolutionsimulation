@@ -10,6 +10,7 @@ import com.google.common.collect.Lists;
 
 public abstract class FullDataGatherer<T> extends SimpleDataGatherer<T> {
 	private Aggregator<T> ticker;
+	private List<Number> dataList;
 
 	@Override
 	public void init() {

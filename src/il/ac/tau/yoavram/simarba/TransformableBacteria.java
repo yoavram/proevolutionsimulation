@@ -111,7 +111,6 @@ public class TransformableBacteria implements Bacteria {
 			GenomicMemory.getInstance().addGenome(alleles);
 		}
 		setTrash();
-
 	}
 
 	public TransformableBacteria spawn() {
@@ -139,7 +138,6 @@ public class TransformableBacteria implements Bacteria {
 				child.mutate();
 			}
 		}
-
 		return child;
 	}
 

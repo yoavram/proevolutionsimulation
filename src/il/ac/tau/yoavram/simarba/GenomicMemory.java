@@ -4,7 +4,8 @@ import il.ac.tau.yoavram.pes.utils.RandomUtils;
 
 import java.io.ObjectInputStream;
 import java.io.Serializable;
-import java.util.LinkedList;
+import java.util.Arrays;
+import java.util.List;
 
 import com.google.common.collect.Lists;
 
@@ -20,16 +21,17 @@ public class GenomicMemory implements Serializable {
 	private static GenomicMemory INSTANCE = null;
 
 	private int capacity = 0;
-	private LinkedList<int[]> memory;
-	private transient int[] recycle;
+	private List<int[]> memory;
+
+	// private transient int[] recycle;
 
 	public GenomicMemory() {
 		INSTANCE = this;
 	}
 
 	public void init() {
-		memory = Lists.newLinkedList();
-		recycle = null;
+		memory = Lists.newArrayListWithCapacity(getCapacity()+1);
+		// recycle = null;
 	}
 
 	public static GenomicMemory getInstance() {
@@ -41,37 +43,39 @@ public class GenomicMemory implements Serializable {
 		INSTANCE = this;
 	}
 
-	public void addGenome(int[] genome) {
-		int len = genome.length;
-		if (recycle == null || recycle.length != len) {
-			recycle = new int[len];
-		}
-		System.arraycopy(genome, 0, recycle, 0, len);
-		memory.add(recycle);
-		recycle = null;
+	public void addGenome(final int[] genome) {
+		// int len = genome.length;
+		/*
+		 * if (recycle == null || recycle.length != len) { recycle = new
+		 * int[len]; }
+		 */
+		// System.arraycopy(genome, 0, recycle, 0, len);
+		memory.add(Arrays.copyOf(genome, genome.length));
+		// recycle = null;
 		while (memory.size() > getCapacity()) {
-			recycle = memory.removeFirst();
+			// recycle =
+			memory.remove(0);
 		}
 	}
 
 	/**
 	 * returns a random genome from the memory.
 	 * 
-	 * @return a genome. please do not use this array - only copy from it, as it
-	 *         will be reused in the memory.
+	 * @return a genome.
 	 */
 	public int[] getRandomGenome() {
 		if (memory.size() < 1) {
 			return null;
 		}
 		int rand = RandomUtils.nextInt(0, memory.size() - 1);
-		recycle = memory.remove(rand);
-		return recycle;
+		// recycle =
+		return memory.remove(rand);
+		// return recycle;
 	}
 
 	public void clear() {
 		memory.clear();
-		recycle = null;
+		// recycle = null;
 	}
 
 	public void setCapacity(int capacity) {

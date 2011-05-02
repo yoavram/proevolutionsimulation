@@ -19,7 +19,7 @@
 		<property name="blockAtEnd" value="${simulation.block}" />
 		<property name="ID" value="${jobName}.${time}" />
 	</bean>
-	<bean id="environment" class="il.ac.tau.yoavram.simba.Environment">
+	<bean id="environment" class="il.ac.tau.yoavram.simba.SimpleEnvironment">
 		<property name="numberOfEnvironmentalGenes" value="${numberOfEnvironmentalGenes}" />
 	</bean>
 	<bean id="tickTerminator" class="il.ac.tau.yoavram.pes.terminators.TickTerminator">
@@ -56,7 +56,7 @@
 			<list>
 				<bean class="il.ac.tau.yoavram.pes.statistics.listeners.CsvWriterListener">
 					<property name="csvWriter">
-						<bean class="il.ac.tau.yoavram.pes.io.CsvWriter">
+						<bean class="il.ac.tau.yoavram.pes.io.csv.CsvWriter">
 							<property name="filename" value="${jobName}.${time}" />
 							<property name="directory" value="${output.dir}/${jobName}" />
 
