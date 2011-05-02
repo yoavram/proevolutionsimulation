@@ -25,13 +25,14 @@ public class SimpleDataGatherer<T> implements DataGatherer<T> {
 
 	private Model<T> model;
 	private int interval = 1;
-	//protected List<Number> dataList;
+	// protected List<Number> dataList;
 	protected Number[] data;
 
 	public SimpleDataGatherer() {
 		aggregators = new ArrayList<Aggregator<T>>();
 		filters = new ArrayList<Filter<T>>();
 		listeners = new HashSet<DataListener>();
+		finalListeners = new HashSet<DataListener>();
 	}
 
 	@Override
@@ -131,7 +132,7 @@ public class SimpleDataGatherer<T> implements DataGatherer<T> {
 		for (DataListener dl : listeners) {
 			dl.setDataFieldNames(aggList);
 		}
-	//	dataList = new ArrayList<Number>(getAggregators().size());
+		// dataList = new ArrayList<Number>(getAggregators().size());
 		data = new Number[getAggregators().size()];
 	}
 
@@ -170,13 +171,14 @@ public class SimpleDataGatherer<T> implements DataGatherer<T> {
 			}
 		}
 
-		/*for (Aggregator<T> agg : getAggregators()) {
-			dataList.add(agg.result());
-		}*/
+		/*
+		 * for (Aggregator<T> agg : getAggregators()) {
+		 * dataList.add(agg.result()); }
+		 */
 		for (int i = 0; i < data.length; i++) {
 			data[i] = getAggregators().get(i).result();
 		}
-		//Number[] data = dataList.toArray(EMPTY_NUMBER_ARRAY);
+		// Number[] data = dataList.toArray(EMPTY_NUMBER_ARRAY);
 		for (DataListener listener : getListeners()) {
 			listener.listen(data);
 		}
