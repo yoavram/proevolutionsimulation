@@ -12,6 +12,9 @@ import org.apache.log4j.Logger;
  * Modified from {@link il.ac.tau.yoavram.simba.SimpleBacteria}. Added
  * transformation and explicit genome for all genes, including HK genes.
  * 
+ * TODO add mutating and recombinating modifiers of basal rates, thresholds,
+ * and increases
+ * 
  * @author yoavram
  * @version Charles
  */
@@ -33,7 +36,7 @@ public class TransformableBacteria implements Bacteria {
 	private double beneficialMutationProbability; // STATIC?
 	private double deleteriousMutationProbability;// STATIC?
 
-	private int[] alleles;
+	private int[] alleles; // the genome is assumed to be a cycle
 	private double mutationRate;
 	private double transformationRate; // transformations per cell per
 										// generation
@@ -172,13 +175,19 @@ public class TransformableBacteria implements Bacteria {
 			logger.error(msg);
 			throw new IllegalArgumentException(msg);
 		}
-		int x1 = RandomUtils.nextInt(0, alleles.length - 1);
-		int x2 = RandomUtils.nextInt(0, alleles.length - 1);
+		int start = RandomUtils.nextInt(0, alleles.length - 1);
+		int stop = RandomUtils.nextInt(1, alleles.length);
 
-		int start = Math.min(x1, x2);
-		int stop = Math.max(x1, x2) + 1;
-
-		System.arraycopy(otherAlleles, start, alleles, start, stop - start);
+		if (start == stop) {
+			System.arraycopy(otherAlleles, 0, alleles, 0, alleles.length);
+		}
+		if (start < stop) {
+			System.arraycopy(otherAlleles, start, alleles, start, stop - start);
+		} else {// start>stop
+			System.arraycopy(otherAlleles, start, alleles, start,
+					alleles.length - start);
+			System.arraycopy(otherAlleles, 0, alleles, 0, stop);
+		}
 
 		logger.debug(String.format("Recombinated %d alleles", (stop - start)));
 	}
