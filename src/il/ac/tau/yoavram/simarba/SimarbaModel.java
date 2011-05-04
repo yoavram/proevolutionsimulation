@@ -14,7 +14,20 @@ public class SimarbaModel extends SimbaModel {
 	private static final long serialVersionUID = -855542231005863606L;
 	private static final Logger logger = Logger.getLogger(SimarbaModel.class);
 
-	private GenomicMemory genomicMemory = null; // for serialization
+	private GenomicMemory genomicMemory = null;
+
+	@Override
+	public void init() {
+		super.init();
+		if (genomicMemory == null) {
+			genomicMemory = new GenomicMemory();
+			genomicMemory.setCapacity(getPopulationSize() / 100);
+			logger.warn(String.format(
+					"No %s set, created one with capacity %d", genomicMemory
+							.getClass().getSimpleName(), getGenomicMemory()
+							.getCapacity()));
+		}
+	}
 
 	@Override
 	public void step() {
@@ -24,10 +37,12 @@ public class SimarbaModel extends SimbaModel {
 		int numOfTrans = RandomUtils.nextPoisson(bacteria
 				.getTransformationRate());
 		if (numOfTrans > 0) {
-			logger.debug(String.format("Bacteria %d has %d transformations",
-					bacteria.getID(), numOfTrans));
 			for (int i = 0; i < numOfTrans; i++) {
-				bacteria.transform();
+				int num = bacteria.recombinate(getGenomicMemory()
+						.getRandomGenome());
+				logger.debug(String.format("%s %d recombinated %d alleles",
+						bacteria.getClass().getSimpleName(), bacteria.getID(),
+						num));
 			}
 		}
 	}

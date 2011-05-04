@@ -12,8 +12,10 @@ import org.apache.log4j.Logger;
  * Modified from {@link il.ac.tau.yoavram.simba.SimpleBacteria}. Added
  * transformation and explicit genome for all genes, including HK genes.
  * 
- * TODO add mutating and recombinating modifiers of basal rates, thresholds,
- * and increases
+ * TODO add mutating and recombinating modifiers of basal rates, thresholds, and
+ * increases
+ * 
+ * @see <a href=http://dx.doi.org/10.1038%2Fnrmicro844>review</a>
  * 
  * @author yoavram
  * @version Charles
@@ -162,13 +164,13 @@ public class TransformableBacteria implements Bacteria {
 	}
 
 	/**
-	 * draw 2 rv to assign start (min) and stop (max+1) point from uniform dist
-	 * 0-alleles.length-1. expected length of recombination is n/3 where n is
-	 * genome length (http://www.jstor.org/stable/2583917)
+	 * draw 2 rv to assign start point (0 to n-1) and length (1 to n) from
+	 * uniform dist. expected length of recombination is n/2s where n is genome
+	 * length 
 	 * 
 	 * @param otherAlleles
 	 */
-	public void recombinate(int[] otherAlleles) {
+	public int recombinate(int[] otherAlleles) {
 		if (alleles.length != otherAlleles.length) {
 			String msg = "Can't recombinate genomes of different sizes: "
 					+ alleles.length + " and " + otherAlleles.length;
@@ -176,33 +178,17 @@ public class TransformableBacteria implements Bacteria {
 			throw new IllegalArgumentException(msg);
 		}
 		int start = RandomUtils.nextInt(0, alleles.length - 1);
-		int stop = RandomUtils.nextInt(1, alleles.length);
+		int length = RandomUtils.nextInt(1, alleles.length);
 
-		if (start == stop) {
-			System.arraycopy(otherAlleles, 0, alleles, 0, alleles.length);
-		}
-		if (start < stop) {
-			System.arraycopy(otherAlleles, start, alleles, start, stop - start);
-		} else {// start>stop
-			System.arraycopy(otherAlleles, start, alleles, start,
-					alleles.length - start);
-			System.arraycopy(otherAlleles, 0, alleles, 0, stop);
-		}
-
-		logger.debug(String.format("Recombinated %d alleles", (stop - start)));
-	}
-
-	/**
-	 * @see <a href=http://dx.doi.org/10.1038%2Fnrmicro844>review</a>
-	 */
-	@Override
-	public void transform() {
-		int[] otherAlleles = GenomicMemory.getInstance().getRandomGenome();
-		if (otherAlleles == null) {
-			logger.warn("Couldn't transform, genomic memory empty");
+		if (start + length < alleles.length) {
+			System.arraycopy(otherAlleles, start, alleles, start, length);
 		} else {
-			recombinate(otherAlleles);
+			int firstLen = alleles.length - start;
+			System.arraycopy(otherAlleles, start, alleles, start, firstLen);
+			int SecondLen = length - firstLen;
+			System.arraycopy(otherAlleles, 0, alleles, 0, SecondLen);
 		}
+		return length;
 	}
 
 	public double getFitness() {

@@ -2,7 +2,7 @@ package il.ac.tau.yoavram.simba;
 
 import java.io.Serializable;
 
-public interface Bacteria extends Serializable{
+public interface Bacteria extends Serializable {
 
 	public abstract void die();
 
@@ -10,7 +10,7 @@ public interface Bacteria extends Serializable{
 
 	public abstract Bacteria reproduce();
 
-	public abstract void transform();
+	public abstract int recombinate(int[] alleles);
 
 	public abstract void mutate();
 

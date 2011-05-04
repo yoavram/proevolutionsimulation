@@ -344,12 +344,12 @@ public class SimpleBacteria implements Serializable, Bacteria {
 	}
 
 	@Override
-	public void transform() {
-		// nothing to do
+	public double getTransformationRate() {
+		return 0;
 	}
 
 	@Override
-	public double getTransformationRate() {
+	public int recombinate(int[] alleles) {
 		return 0;
 	}
 }
