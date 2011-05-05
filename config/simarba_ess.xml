@@ -41,7 +41,7 @@
 		<property name="transformationThreshold" value="${transformationThreshold}" />
 		<property name="alleleChangeDistribution">
 			<bean
-				class="il.ac.tau.yoavram.pes.random.NormalDistributionSupportedOnTheUnit">
+				class="il.ac.tau.yoavram.pes.random.NormalDistribution">
 				<property name="mean" value="${meanAlleleChange}" />
 				<property name="standardDeviation" value="${stdAlleleChange}" />
 			</bean>
@@ -54,14 +54,14 @@
 		</property>
 		<property name="thresholdChangeDistribution">
 			<bean
-				class="il.ac.tau.yoavram.pes.random.NormalDistributionSupportedOnTheUnit">
+				class="il.ac.tau.yoavram.pes.random.NormalDistribution">
 				<property name="mean" value="${meanThresholdChange}" />
 				<property name="standardDeviation" value="${stdThresholdChange}" />
 			</bean>
 		</property>
 		<property name="transformationRateChangeDistribution">
 			<bean
-				class="il.ac.tau.yoavram.pes.random.NormalDistributionSupportedOnTheUnit">
+				class="il.ac.tau.yoavram.pes.random.NormalDistribution">
 				<property name="mean" value="${meanTransformationRateChange}" />
 				<property name="standardDeviation" value="${stdTransformationRateChange}" />
 			</bean>
