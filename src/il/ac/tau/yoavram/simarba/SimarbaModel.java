@@ -38,8 +38,7 @@ public class SimarbaModel extends SimbaModel {
 				.getTransformationRate());
 		if (numOfTrans > 0) {
 			for (int i = 0; i < numOfTrans; i++) {
-				int num = bacteria.recombinate(getGenomicMemory()
-						.getRandomGenome());
+				int num = bacteria.recombinate();
 				logger.debug(String.format("%s %d recombinated %d alleles",
 						bacteria.getClass().getSimpleName(), bacteria.getID(),
 						num));

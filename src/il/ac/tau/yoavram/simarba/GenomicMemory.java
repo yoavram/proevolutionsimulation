@@ -20,7 +20,7 @@ public class GenomicMemory implements Serializable {
 	private static GenomicMemory INSTANCE = null;
 
 	private int capacity = 0;
-	private List<int[]> memory;
+	private List<float[]> memory;
 
 	// private transient int[] recycle;
 
@@ -29,7 +29,7 @@ public class GenomicMemory implements Serializable {
 	}
 
 	public void init() {
-		memory = Lists.newArrayListWithCapacity(getCapacity()+1);
+		memory = Lists.newArrayListWithCapacity(getCapacity() + 1);
 		// recycle = null;
 	}
 
@@ -42,7 +42,7 @@ public class GenomicMemory implements Serializable {
 		INSTANCE = this;
 	}
 
-	public void addGenome(final int[] genome) {
+	public void addGenome(float[] genome) {
 		// int len = genome.length;
 		/*
 		 * if (recycle == null || recycle.length != len) { recycle = new
@@ -62,7 +62,7 @@ public class GenomicMemory implements Serializable {
 	 * 
 	 * @return a genome.
 	 */
-	public int[] getRandomGenome() {
+	public float[] getRandomGenome() {
 		if (memory.size() < 1) {
 			return null;
 		}

@@ -2,7 +2,7 @@ package il.ac.tau.yoavram.simarba;
 
 import il.ac.tau.yoavram.pes.utils.RandomUtils;
 
-public class RandomAncestor extends TransformableBacteria {
+public class RandomAncestor extends IdealAncestor {
 	private static final long serialVersionUID = -1820986529454870872L;
 
 	private double randomness = 0.01;
@@ -12,18 +12,24 @@ public class RandomAncestor extends TransformableBacteria {
 	}
 
 	public void init() {
-		int[] alleles = getEnvironment().getIdealAlleles();
-		for (int i = 0; i < alleles.length; i++) {
-			if (RandomUtils.nextDouble() < getRandomness())
-				alleles[i] = RandomUtils.nextInt(0, 2);
+		super.init();
+		for (int gene = 0; gene < alleles.length; gene++) {
+			if (alleles[gene] != -1
+					&& RandomUtils.nextDouble() < getRandomness()) {
+				alleles[gene] = (float) RandomUtils.nextDouble();
+			}
 		}
-		setAlleles(alleles);
 	}
 
 	@Override
 	public void die() {
 	}
 
+	/**
+	 * The probability that an allele will be random instead of ideal
+	 * 
+	 * @return the probability. default is 0.01.
+	 */
 	public double getRandomness() {
 		return randomness;
 	}

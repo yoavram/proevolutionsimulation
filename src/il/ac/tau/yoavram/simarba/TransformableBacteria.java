@@ -1,6 +1,7 @@
 package il.ac.tau.yoavram.simarba;
 
 import il.ac.tau.yoavram.pes.Simulation;
+import il.ac.tau.yoavram.pes.random.Distribution;
 import il.ac.tau.yoavram.pes.utils.RandomUtils;
 import il.ac.tau.yoavram.simarba.Environment.GeneType;
 import il.ac.tau.yoavram.simba.Bacteria;
@@ -9,12 +10,11 @@ import java.io.ObjectInputStream;
 
 import org.apache.log4j.Logger;
 
+import com.google.common.collect.Multimap;
+
 /**
  * Modified from {@link il.ac.tau.yoavram.simba.SimpleBacteria}. Added
  * transformation and explicit genome for all genes, including HK genes.
- * 
- * TODO add mutating and recombinating modifiers of basal rates, thresholds, and
- * increases
  * 
  * @see <a href=http://dx.doi.org/10.1038%2Fnrmicro844>review</a>
  * 
@@ -22,38 +22,41 @@ import org.apache.log4j.Logger;
  * @version Charles
  */
 public class TransformableBacteria implements Bacteria {
-	private static final long serialVersionUID = -7309784949905839395L;
-
+	private static final long serialVersionUID = 2231196569650656097L;
 	private static final Logger logger = Logger
 			.getLogger(TransformableBacteria.class);
 
-	private static final double DEFAULT_FITNESS = -1;
+	private static final double DEFAULT_VALUE = -1;
 	private static final long DEFAULT_UPDATE = Long.MAX_VALUE;
-	private static final int[] EMPTY_INT_ARRAY = new int[0];
+	private static final float[] EMPTY_FLOAT_ARRAY = new float[0];
+
+	// modifiers: 0:mut basal rate 1:mut induced rate 2:mut threshold 3:trans
+	// basal rate 4:trans induced rate 5:trans threshold
+	protected static Multimap<Integer, Integer> modifierPositions;
+
+	protected static Distribution alleleChangeDistribution;
+	protected static Distribution mutationRateChangeDistribution;
+	protected static Distribution transformationRateChangeDistribution;
+	protected static Distribution thresholdChangeDistribution;
 
 	private static TransformableBacteria trash = null;
 	private static int nextID = 0;
 	private int id = nextID++;
 
-	private double selectionCoefficient; // STATIC?
-	private double beneficialMutationProbability; // STATIC?
-	private double deleteriousMutationProbability;// STATIC?
+	protected float[] alleles = EMPTY_FLOAT_ARRAY;
 
-	private int[] alleles; // the genome is assumed to be a cycle
-	private double mutationRate = Double.NaN;
-	private double transformationRate = Double.NaN; // transformations per cell
-													// per
-	// generation
-	private double mutationFitnessThreshold = Double.NaN;
-	private double transformationFitnessThreshold = Double.NaN;
-	private double mutationRateModifier = Double.NaN;
-	private double transformationRateModifier = Double.NaN;
-
-	protected transient double fitness = DEFAULT_FITNESS;
-	protected transient long update = DEFAULT_UPDATE;
+	protected double fitness = DEFAULT_VALUE;
+	protected double mutationRate = DEFAULT_VALUE;
+	protected double mutationThreshold = DEFAULT_VALUE;
+	protected double transformationRate = DEFAULT_VALUE;
+	protected double transformationThreshold = DEFAULT_VALUE;
+	protected transient long fitnessUpdate = DEFAULT_UPDATE;
+	protected transient long mutationRateUpdate = DEFAULT_UPDATE;
+	protected transient long transformationRateUpdate = DEFAULT_UPDATE;
+	protected transient long transformationThresholdUpdate = DEFAULT_UPDATE;
+	protected transient long mutationThresholdUpdate = DEFAULT_UPDATE;
 
 	public TransformableBacteria() {
-		alleles = EMPTY_INT_ARRAY;
 	}
 
 	public TransformableBacteria(TransformableBacteria other) {
@@ -68,16 +71,19 @@ public class TransformableBacteria implements Bacteria {
 	 */
 	protected void copy(TransformableBacteria other) {
 		if (alleles == null || alleles.length != other.alleles.length) {
-			alleles = new int[other.alleles.length];
+			alleles = new float[other.alleles.length];
 		}
 		System.arraycopy(other.alleles, 0, alleles, 0, alleles.length);
-
-		selectionCoefficient = other.selectionCoefficient;
-		beneficialMutationProbability = other.beneficialMutationProbability;
-		deleteriousMutationProbability = other.deleteriousMutationProbability;
-
-		fitness = DEFAULT_FITNESS;
-		update = DEFAULT_UPDATE;
+		this.fitness = other.fitness;
+		this.mutationRate = other.mutationRate;
+		this.mutationThreshold = other.mutationThreshold;
+		this.transformationRate = other.transformationRate;
+		this.transformationThreshold = other.transformationThreshold;
+		this.fitnessUpdate = other.fitnessUpdate;
+		this.mutationRateUpdate = other.mutationRateUpdate;
+		this.mutationThresholdUpdate = other.mutationThresholdUpdate;
+		this.transformationRateUpdate = other.transformationRateUpdate;
+		this.transformationThresholdUpdate = other.transformationThresholdUpdate;
 	}
 
 	/**
@@ -101,10 +107,21 @@ public class TransformableBacteria implements Bacteria {
 		trash = null;
 	}
 
+	protected void notUpdated() {
+		update(DEFAULT_UPDATE);
+	}
+
+	protected void update(long time) {
+		fitnessUpdate = time;
+		mutationRateUpdate = time;
+		transformationRateUpdate = time;
+		mutationThresholdUpdate = time;
+		transformationThresholdUpdate = time;
+	}
+
 	private void readObject(ObjectInputStream ois) throws Exception {
 		ois.defaultReadObject();
-		fitness = DEFAULT_FITNESS;
-		update = DEFAULT_UPDATE;
+		notUpdated();
 	}
 
 	public void die() {
@@ -116,9 +133,9 @@ public class TransformableBacteria implements Bacteria {
 
 	public TransformableBacteria spawn() {
 		TransformableBacteria recycled = null;
-		if (getTrash() == null)
+		if (getTrash() == null) {
 			recycled = create();
-		else {
+		} else {
 			recycled = getTrash();
 			removeTrash();
 			recycled.id = nextID++;
@@ -128,7 +145,6 @@ public class TransformableBacteria implements Bacteria {
 	}
 
 	public TransformableBacteria reproduce() {
-		// logger.debug(getID() + " reproducing");
 		TransformableBacteria child = spawn();
 		int numOfMutations = RandomUtils.nextPoisson(getMutationRate());
 		if (numOfMutations > 0) {
@@ -144,23 +160,46 @@ public class TransformableBacteria implements Bacteria {
 
 	public void mutate() {
 		int gene = RandomUtils.nextInt(0, alleles.length - 1);
-		GeneType type = getEnvironment().getGeneType(gene);
-		if (type.equals(GeneType.HK) || type.equals(GeneType.ENV)) {
-			double rand = RandomUtils.nextDouble();
-			int idealAllele = getEnvironment().getIdealAllele(gene);
-			if (rand < getBeneficialMutationProbability()) {
-				alleles[gene] = idealAllele;
-			} else if (rand < getBeneficialMutationProbability()
-					+ getDeleteriousMutationProbability()) {
-				// randomly chose one of the non-ideal alleles
-				int change = RandomUtils.coinToss() ? 2 : 4;
-				// 3 is number of alleles per gene
-				alleles[gene] = (idealAllele + change) % 3;
-			} // else neutral mutation does not affect the allele
-		} else { // MODIFIER GENE
-			int mutation = RandomUtils.coinToss() ? 1 : -1;
-			alleles[gene] = alleles[gene] + mutation;
+		GeneType geneType = getEnvironment().geneType(gene);
+		if (!geneType.equals(GeneType.MOD)) {
+			// HK or ENV
+			float change = (float) alleleChangeDistribution.nextDouble();
+			if (getEnvironment().idealAllele(gene) == 1)
+				change = -change;
+			float nuevo = alleles[gene] + change;
+			if (nuevo > 1)
+				alleles[gene] = 1;
+			else if (nuevo < 0)
+				alleles[gene] = 0;
+			else
+				alleles[gene] = nuevo;
+		} else {
+			// MODIFIER
+			if (modifierPositions.get(2).contains(gene)
+					|| modifierPositions.get(5).contains(gene)) {
+				// THRESHOLD
+				float nuevo = alleles[gene]
+						+ (float) thresholdChangeDistribution.nextDouble();
+				if (nuevo > 1)
+					alleles[gene] = 1;
+				else if (nuevo < 0)
+					alleles[gene] = 0;
+				else
+					alleles[gene] = nuevo;
+			} else if (modifierPositions.get(0).contains(gene)
+					|| modifierPositions.get(1).contains(gene)) {
+				// MUTATION RATE
+				alleles[gene] = alleles[gene]
+						+ (float) mutationRateChangeDistribution.nextDouble();
+			} else if (modifierPositions.get(3).contains(gene)
+					|| modifierPositions.get(4).contains(gene)) {
+				// MUTATION RATE
+				alleles[gene] = alleles[gene]
+						+ (float) transformationRateChangeDistribution
+								.nextDouble();
+			}
 		}
+		notUpdated();
 	}
 
 	/**
@@ -170,7 +209,9 @@ public class TransformableBacteria implements Bacteria {
 	 * 
 	 * @param otherAlleles
 	 */
-	public int recombinate(int[] otherAlleles) {
+	@Override
+	public int recombinate() {
+		float[] otherAlleles = GenomicMemory.getInstance().getRandomGenome();
 		if (alleles.length != otherAlleles.length) {
 			String msg = "Can't recombinate genomes of different sizes: "
 					+ alleles.length + " and " + otherAlleles.length;
@@ -188,24 +229,8 @@ public class TransformableBacteria implements Bacteria {
 			int SecondLen = length - firstLen;
 			System.arraycopy(otherAlleles, 0, alleles, 0, SecondLen);
 		}
+		notUpdated();
 		return length;
-	}
-
-	public double getFitness() {
-		if (fitness == -1
-				|| getEnvironment().getLastEnvironmentalChange() > update) {
-			double s = getSelectionCoefficient();
-			int deleteriousMutations = 0;
-			for (int gene = 0; gene < alleles.length; gene++) {
-				int ideal = getEnvironment().getIdealAllele(gene);
-				if (ideal != -1 && ideal != alleles[gene]) {
-					deleteriousMutations++;
-				}
-			}
-			fitness = Math.pow((1 - s), deleteriousMutations);
-			update = Simulation.getInstance().getTick();
-		}
-		return fitness;
 	}
 
 	public int getID() {
@@ -222,107 +247,155 @@ public class TransformableBacteria implements Bacteria {
 		return Environment.getInstance();
 	}
 
-	public void setSelectionCoefficient(double selectionCoefficient) {
-		this.selectionCoefficient = selectionCoefficient;
+	@Override
+	public double getFitness() {
+		if (fitness == DEFAULT_VALUE
+				|| getEnvironment().getLastEnvironmentalChange() > fitnessUpdate) {
+			fitness = 1;
+			for (int gene = 0; gene < alleles.length; gene++) {
+				float ideal = getEnvironment().idealAllele(gene);
+				if (ideal != -1) {
+					float dist = Math.abs(ideal - alleles[gene]);
+					if (dist > 0) {
+						double s = getEnvironment().getSelectionCoefficient(
+								gene);
+						fitness *= (1 - dist * s);
+					}
+				}
+			}
+			fitnessUpdate = Simulation.getInstance().getTick();
+		}
+		return fitness;
 	}
 
-	public double getSelectionCoefficient() {
-		return selectionCoefficient;
+	@Override
+	public double getMutationRate() {
+		if (mutationRate == DEFAULT_VALUE
+				|| getEnvironment().getLastEnvironmentalChange() > mutationRateUpdate) {
+			int index = 0;
+			if (isMutator()) {
+				index = 1;
+			}
+			mutationRate = 0;
+			for (int gene : modifierPositions.get(index)) {
+				mutationRate += alleles[gene];
+			}
+			mutationRateUpdate = Simulation.getInstance().getTick();
+
+		}
+		return mutationRate;
 	}
 
-	/**
-	 * see http://www.sciencemag.org/cgi/content/full/317/5839/813
-	 * 
-	 * @return
-	 */
-	public double getBeneficialMutationProbability() {
-		return beneficialMutationProbability;
+	@Override
+	public double getTransformationRate() {
+		if (transformationRate == DEFAULT_VALUE
+				|| getEnvironment().getLastEnvironmentalChange() > transformationRateUpdate) {
+			int index = 3;
+			if (isTransformator()) {
+				index = 4;
+			}
+			transformationRate = 0;
+			for (int gene : modifierPositions.get(index)) {
+				transformationRate += alleles[gene];
+			}
+			transformationRateUpdate = Simulation.getInstance().getTick();
+
+		}
+		return transformationRate;
 	}
 
-	public void setBeneficialMutationProbability(
-			double beneficialMutationProbability) {
-		this.beneficialMutationProbability = beneficialMutationProbability;
+	public double getMutationThreshold() {
+		if (mutationThreshold == DEFAULT_VALUE
+				|| getEnvironment().getLastEnvironmentalChange() > mutationThresholdUpdate) {
+			mutationThreshold = 0;
+			for (int gene : modifierPositions.get(2)) {
+				mutationThreshold *= alleles[gene];
+			}
+			mutationThresholdUpdate = Simulation.getInstance().getTick();
+
+		}
+		return mutationThreshold;
 	}
 
-	public double getMutationFitnessThreshold() {
-		return mutationFitnessThreshold;
-	}
+	public double getTransformationThreshold() {
+		if (transformationThreshold == DEFAULT_VALUE
+				|| getEnvironment().getLastEnvironmentalChange() > transformationThresholdUpdate) {
+			transformationThreshold = 0;
+			for (int gene : modifierPositions.get(5)) {
+				transformationThreshold *= alleles[gene];
+			}
+			transformationThresholdUpdate = Simulation.getInstance().getTick();
 
-	public double getMutationRateModifier() {
-		return mutationRateModifier;
-	}
-
-	public double getTransformationRateModifier() {
-		return transformationRateModifier;
-	}
-
-	public void setAlleles(int[] alleles) {
-		this.alleles = alleles;
-	}
-
-	public int[] getAlleles() {
-		return alleles;
-	}
-
-	public void setDeleteriousMutationProbability(
-			double deleteriousMutationProbability) {
-		this.deleteriousMutationProbability = deleteriousMutationProbability;
-	}
-
-	public double getDeleteriousMutationProbability() {
-		return deleteriousMutationProbability;
-	}
-
-	public double getTransformationFitnessThreshold() {
-		return transformationFitnessThreshold;
+		}
+		return transformationThreshold;
 	}
 
 	public boolean isMutator() {
-		return getFitness() < getMutationFitnessThreshold();
+		return getFitness() < getMutationThreshold();
+	}
+
+	public boolean isTransformator() {
+		return getFitness() < getTransformationThreshold();
 	}
 
 	public boolean isSim() {
-		return getMutationRateModifier() > 1
-				&& getMutationFitnessThreshold() > 0
-				&& getMutationFitnessThreshold() < 1;
-	}
-
-	public boolean isCm() {
-		return getMutationRateModifier() > 1
-				&& getMutationFitnessThreshold() == 1;
-	}
-
-	public boolean isTransformer() {
-		return getFitness() < getTransformationFitnessThreshold();
+		return getMutationThreshold() > 0;
 	}
 
 	public boolean isSit() {
-		return getTransformationRateModifier() > 1
-				&& getTransformationFitnessThreshold() > 0
-				&& getTransformationFitnessThreshold() < 1;
+		return getTransformationThreshold() > 0;
 	}
 
-	public boolean isCt() {
-		return getTransformationRateModifier() > 1
-				&& getTransformationFitnessThreshold() == 1;
+	public void setMutationRate(double mutationRate) {
+		this.mutationRate = mutationRate;
 	}
 
-	public double getMutationRate() {
-		if ((isSim() && getFitness() < getMutationFitnessThreshold()) || isCm()) {
-			return getMutationRateModifier() * mutationRate;
-		} else {
-			return mutationRate;
-		}
+	public void setTransformationRate(double transformationRate) {
+		this.transformationRate = transformationRate;
 	}
 
-	public double getTransformationRate() {
-		if ((isSit() && getFitness() < getTransformationFitnessThreshold())
-				|| isCt()) {
-			return getTransformationRateModifier() * transformationRate;
-		} else {
-			return transformationRate;
-		}
+	public void setMutationThreshold(double mutationThreshold) {
+		this.mutationThreshold = mutationThreshold;
 	}
 
-	
+	public void setTransformationThreshold(double transformationThreshold) {
+		this.transformationThreshold = transformationThreshold;
+	}
+
+	public Distribution getAlleleChangeDistribution() {
+		return alleleChangeDistribution;
+	}
+
+	public void setAlleleChangeDistribution(
+			Distribution alleleChangeDistribution) {
+		TransformableBacteria.alleleChangeDistribution = alleleChangeDistribution;
+	}
+
+	public Distribution getMutationRateChangeDistribution() {
+		return mutationRateChangeDistribution;
+	}
+
+	public void setMutationRateChangeDistribution(
+			Distribution mutationRateChangeDistribution) {
+		TransformableBacteria.mutationRateChangeDistribution = mutationRateChangeDistribution;
+	}
+
+	public Distribution getTransformationRateChangeDistribution() {
+		return transformationRateChangeDistribution;
+	}
+
+	public void setTransformationRateChangeDistribution(
+			Distribution transformationRateChangeDistribution) {
+		TransformableBacteria.transformationRateChangeDistribution = transformationRateChangeDistribution;
+	}
+
+	public Distribution getThresholdChangeDistribution() {
+		return thresholdChangeDistribution;
+	}
+
+	public void setThresholdChangeDistribution(
+			Distribution thresholdChangeDistribution) {
+		TransformableBacteria.thresholdChangeDistribution = thresholdChangeDistribution;
+	}
+
 }

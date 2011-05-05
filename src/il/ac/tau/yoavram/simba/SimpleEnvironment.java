@@ -6,7 +6,6 @@ import il.ac.tau.yoavram.pes.utils.RandomUtils;
 import java.io.ObjectInputStream;
 import java.util.Arrays;
 
-import org.apache.commons.lang.NotImplementedException;
 import org.apache.log4j.Logger;
 
 public class SimpleEnvironment implements Environment {
@@ -14,7 +13,7 @@ public class SimpleEnvironment implements Environment {
 
 	private static final Logger logger = Logger.getLogger(Environment.class);
 
-	private static Environment INSTANCE = null;
+	private static SimpleEnvironment INSTANCE = null;
 
 	private int numberOfEnvironmentalGenes;
 	private int[] alleles;
@@ -26,7 +25,7 @@ public class SimpleEnvironment implements Environment {
 		INSTANCE = this;
 	}
 
-	public static Environment getInstance() {
+	public static SimpleEnvironment getInstance() {
 		return INSTANCE;
 	}
 
@@ -81,22 +80,10 @@ public class SimpleEnvironment implements Environment {
 						((SimpleEnvironment) obj).alleles);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see il.ac.tau.yoavram.simba.IEnvironment#getIdealAllele(int)
-	 */
-	@Override
 	public int getIdealAllele(int gene) {
 		return alleles[gene];
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see il.ac.tau.yoavram.simba.IEnvironment#getLastEnvironmentalChange()
-	 */
-	@Override
 	public long getLastEnvironmentalChange() {
 		return lastEnvironmentalChange;
 	}
@@ -119,9 +106,8 @@ public class SimpleEnvironment implements Environment {
 		this.numberOfEnvironmentalGenes = numberOfEnvironmentalGenes;
 	}
 
-	@Override
 	public int[] getIdealAlleles() {
-		throw new NotImplementedException();
+		return Arrays.copyOf(alleles, alleles.length);
 	}
 
 }

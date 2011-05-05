@@ -10,10 +10,6 @@ public interface Environment extends Serializable {
 
 	public abstract boolean equals(Object obj);
 
-	public abstract int getIdealAllele(int gene);
-
-	public abstract int[] getIdealAlleles();
-
 	public abstract long getLastEnvironmentalChange();
 
 	public abstract int getNumberOfEnvironmentalGenes();

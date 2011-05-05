@@ -1,6 +1,7 @@
 package il.ac.tau.yoavram.simarba;
 
 import il.ac.tau.yoavram.pes.Simulation;
+import il.ac.tau.yoavram.pes.random.Distribution;
 import il.ac.tau.yoavram.pes.utils.RandomUtils;
 
 import java.io.ObjectInputStream;
@@ -35,9 +36,11 @@ public class Environment implements il.ac.tau.yoavram.simba.Environment {
 	private int numberOfEnvironmentalGenes;
 	private int numberOfHousekeepingGenes;
 	private int numberOfModifierGenes;
+	private Distribution selectionDistribution;
 
-	private int[] alleles;
+	private float[] alleles;
 	private GeneType[] geneTypes;
+	private double[] selectionCoefficients;
 
 	public enum GeneType {
 		HK, ENV, MOD
@@ -62,8 +65,7 @@ public class Environment implements il.ac.tau.yoavram.simba.Environment {
 
 	public void init() {
 		geneTypes = new GeneType[getNumberOfHousekeepingGenes()
-				+ getNumberOfEnvironmentalGenes() +
-				 getNumberOfModifierGenes()];
+				+ getNumberOfEnvironmentalGenes() + getNumberOfModifierGenes()];
 
 		for (int gene = 0; gene < geneTypes.length; gene++) {
 			if (gene < getNumberOfHousekeepingGenes())
@@ -78,15 +80,21 @@ public class Environment implements il.ac.tau.yoavram.simba.Environment {
 		// shuffle genes
 		RandomUtils.shuffleArray(geneTypes);
 
-		alleles = new int[geneTypes.length];
+		alleles = new float[geneTypes.length];
+		selectionCoefficients = new double[geneTypes.length];
 		for (int gene = 0; gene < alleles.length; gene++) {
 			if (geneTypes[gene].equals(GeneType.HK)) {
 				alleles[gene] = 0;
+				selectionCoefficients[gene] = selectionDistribution
+						.nextDouble();
 			} else if (geneTypes[gene].equals(GeneType.ENV)) {
 				alleles[gene] = RandomUtils.coinToss() ? 0 : 1;
-			} else if (geneTypes[gene].equals(GeneType.MOD)) { //MODIFIERS
+				selectionCoefficients[gene] = selectionDistribution
+						.nextDouble();
+			} else if (geneTypes[gene].equals(GeneType.MOD)) { // MODIFIERS
 				alleles[gene] = -1;
-			} 
+				selectionCoefficients[gene] = Double.NaN;
+			}
 		}
 	}
 
@@ -115,7 +123,7 @@ public class Environment implements il.ac.tau.yoavram.simba.Environment {
 				&& Arrays.equals(this.alleles, ((Environment) obj).alleles);
 	}
 
-	public int getIdealAllele(int gene) {
+	public float idealAllele(int gene) {
 		return alleles[gene];
 	}
 
@@ -123,11 +131,11 @@ public class Environment implements il.ac.tau.yoavram.simba.Environment {
 	 * 
 	 * @return a copy of the ideal alleles
 	 */
-	public int[] getIdealAlleles() {
+	public float[] idealAlleles() {
 		return Arrays.copyOf(alleles, alleles.length);
 	}
 
-	public GeneType getGeneType(int gene) {
+	public GeneType geneType(int gene) {
 		return geneTypes[gene];
 	}
 
@@ -162,9 +170,20 @@ public class Environment implements il.ac.tau.yoavram.simba.Environment {
 	public int getNumberOfModifierGenes() {
 		return numberOfModifierGenes;
 	}
-	
+
 	public int getNumberOfGenes() {
 		return alleles.length;
 	}
 
+	public Distribution getSelectionDistribution() {
+		return selectionDistribution;
+	}
+
+	public void setSelectionDistribution(Distribution selectionDistribution) {
+		this.selectionDistribution = selectionDistribution;
+	}
+
+	public double getSelectionCoefficient(int gene) {
+		return selectionCoefficients[gene];
+	}
 }

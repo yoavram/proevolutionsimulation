@@ -231,7 +231,7 @@ public class SimpleBacteria implements Serializable, Bacteria {
 				&& this.getID() == ((Bacteria) obj).getID();
 	}
 
-	protected Environment getEnvironment() {
+	protected SimpleEnvironment getEnvironment() {
 		return SimpleEnvironment.getInstance();
 	}
 
@@ -260,12 +260,6 @@ public class SimpleBacteria implements Serializable, Bacteria {
 		this.selectionCoefficient = selectionCoefficient;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see il.ac.tau.yoavram.simba.Bacteria#getSelectionCoefficient()
-	 */
-	@Override
 	public double getSelectionCoefficient() {
 		return selectionCoefficient;
 	}
@@ -312,33 +306,15 @@ public class SimpleBacteria implements Serializable, Bacteria {
 		return mutationRateModifier;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see il.ac.tau.yoavram.simba.Bacteria#isMutator()
-	 */
-	@Override
 	public boolean isMutator() {
 		return getFitness() < getFitnessThreshold();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see il.ac.tau.yoavram.simba.Bacteria#isSim()
-	 */
-	@Override
 	public boolean isSim() {
 		return getMutationRateModifier() > 1 && getFitnessThreshold() > 0
 				&& getFitnessThreshold() < 1;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see il.ac.tau.yoavram.simba.Bacteria#isCm()
-	 */
-	@Override
 	public boolean isCm() {
 		return getMutationRateModifier() > 1 && getFitnessThreshold() == 1;
 	}
@@ -346,5 +322,20 @@ public class SimpleBacteria implements Serializable, Bacteria {
 	@Override
 	public double getTransformationRate() {
 		return 0;
+	}
+
+	@Override
+	public int recombinate() {
+		return 0;
+	}
+
+	@Override
+	public double getMutationThreshold() {
+		return fitnessThreshold;
+	}
+
+	@Override
+	public double getTransformationThreshold() {
+		return Double.NaN;
 	}
 }

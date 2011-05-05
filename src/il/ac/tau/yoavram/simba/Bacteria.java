@@ -22,12 +22,10 @@ public interface Bacteria extends Serializable {
 
 	public abstract double getTransformationRate();
 
-	public abstract double getSelectionCoefficient();
+	public abstract int recombinate();
 
-	public abstract boolean isMutator();
+	public abstract double getMutationThreshold();
 
-	public abstract boolean isSim();
-
-	public abstract boolean isCm();
+	public abstract double getTransformationThreshold();
 
 }
