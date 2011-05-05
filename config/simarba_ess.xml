@@ -28,8 +28,10 @@
 		<property name="selectionDistribution">
 			<bean class="il.ac.tau.yoavram.pes.random.NormalDistribution"
 				factory-method="createNormalDistributionSupportedOnTheUnit">
-				<constructor-arg name="mean" value="${meanSelectionCoefficient}" />
-				<constructor-arg name="standardDeviation" value="${stdSelectionCoefficient}" />
+				<constructor-arg name="mean" index="0"
+					value="${meanSelectionCoefficient}" />
+				<constructor-arg name="standardDeviation" index="1"
+					value="${stdSelectionCoefficient}" />
 			</bean>
 		</property>
 	</bean>
@@ -42,21 +44,27 @@
 		<property name="alleleChangeDistribution">
 			<bean class="il.ac.tau.yoavram.pes.random.NormalDistribution"
 				factory-method="createNormalDistributionSupportedOnTheUnit">
-				<constructor-arg name="mean" value="${meanAlleleChange}" />
-				<constructor-arg name="standardDeviation" value="${stdAlleleChange}" />
+				<constructor-arg name="mean" index="0"
+					value="${meanAlleleChange}" />
+				<constructor-arg name="standardDeviation" index="1"
+					value="${stdAlleleChange}" />
 			</bean>
 		</property>
 		<property name="mutationRateChangeDistribution">
 			<bean class="il.ac.tau.yoavram.pes.random.NormalDistribution">
-				<constructor-arg name="mean" value="${meanMutationRateChange}" />
-				<constructor-arg name="standardDeviation" value="${stdMutationRateChange}" />
+				<constructor-arg name="mean" index="0"
+					value="${meanMutationRateChange}" />
+				<constructor-arg name="standardDeviation" index="1"
+					value="${stdMutationRateChange}" />
 			</bean>
 		</property>
 		<property name="thresholdChangeDistribution">
 			<bean class="il.ac.tau.yoavram.pes.random.NormalDistribution"
 				factory-method="createNormalDistributionSupportedOnTheUnit">
-				<constructor-arg name="mean" value="${meanThresholdChange}" />
-				<constructor-arg name="standardDeviation" value="${stdThresholdChange}" />
+				<constructor-arg name="mean" index="0"
+					value="${meanThresholdChange}" />
+				<constructor-arg name="standardDeviation" index="1"
+					value="${stdThresholdChange}" />
 			</bean>
 		</property>
 		<property name="transformationRateChangeDistribution">
@@ -130,28 +138,62 @@
 					<property name="name" value="stdev fitness" />
 					<property name="meanAggregator" ref="meanFitness" />
 				</bean>
-				<!-- <ref bean="meanMutationRate" /> <bean class="il.ac.tau.yoavram.simba.statistics.aggregators.MinimumMutationRate"> 
-					<property name="name" value="min mutation rate" /> </bean> <bean class="il.ac.tau.yoavram.simba.statistics.aggregators.MaximumMutationRate"> 
-					<property name="name" value="max mutation rate" /> </bean> <bean class="il.ac.tau.yoavram.simba.statistics.aggregators.StandardDeviationMutationRate"> 
-					<property name="name" value="stdev mutation rate" /> <property name="meanAggregator" 
-					ref="meanMutationRate" /> </bean> <ref bean="meanTransformationRate" /> <bean 
-					class="il.ac.tau.yoavram.simarba.statistics.aggregators.MinimumTransformationRate"> 
-					<property name="name" value="min transformation rate" /> </bean> <bean class="il.ac.tau.yoavram.simarba.statistics.aggregators.MaximumTransformationRate"> 
-					<property name="name" value="max transformation rate" /> </bean> <bean class="il.ac.tau.yoavram.simarba.statistics.aggregators.StandardDeviationTransformationRate"> 
-					<property name="name" value="stdev transformation rate" /> <property name="meanAggregator" 
-					ref="meanTransformationRate" /> </bean> <ref bean="meanMutationThreshold" 
-					/> <bean class="il.ac.tau.yoavram.simarba.statistics.aggregators.MinimumMutationThreshold"> 
-					<property name="name" value="min mutation threshold" /> </bean> <bean class="il.ac.tau.yoavram.simarba.statistics.aggregators.MaximumMutationThreshold"> 
-					<property name="name" value="max mutation threshold" /> </bean> <bean class="il.ac.tau.yoavram.simarba.statistics.aggregators.StandardDeviationMutationThreshold"> 
-					<property name="name" value="stdev mutation threshold" /> <property name="meanAggregator" 
-					ref="meanMutationThreshold" /> </bean> <ref bean="meanTransformationThreshold" 
-					/> <bean class="il.ac.tau.yoavram.simarba.statistics.aggregators.MinimumTransformationThreshold"> 
-					<property name="name" value="min transformation threshold" /> </bean> <bean 
-					class="il.ac.tau.yoavram.simarba.statistics.aggregators.MaximumTransformationThreshold"> 
-					<property name="name" value="max transformation threshold" /> </bean> <bean 
-					class="il.ac.tau.yoavram.simarba.statistics.aggregators.StandardDeviationTransformationThreshold"> 
-					<property name="name" value="stdev transformation threshold" /> <property 
-					name="meanAggregator" ref="meanTransformationThreshold" /> </bean> -->
+				<ref bean="meanMutationRate" />
+				<bean
+					class="il.ac.tau.yoavram.simba.statistics.aggregators.MinimumMutationRate">
+					<property name="name" value="min mutation rate" />
+				</bean>
+				<bean
+					class="il.ac.tau.yoavram.simba.statistics.aggregators.MaximumMutationRate">
+					<property name="name" value="max mutation rate" />
+				</bean>
+				<bean
+					class="il.ac.tau.yoavram.simba.statistics.aggregators.StandardDeviationMutationRate">
+					<property name="name" value="stdev mutation rate" />
+					<property name="meanAggregator" ref="meanMutationRate" />
+				</bean>
+				<ref bean="meanTransformationRate" />
+				<bean
+					class="il.ac.tau.yoavram.simarba.statistics.aggregators.MinimumTransformationRate">
+					<property name="name" value="min transformation rate" />
+				</bean>
+				<bean
+					class="il.ac.tau.yoavram.simarba.statistics.aggregators.MaximumTransformationRate">
+					<property name="name" value="max transformation rate" />
+				</bean>
+				<bean
+					class="il.ac.tau.yoavram.simarba.statistics.aggregators.StandardDeviationTransformationRate">
+					<property name="name" value="stdev transformation rate" />
+					<property name="meanAggregator" ref="meanTransformationRate" />
+				</bean>
+				<ref bean="meanMutationThreshold" />
+				<bean
+					class="il.ac.tau.yoavram.simarba.statistics.aggregators.MinimumMutationThreshold">
+					<property name="name" value="min mutation threshold" />
+				</bean>
+				<bean
+					class="il.ac.tau.yoavram.simarba.statistics.aggregators.MaximumMutationThreshold">
+					<property name="name" value="max mutation threshold" />
+				</bean>
+				<bean
+					class="il.ac.tau.yoavram.simarba.statistics.aggregators.StandardDeviationMutationThreshold">
+					<property name="name" value="stdev mutation threshold" />
+					<property name="meanAggregator" ref="meanMutationThreshold" />
+				</bean>
+				<ref bean="meanTransformationThreshold" />
+				<bean
+					class="il.ac.tau.yoavram.simarba.statistics.aggregators.MinimumTransformationThreshold">
+					<property name="name" value="min transformation threshold" />
+				</bean>
+				<bean
+					class="il.ac.tau.yoavram.simarba.statistics.aggregators.MaximumTransformationThreshold">
+					<property name="name" value="max transformation threshold" />
+				</bean>
+				<bean
+					class="il.ac.tau.yoavram.simarba.statistics.aggregators.StandardDeviationTransformationThreshold">
+					<property name="name" value="stdev transformation threshold" />
+					<property name="meanAggregator" ref="meanTransformationThreshold" />
+				</bean>
 			</list>
 		</property>
 	</bean>
