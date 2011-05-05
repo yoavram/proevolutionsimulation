@@ -10,8 +10,6 @@ public interface Bacteria extends Serializable {
 
 	public abstract Bacteria reproduce();
 
-	public abstract int recombinate(int[] alleles);
-
 	public abstract void mutate();
 
 	public abstract double getFitness();

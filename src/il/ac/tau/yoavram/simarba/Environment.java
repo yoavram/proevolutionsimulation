@@ -6,7 +6,6 @@ import il.ac.tau.yoavram.pes.utils.RandomUtils;
 import java.io.ObjectInputStream;
 import java.util.Arrays;
 
-import org.apache.commons.lang.NotImplementedException;
 import org.apache.log4j.Logger;
 
 /**
@@ -31,16 +30,22 @@ public class Environment implements il.ac.tau.yoavram.simba.Environment {
 
 	private static final Logger logger = Logger.getLogger(Environment.class);
 
-	private static Environment INSTANCE = null;
+	protected static Environment INSTANCE = null;
 
 	private int numberOfEnvironmentalGenes;
 	private int numberOfHousekeepingGenes;
+	private int numberOfModifierGenes;
+
 	private int[] alleles;
-	private int[] geneTypes;
+	private GeneType[] geneTypes;
+
+	public enum GeneType {
+		HK, ENV, MOD
+	}
 
 	private transient long lastEnvironmentalChange = 0;
 
-	private Environment() {
+	protected Environment() {
 		INSTANCE = this;
 	}
 
@@ -56,29 +61,32 @@ public class Environment implements il.ac.tau.yoavram.simba.Environment {
 	}
 
 	public void init() {
-		geneTypes = new int[getNumberOfHousekeepingGenes()
-				+ getNumberOfEnvironmentalGenes()];
-		// 0 is HK
-		Arrays.fill(geneTypes, 0, getNumberOfHousekeepingGenes(), 0);
-		// 1 is ENV
-		Arrays.fill(geneTypes, getNumberOfHousekeepingGenes(),
-				geneTypes.length, 1);
+		geneTypes = new GeneType[getNumberOfHousekeepingGenes()
+				+ getNumberOfEnvironmentalGenes() +
+				 getNumberOfModifierGenes()];
+
+		for (int gene = 0; gene < geneTypes.length; gene++) {
+			if (gene < getNumberOfHousekeepingGenes())
+				geneTypes[gene] = GeneType.HK;
+			else if (gene < getNumberOfEnvironmentalGenes())
+				geneTypes[gene] = GeneType.ENV;
+			else {
+				geneTypes[gene] = GeneType.MOD;
+			}
+		}
+
 		// shuffle genes
 		RandomUtils.shuffleArray(geneTypes);
 
 		alleles = new int[geneTypes.length];
 		for (int gene = 0; gene < alleles.length; gene++) {
-			if (geneTypes[gene] == 0) {
+			if (geneTypes[gene].equals(GeneType.HK)) {
 				alleles[gene] = 0;
-			} else if (geneTypes[gene] == 1) {
+			} else if (geneTypes[gene].equals(GeneType.ENV)) {
 				alleles[gene] = RandomUtils.coinToss() ? 0 : 1;
-			} else {
-				String msg = this.getClass().getName()
-						+ " does not support gene type with value "
-						+ geneTypes[gene] + " in position " + gene;
-				logger.error(msg);
-				throw new NotImplementedException(msg);
-			}
+			} else if (geneTypes[gene].equals(GeneType.MOD)) { //MODIFIERS
+				alleles[gene] = -1;
+			} 
 		}
 	}
 
@@ -87,8 +95,8 @@ public class Environment implements il.ac.tau.yoavram.simba.Environment {
 		for (int i = 0; i < toChange; i++) {
 			// pick gene
 			int gene = RandomUtils.nextInt(0, alleles.length - 1);
-			// make sure it is an environmental gene and not housekeeping
-			while (geneTypes[gene] == 0) {
+			// make sure it is an environmental gene
+			while (!geneTypes[gene].equals(GeneType.ENV)) {
 				gene = RandomUtils.nextInt(0, alleles.length - 1);
 			}
 			// change it (0->1, 1->0)
@@ -119,7 +127,7 @@ public class Environment implements il.ac.tau.yoavram.simba.Environment {
 		return Arrays.copyOf(alleles, alleles.length);
 	}
 
-	public int getGeneType(int gene) {
+	public GeneType getGeneType(int gene) {
 		return geneTypes[gene];
 	}
 
@@ -145,6 +153,18 @@ public class Environment implements il.ac.tau.yoavram.simba.Environment {
 
 	public int getNumberOfHousekeepingGenes() {
 		return numberOfHousekeepingGenes;
+	}
+
+	public void setNumberOfModifierGenes(int numberOfModifierGenes) {
+		this.numberOfModifierGenes = numberOfModifierGenes;
+	}
+
+	public int getNumberOfModifierGenes() {
+		return numberOfModifierGenes;
+	}
+	
+	public int getNumberOfGenes() {
+		return alleles.length;
 	}
 
 }

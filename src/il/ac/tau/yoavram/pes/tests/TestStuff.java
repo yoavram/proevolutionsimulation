@@ -3,6 +3,7 @@ package il.ac.tau.yoavram.pes.tests;
 import static org.junit.Assert.assertTrue;
 
 import il.ac.tau.yoavram.pes.utils.RandomUtils;
+import il.ac.tau.yoavram.pes.utils.RandomUtils.NormalDistribution;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -11,10 +12,9 @@ import java.util.List;
 public class TestStuff {
 
 	public static void main(String[] args) {
-		int n = RandomUtils.nextInt(0, 10);
-		while (n-- > 0) {
-			System.out.println(n);
-		}
+		NormalDistribution d = RandomUtils.createNormalDistribution(0, 0);
+		for (int i = 0; i < 10; i++)
+			System.out.println(d.nextDouble());
 	}
 
 	// @org.junit.Test

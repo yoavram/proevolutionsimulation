@@ -2,6 +2,7 @@ package il.ac.tau.yoavram.simarba;
 
 import il.ac.tau.yoavram.pes.Simulation;
 import il.ac.tau.yoavram.pes.utils.RandomUtils;
+import il.ac.tau.yoavram.simarba.Environment.GeneType;
 import il.ac.tau.yoavram.simba.Bacteria;
 
 import java.io.ObjectInputStream;
@@ -39,13 +40,14 @@ public class TransformableBacteria implements Bacteria {
 	private double deleteriousMutationProbability;// STATIC?
 
 	private int[] alleles; // the genome is assumed to be a cycle
-	private double mutationRate;
-	private double transformationRate; // transformations per cell per
-										// generation
-	private double mutationFitnessThreshold = 0;
-	private double transformationFitnessThreshold = 0;
-	private double mutationRateModifier = 1;
-	private double transformationRateModifier = 1;
+	private double mutationRate = Double.NaN;
+	private double transformationRate = Double.NaN; // transformations per cell
+													// per
+	// generation
+	private double mutationFitnessThreshold = Double.NaN;
+	private double transformationFitnessThreshold = Double.NaN;
+	private double mutationRateModifier = Double.NaN;
+	private double transformationRateModifier = Double.NaN;
 
 	protected transient double fitness = DEFAULT_FITNESS;
 	protected transient long update = DEFAULT_UPDATE;
@@ -70,15 +72,9 @@ public class TransformableBacteria implements Bacteria {
 		}
 		System.arraycopy(other.alleles, 0, alleles, 0, alleles.length);
 
-		mutationRate = other.mutationRate;
-		transformationRate = other.transformationRate;
 		selectionCoefficient = other.selectionCoefficient;
 		beneficialMutationProbability = other.beneficialMutationProbability;
 		deleteriousMutationProbability = other.deleteriousMutationProbability;
-		mutationFitnessThreshold = other.mutationFitnessThreshold;
-		transformationFitnessThreshold = other.transformationFitnessThreshold;
-		mutationRateModifier = other.mutationRateModifier;
-		transformationRateModifier = other.transformationRateModifier;
 
 		fitness = DEFAULT_FITNESS;
 		update = DEFAULT_UPDATE;
@@ -148,25 +144,29 @@ public class TransformableBacteria implements Bacteria {
 
 	public void mutate() {
 		int gene = RandomUtils.nextInt(0, alleles.length - 1);
-		double rand = RandomUtils.nextDouble();
-		int idealAllele = getEnvironment().getIdealAllele(gene);
-
-		if (rand < getBeneficialMutationProbability()) {
-			alleles[gene] = idealAllele;
-		} else if (rand < getBeneficialMutationProbability()
-				+ getDeleteriousMutationProbability()) {
-			// randomly chose one of the non-ideal alleles
-			int change = RandomUtils.coinToss() ? 2 : 4;
-			// 3 is number of alleles per gene
-			alleles[gene] = (idealAllele + change) % 3;
+		GeneType type = getEnvironment().getGeneType(gene);
+		if (type.equals(GeneType.HK) || type.equals(GeneType.ENV)) {
+			double rand = RandomUtils.nextDouble();
+			int idealAllele = getEnvironment().getIdealAllele(gene);
+			if (rand < getBeneficialMutationProbability()) {
+				alleles[gene] = idealAllele;
+			} else if (rand < getBeneficialMutationProbability()
+					+ getDeleteriousMutationProbability()) {
+				// randomly chose one of the non-ideal alleles
+				int change = RandomUtils.coinToss() ? 2 : 4;
+				// 3 is number of alleles per gene
+				alleles[gene] = (idealAllele + change) % 3;
+			} // else neutral mutation does not affect the allele
+		} else { // MODIFIER GENE
+			int mutation = RandomUtils.coinToss() ? 1 : -1;
+			alleles[gene] = alleles[gene] + mutation;
 		}
-
 	}
 
 	/**
 	 * draw 2 rv to assign start point (0 to n-1) and length (1 to n) from
 	 * uniform dist. expected length of recombination is n/2s where n is genome
-	 * length 
+	 * length
 	 * 
 	 * @param otherAlleles
 	 */
@@ -197,7 +197,8 @@ public class TransformableBacteria implements Bacteria {
 			double s = getSelectionCoefficient();
 			int deleteriousMutations = 0;
 			for (int gene = 0; gene < alleles.length; gene++) {
-				if (getEnvironment().getIdealAllele(gene) != alleles[gene]) {
+				int ideal = getEnvironment().getIdealAllele(gene);
+				if (ideal != -1 && ideal != alleles[gene]) {
 					deleteriousMutations++;
 				}
 			}
@@ -219,10 +220,6 @@ public class TransformableBacteria implements Bacteria {
 
 	protected Environment getEnvironment() {
 		return Environment.getInstance();
-	}
-
-	public void setMutationRate(double mutationRate) {
-		this.mutationRate = mutationRate;
 	}
 
 	public void setSelectionCoefficient(double selectionCoefficient) {
@@ -247,32 +244,16 @@ public class TransformableBacteria implements Bacteria {
 		this.beneficialMutationProbability = beneficialMutationProbability;
 	}
 
-	public void setMutationFitnessThreshold(double mutationFitnessThreshold) {
-		this.mutationFitnessThreshold = mutationFitnessThreshold;
-	}
-
 	public double getMutationFitnessThreshold() {
 		return mutationFitnessThreshold;
-	}
-
-	public void setMutationRateModifier(double mutationRateModifier) {
-		this.mutationRateModifier = mutationRateModifier;
 	}
 
 	public double getMutationRateModifier() {
 		return mutationRateModifier;
 	}
 
-	public void setTransformationRateModifier(double transformationRateModifier) {
-		this.transformationRateModifier = transformationRateModifier;
-	}
-
 	public double getTransformationRateModifier() {
 		return transformationRateModifier;
-	}
-
-	public void setTransformationRate(double transformationRate) {
-		this.transformationRate = transformationRate;
 	}
 
 	public void setAlleles(int[] alleles) {
@@ -290,11 +271,6 @@ public class TransformableBacteria implements Bacteria {
 
 	public double getDeleteriousMutationProbability() {
 		return deleteriousMutationProbability;
-	}
-
-	public void setTransformationFitnessThreshold(
-			double transformationFitnessThreshold) {
-		this.transformationFitnessThreshold = transformationFitnessThreshold;
 	}
 
 	public double getTransformationFitnessThreshold() {
@@ -348,4 +324,5 @@ public class TransformableBacteria implements Bacteria {
 		}
 	}
 
+	
 }

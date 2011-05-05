@@ -347,9 +347,4 @@ public class SimpleBacteria implements Serializable, Bacteria {
 	public double getTransformationRate() {
 		return 0;
 	}
-
-	@Override
-	public int recombinate(int[] alleles) {
-		return 0;
-	}
 }
