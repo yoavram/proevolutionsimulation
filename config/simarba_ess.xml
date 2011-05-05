@@ -26,12 +26,10 @@
 		<property name="numberOfHousekeepingGenes" value="${numberOfHousekeepingGenes}" />
 		<property name="numberOfModifierGenes" value="${numberOfModifierGenes}" />
 		<property name="selectionDistribution">
-			<bean class="il.ac.tau.yoavram.pes.random.NormalDistribution"
-				factory-method="createNormalDistributionSupportedOnTheUnit">
-				<constructor-arg name="mean" index="0"
-					value="${meanSelectionCoefficient}" />
-				<constructor-arg name="standardDeviation" index="1"
-					value="${stdSelectionCoefficient}" />
+			<bean
+				class="il.ac.tau.yoavram.pes.random.NormalDistributionSupportedOnTheUnit">
+				<property name="mean" value="${meanSelectionCoefficient}" />
+				<property name="standardDeviation" value="${stdSelectionCoefficient}" />
 			</bean>
 		</property>
 	</bean>
@@ -42,33 +40,28 @@
 		<property name="mutationThreshold" value="${mutationThreshold}" />
 		<property name="transformationThreshold" value="${transformationThreshold}" />
 		<property name="alleleChangeDistribution">
-			<bean class="il.ac.tau.yoavram.pes.random.NormalDistribution"
-				factory-method="createNormalDistributionSupportedOnTheUnit">
-				<constructor-arg name="mean" index="0"
-					value="${meanAlleleChange}" />
-				<constructor-arg name="standardDeviation" index="1"
-					value="${stdAlleleChange}" />
+			<bean
+				class="il.ac.tau.yoavram.pes.random.NormalDistributionSupportedOnTheUnit">
+				<property name="mean" value="${meanAlleleChange}" />
+				<property name="standardDeviation" value="${stdAlleleChange}" />
 			</bean>
 		</property>
 		<property name="mutationRateChangeDistribution">
 			<bean class="il.ac.tau.yoavram.pes.random.NormalDistribution">
-				<constructor-arg name="mean" index="0"
-					value="${meanMutationRateChange}" />
-				<constructor-arg name="standardDeviation" index="1"
-					value="${stdMutationRateChange}" />
+				<property name="mean" value="${meanMutationRateChange}" />
+				<property name="standardDeviation" value="${stdMutationRateChange}" />
 			</bean>
 		</property>
 		<property name="thresholdChangeDistribution">
-			<bean class="il.ac.tau.yoavram.pes.random.NormalDistribution"
-				factory-method="createNormalDistributionSupportedOnTheUnit">
-				<constructor-arg name="mean" index="0"
-					value="${meanThresholdChange}" />
-				<constructor-arg name="standardDeviation" index="1"
-					value="${stdThresholdChange}" />
+			<bean
+				class="il.ac.tau.yoavram.pes.random.NormalDistributionSupportedOnTheUnit">
+				<property name="mean" value="${meanThresholdChange}" />
+				<property name="standardDeviation" value="${stdThresholdChange}" />
 			</bean>
 		</property>
 		<property name="transformationRateChangeDistribution">
-			<bean class="il.ac.tau.yoavram.pes.random.NormalDistribution">
+			<bean
+				class="il.ac.tau.yoavram.pes.random.NormalDistributionSupportedOnTheUnit">
 				<property name="mean" value="${meanTransformationRateChange}" />
 				<property name="standardDeviation" value="${stdTransformationRateChange}" />
 			</bean>

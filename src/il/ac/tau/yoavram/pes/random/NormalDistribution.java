@@ -58,10 +58,4 @@ public class NormalDistribution implements Distribution {
 	public double pdf(double x) {
 		return normal.pdf(x);
 	}
-
-	public static Distribution createNormalDistributionSupportedOnTheUnit(
-			double mean, double standardDeviation) {
-		return new FiniteSupportDistributionWrapper(new NormalDistribution(
-				mean, standardDeviation), 0, 1);
-	}
 }
