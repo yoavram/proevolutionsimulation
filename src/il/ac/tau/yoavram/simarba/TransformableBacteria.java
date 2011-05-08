@@ -159,7 +159,10 @@ public class TransformableBacteria implements Bacteria {
 	}
 
 	public void mutate() {
-		int gene = RandomUtils.nextInt(0, alleles.length - 1);
+		mutate(RandomUtils.nextInt(0, alleles.length - 1));
+	}
+
+	public void mutate(int gene) {
 		GeneType geneType = getEnvironment().geneType(gene);
 		if (!geneType.equals(GeneType.MOD)) {
 			// HK or ENV

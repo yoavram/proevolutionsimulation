@@ -34,14 +34,12 @@
 		</property>
 	</bean>
 	<bean id="ancestor" class="il.ac.tau.yoavram.simarba.RandomAncestor">
-		<property name="randomness" value="0.01" />
 		<property name="mutationRate" value="${mutationRate}" />
 		<property name="transformationRate" value="${transformationRate}" />
 		<property name="mutationThreshold" value="${mutationThreshold}" />
 		<property name="transformationThreshold" value="${transformationThreshold}" />
 		<property name="alleleChangeDistribution">
-			<bean
-				class="il.ac.tau.yoavram.pes.random.NormalDistribution">
+			<bean class="il.ac.tau.yoavram.pes.random.NormalDistribution">
 				<property name="mean" value="${meanAlleleChange}" />
 				<property name="standardDeviation" value="${stdAlleleChange}" />
 			</bean>
@@ -53,15 +51,13 @@
 			</bean>
 		</property>
 		<property name="thresholdChangeDistribution">
-			<bean
-				class="il.ac.tau.yoavram.pes.random.NormalDistribution">
+			<bean class="il.ac.tau.yoavram.pes.random.NormalDistribution">
 				<property name="mean" value="${meanThresholdChange}" />
 				<property name="standardDeviation" value="${stdThresholdChange}" />
 			</bean>
 		</property>
 		<property name="transformationRateChangeDistribution">
-			<bean
-				class="il.ac.tau.yoavram.pes.random.NormalDistribution">
+			<bean class="il.ac.tau.yoavram.pes.random.NormalDistribution">
 				<property name="mean" value="${meanTransformationRateChange}" />
 				<property name="standardDeviation" value="${stdTransformationRateChange}" />
 			</bean>
