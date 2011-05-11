@@ -283,6 +283,7 @@ public class TransformableBacteria implements Bacteria {
 			for (int gene : modifierPositions.get(index)) {
 				mutationRate += alleles[gene];
 			}
+			mutationRate = mutationRate / modifierPositions.get(index).size();
 			mutationRateUpdate = Simulation.getInstance().getTick();
 
 		}
@@ -301,6 +302,7 @@ public class TransformableBacteria implements Bacteria {
 			for (int gene : modifierPositions.get(index)) {
 				transformationRate += alleles[gene];
 			}
+			transformationRate=transformationRate/modifierPositions.get(index).size();
 			transformationRateUpdate = Simulation.getInstance().getTick();
 
 		}
@@ -312,8 +314,9 @@ public class TransformableBacteria implements Bacteria {
 				|| getEnvironment().getLastEnvironmentalChange() > mutationThresholdUpdate) {
 			mutationThreshold = 0;
 			for (int gene : modifierPositions.get(2)) {
-				mutationThreshold *= alleles[gene];
+				mutationThreshold += alleles[gene];
 			}
+			mutationThreshold=mutationThreshold/modifierPositions.get(2).size();
 			mutationThresholdUpdate = Simulation.getInstance().getTick();
 
 		}
@@ -325,8 +328,9 @@ public class TransformableBacteria implements Bacteria {
 				|| getEnvironment().getLastEnvironmentalChange() > transformationThresholdUpdate) {
 			transformationThreshold = 0;
 			for (int gene : modifierPositions.get(5)) {
-				transformationThreshold *= alleles[gene];
+				transformationThreshold += alleles[gene];
 			}
+			transformationThreshold=transformationThreshold/modifierPositions.get(5).size();
 			transformationThresholdUpdate = Simulation.getInstance().getTick();
 
 		}

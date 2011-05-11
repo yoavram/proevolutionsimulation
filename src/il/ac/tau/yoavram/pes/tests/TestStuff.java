@@ -1,8 +1,6 @@
 package il.ac.tau.yoavram.pes.tests;
 
 import static org.junit.Assert.assertTrue;
-import il.ac.tau.yoavram.pes.random.NormalDistribution;
-import il.ac.tau.yoavram.pes.utils.RandomUtils;
 
 import java.util.ArrayList;
 import java.util.Calendar;

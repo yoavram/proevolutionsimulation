@@ -22,17 +22,22 @@
  */
 package il.ac.tau.yoavram.pes;
 
+import il.ac.tau.yoavram.pes.io.PropertiesPersister;
+
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.Properties;
 
 import org.apache.log4j.Logger;
+import org.springframework.beans.factory.NoSuchBeanDefinitionException;
 import org.springframework.beans.factory.config.PropertyPlaceholderConfigurer;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 /**
- * This class runs a {@link Simulation} that is configured using a Spring XML file from the classpath (usually the config folder).
+ * This class runs a {@link Simulation} that is configured using a Spring XML
+ * file from the classpath (usually the config folder).
+ * 
  * @author yoavram
  * @version Alfred
  * 
@@ -70,26 +75,41 @@ public abstract class SpringRunner {
 			System.exit(1);
 		}
 
+		// get the properties
 		Properties properties = configurer.getProperties();
 		String jobName = properties
 				.getProperty(SimulationConfigurer.JOB_NAME_KEY);
 
+		// create context
 		AbstractXmlApplicationContext context = new ClassPathXmlApplicationContext();
 
+		// add properties to context
 		logger.info("Adding properties to context: " + properties.toString());
 		PropertyPlaceholderConfigurer propertyPlaceholderConfigurer = new PropertyPlaceholderConfigurer();
 		propertyPlaceholderConfigurer.setProperties(properties);
 		context.addBeanFactoryPostProcessor(propertyPlaceholderConfigurer);
 
-		logger.info("Loading context from file "
-				+ configurer.getSpringXmlConfig().toString());
-
-		context.setConfigLocation(configurer.getSpringXmlConfig().toString());
+		// set config location
+		String configLocation = configurer.getSpringXmlConfig().toString();
+		logger.info("Loading context from file " + configLocation);
+		context.setConfigLocation(configLocation);
 
 		// make sure destroy methods will be called and refresh the context
 		context.registerShutdownHook();
 		context.refresh();
 
+		// persist properties
+		try{
+		PropertiesPersister persister = context
+				.getBean(PropertiesPersister.class);
+		if (persister != null) {
+			persister.persist(properties);
+		}
+		} catch (NoSuchBeanDefinitionException e) {
+			// nothing to do
+		}
+
+		// get the simulation bean and run it
 		Simulation simulation = context.getBean("simulation", Simulation.class);
 
 		logger.debug("Starting simulation " + jobName);
