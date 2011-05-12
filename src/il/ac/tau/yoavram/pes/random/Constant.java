@@ -44,4 +44,13 @@ public class Constant implements Distribution {
 	public double getStandardDeviation() {
 		return 0;
 	}
+
+	public double getConstant() {
+		return c;
+	}
+
+	public void setConstant(double constant) {
+		this.c = constant;
+	}
+
 }

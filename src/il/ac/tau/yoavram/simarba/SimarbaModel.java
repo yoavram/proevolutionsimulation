@@ -19,14 +19,6 @@ public class SimarbaModel extends SimbaModel {
 	@Override
 	public void init() {
 		super.init();
-		if (genomicMemory == null) {
-			genomicMemory = new GenomicMemory();
-			genomicMemory.setCapacity(getPopulationSize() / 100);
-			logger.warn(String.format(
-					"No %s set, created one with capacity %d", genomicMemory
-							.getClass().getSimpleName(), getGenomicMemory()
-							.getCapacity()));
-		}
 	}
 
 	@Override
@@ -34,14 +26,16 @@ public class SimarbaModel extends SimbaModel {
 		super.step();
 		// transformations
 		Bacteria bacteria = randomBacteria();
-		int numOfTrans = RandomUtils.nextPoisson(bacteria
-				.getTransformationRate());
-		if (numOfTrans > 0) {
-			for (int i = 0; i < numOfTrans; i++) {
-				int num = bacteria.recombinate();
-				logger.debug(String.format("%s %d recombinated %d alleles",
-						bacteria.getClass().getSimpleName(), bacteria.getID(),
-						num));
+		double transformationRate = bacteria.getTransformationRate();
+		if (transformationRate > 0) {
+			int numOfTrans = RandomUtils.nextPoisson(transformationRate);
+			if (numOfTrans > 0) {
+				for (int i = 0; i < numOfTrans; i++) {
+					int r = bacteria.recombinate();
+					logger.debug(String.format("%s %d recombinated %d alleles",
+							bacteria.getClass().getSimpleName(),
+							bacteria.getID(), r));
+				}
 			}
 		}
 	}

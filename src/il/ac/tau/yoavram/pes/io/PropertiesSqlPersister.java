@@ -11,6 +11,7 @@ import java.io.FilenameFilter;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Date;
 import java.util.Properties;
 
 import javax.sql.DataSource;
@@ -36,11 +37,11 @@ public class PropertiesSqlPersister implements PropertiesPersister {
 		String sql = String.format("INSERT INTO %s (%s,%s,%s) VALUES (?,?,?)",
 				getTable(), SimulationConfigurer.JOB_NAME_KEY,
 				SimulationConfigurer.TIME, PROPERTIES);
-		int rows = jdbcTemplate.update(sql, properties
-				.getProperty(SimulationConfigurer.JOB_NAME_KEY), TimeUtils
-				.parseToSqlDate(properties
-						.getProperty(SimulationConfigurer.TIME)), properties
-				.toString());
+		String t = TimeUtils.toSqlTime(properties
+						.getProperty(SimulationConfigurer.TIME));
+		int rows = jdbcTemplate.update(sql,
+				properties.getProperty(SimulationConfigurer.JOB_NAME_KEY), t,
+				properties.toString());
 		return rows > 0;
 
 		/*
@@ -102,6 +103,9 @@ public class PropertiesSqlPersister implements PropertiesPersister {
 		for (File f : files) {
 			Properties prop = new Properties();
 			prop.load(new FileInputStream(f));
+			prop.setProperty(SimulationConfigurer.JOB_NAME_KEY, "test");
+			String time = TimeUtils.formatDate(new Date());
+			prop.setProperty(SimulationConfigurer.TIME, time);
 			if (pers.persist(prop))
 				success++;
 		}

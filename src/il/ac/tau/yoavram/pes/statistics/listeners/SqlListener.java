@@ -1,14 +1,15 @@
 package il.ac.tau.yoavram.pes.statistics.listeners;
 
+import il.ac.tau.yoavram.pes.SimulationConfigurer;
 import il.ac.tau.yoavram.pes.utils.TimeUtils;
 
 import java.io.IOException;
-import java.sql.Timestamp;
-import java.text.ParseException;
+import java.util.Date;
 import java.util.List;
 
 import javax.sql.DataSource;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.jdbc.core.JdbcTemplate;
 
@@ -32,44 +33,39 @@ import org.springframework.jdbc.core.JdbcTemplate;
  * 
  */
 public class SqlListener implements DataListener {
+
+	private static final String SQL_TEMPLATE = "INSERT INTO %s (%s) VALUES ('%s',%s,%s)";
+
 	private static final Logger logger = Logger.getLogger(SqlListener.class);
 
-	private static final String SIM_ID = "sim_id";
-	private static final String TIME = "time";
+	private static final String JOB_NAME_KEY = SimulationConfigurer.JOB_NAME_KEY;
+	private static final String TIME = SimulationConfigurer.TIME;
 
 	private String columns;
-	private String qMarks;
-	private String sql;
 	private String table;
-	private String simulationId;
-	private Timestamp time;
+	private String jobName;
+	private String time;
 	private JdbcTemplate jdbcTemplate;
 
 	@Override
 	public void init() {
 		if (time == null) {
-			time = new Timestamp(System.currentTimeMillis());
+			time = TimeUtils.toSqlTime(new Date());
 		}
-		if (simulationId == null) {
-			throw new NullPointerException("No simulation ID given");
+		if (jobName == null) {
+			throw new NullPointerException("No job name given");
 		}
 	}
 
 	@Override
 	public void listen(Number[] data) {
-		if (sql == null) {
-			sql = String.format("INSERT INTO %s (%s) VALUES (%s)", getTable(),
-					columns, qMarks);
-		}
-		Object[] newdata = new Object[data.length + 2];
-		System.arraycopy(data, 0, newdata, 2, data.length);
-		newdata[0] = getSimulationId();
-		newdata[1] = getTime();
-
-		int rows = jdbcTemplate.update(sql, newdata);
+		String values = StringUtils.join(data, ", ");
+		String sql = String.format(SQL_TEMPLATE, getTable(), columns,
+				getJobName(), getTime(), values);
+		int rows = jdbcTemplate.update(sql);
 		if (rows < 1) {
-			logger.warn(String.format("Db update (%s) affected %d rows", sql,
-					rows));
+			logger.warn(String.format("Database update (%s) affected %d rows",
+					sql, rows));
 		}
 	}
 
@@ -79,16 +75,8 @@ public class SqlListener implements DataListener {
 
 	@Override
 	public void setDataFieldNames(List<String> dataFieldNames) {
-		StringBuilder cSb = new StringBuilder();
-		StringBuilder qSb = new StringBuilder();
-		cSb.append(SIM_ID).append(", ").append(TIME);
-		qSb.append("?, ?");
-		for (String fieldName : dataFieldNames) {
-			cSb.append(", ").append(fieldName);
-			qSb.append(", ?");
-		}
-		columns = cSb.toString();
-		qMarks = qSb.toString();
+		columns = String.format("`%s`, `%s`, `%s`", JOB_NAME_KEY, TIME,
+				StringUtils.join(dataFieldNames, "`, `"));
 	}
 
 	public String getTable() {
@@ -99,30 +87,24 @@ public class SqlListener implements DataListener {
 		this.table = table;
 	}
 
-	public String getSimulationId() {
-		return simulationId;
+	public String getJobName() {
+		return jobName;
 	}
 
-	public void setSimulationId(String simulationId) {
-		this.simulationId = simulationId;
+	public void setJobName(String jobName) {
+		this.jobName = jobName;
 	}
 
-	public Timestamp getTime() {
+	public String getTime() {
 		return time;
 	}
 
-	public void setTime(Timestamp time) {
+	public void setSqlTime(String time) {
 		this.time = time;
 	}
 
-	public void setTimeString(String timeString) {
-		try {
-			this.time = new Timestamp(TimeUtils.getDateFormat()
-					.parse(timeString).getTime());
-		} catch (ParseException e) {
-			logger.error("Failed parsing time string: " + timeString
-					+ ", expection: " + e);
-		}
+	public void setTime(String timeString) {
+		this.time = TimeUtils.toSqlTime(timeString);
 	}
 
 	public void setDataSource(DataSource dataSource) {

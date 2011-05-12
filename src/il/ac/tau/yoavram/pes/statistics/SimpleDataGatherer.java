@@ -127,20 +127,22 @@ public class SimpleDataGatherer<T> implements DataGatherer<T> {
 	}
 
 	public void init() {
-		List<String> aggList = new ArrayList<String>(aggregators.size());
-		for (Aggregator<T> agg : aggregators) {
+		List<String> aggList = new ArrayList<String>(getAggregators().size());
+		for (Aggregator<T> agg : getAggregators()) {
 			aggList.add(agg.getName());
 		}
-		for (DataListener dl : listeners) {
+		for (DataListener dl : getListeners()) {
 			dl.setDataFieldNames(aggList);
 		}
-		// dataList = new ArrayList<Number>(getAggregators().size());
+
+		for (DataListener dl : getFinalListeners()) {
+			dl.setDataFieldNames(aggList);
+		}
 		data = new Number[getAggregators().size()];
 	}
 
 	@Override
 	public void close() throws IOException {
-		// Number[] data = dataList.toArray(EMPTY_NUMBER_ARRAY);
 		for (DataListener listener : getFinalListeners()) {
 			listener.listen(data);
 			listener.close();
@@ -152,7 +154,13 @@ public class SimpleDataGatherer<T> implements DataGatherer<T> {
 
 	@Override
 	public void gather() {
-		// dataList.clear();
+		collect();
+		for (DataListener listener : getListeners()) {
+			listener.listen(data);
+		}
+	}
+
+	private void collect() {
 		for (Aggregator<T> agg : getAggregators()) {
 			agg.clear();
 		}
@@ -173,16 +181,8 @@ public class SimpleDataGatherer<T> implements DataGatherer<T> {
 			}
 		}
 
-		/*
-		 * for (Aggregator<T> agg : getAggregators()) {
-		 * dataList.add(agg.result()); }
-		 */
 		for (int i = 0; i < data.length; i++) {
 			data[i] = getAggregators().get(i).result();
-		}
-		// Number[] data = dataList.toArray(EMPTY_NUMBER_ARRAY);
-		for (DataListener listener : getListeners()) {
-			listener.listen(data);
 		}
 	}
 }
