@@ -3,7 +3,7 @@ package il.ac.tau.yoavram.pes.statistics.aggregators;
 public abstract class Mean<T> extends AbstractAggregator<T> implements
 		Aggregator<T> {
 
-	protected int count;
+	protected double count;
 	protected double mean;
 
 	public Mean() {

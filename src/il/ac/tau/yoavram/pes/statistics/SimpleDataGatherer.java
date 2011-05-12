@@ -154,13 +154,6 @@ public class SimpleDataGatherer<T> implements DataGatherer<T> {
 
 	@Override
 	public void gather() {
-		collect();
-		for (DataListener listener : getListeners()) {
-			listener.listen(data);
-		}
-	}
-
-	private void collect() {
 		for (Aggregator<T> agg : getAggregators()) {
 			agg.clear();
 		}
@@ -184,5 +177,9 @@ public class SimpleDataGatherer<T> implements DataGatherer<T> {
 		for (int i = 0; i < data.length; i++) {
 			data[i] = getAggregators().get(i).result();
 		}
+		for (DataListener listener : getListeners()) {
+			listener.listen(data);
+		}
 	}
+
 }
