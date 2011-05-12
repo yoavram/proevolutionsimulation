@@ -8,10 +8,12 @@ import il.ac.tau.yoavram.pes.statistics.listeners.DataListener;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashSet;
 import java.util.List;
 
 import org.apache.log4j.Logger;
+
+import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
 
 public class SimpleDataGatherer<T> implements DataGatherer<T> {
 	@SuppressWarnings("unused")
@@ -29,10 +31,10 @@ public class SimpleDataGatherer<T> implements DataGatherer<T> {
 	protected Number[] data;
 
 	public SimpleDataGatherer() {
-		aggregators = new ArrayList<Aggregator<T>>();
-		filters = new ArrayList<Filter<T>>();
-		listeners = new HashSet<DataListener>();
-		finalListeners = new HashSet<DataListener>();
+		aggregators = Lists.newArrayList();
+		filters = Lists.newArrayList();
+		listeners = Sets.newHashSet();
+		finalListeners = Sets.newHashSet();
 	}
 
 	@Override
