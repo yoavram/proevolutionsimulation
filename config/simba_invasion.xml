@@ -48,10 +48,9 @@
 			<list>
 				<bean class="il.ac.tau.yoavram.pes.statistics.listeners.CsvWriterListener">
 					<property name="csvWriter">
-						<bean class="il.ac.tau.yoavram.pes.io.CsvWriter">
+						<bean class="il.ac.tau.yoavram.pes.io.csv.CsvWriter">
 							<property name="filename" value="pop.${jobName}.${time}" />
 							<property name="directory" value="${output.dir}/${jobName}" />
-
 						</bean>
 					</property>
 				</bean>
@@ -101,7 +100,7 @@
 			<list>
 				<bean class="il.ac.tau.yoavram.pes.statistics.listeners.CsvWriterListener">
 					<property name="csvWriter">
-						<bean class="il.ac.tau.yoavram.pes.io.CsvWriter">
+						<bean class="il.ac.tau.yoavram.pes.io.csv.CsvWriter">
 							<property name="filename" value="sim.${jobName}.${time}" />
 							<property name="directory" value="${output.dir}/${jobName}" />
 

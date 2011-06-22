@@ -30,7 +30,7 @@
 		<property name="numberOfHousekeepingGenes" value="${numberOfHousekeepingGenes}" />
 		<property name="mutationRate" value="${mutationRate}" />
 		<property name="selectionCoefficient" value="${selectionCoefficient}" />
-		<property name="beneficialMutationProbability" value="${beneficialMutationProbability}" />
+		<!-- <property name="beneficialMutationProbability" value="${beneficialMutationProbability}" /> -->
 		<property name="fitnessThreshold" value="${fitnessThreshold}" />
 		<property name="mutationRateModifier" value="${mutationRateModifier}" />
 	</bean>

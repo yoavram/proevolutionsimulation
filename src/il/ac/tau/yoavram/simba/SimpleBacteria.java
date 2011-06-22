@@ -72,7 +72,6 @@ public class SimpleBacteria implements Serializable, Bacteria {
 		numberOfDeleteriousHousekeepingAlleles = other.numberOfDeleteriousHousekeepingAlleles;
 		mutationRate = other.mutationRate;
 		selectionCoefficient = other.selectionCoefficient;
-		beneficialMutationProbability = other.beneficialMutationProbability;
 		fitnessThreshold = other.fitnessThreshold;
 		mutationRateModifier = other.mutationRateModifier;
 
@@ -169,22 +168,21 @@ public class SimpleBacteria implements Serializable, Bacteria {
 		double rand = RandomUtils.nextDouble();
 
 		if (gene < numberOfHousekeepingGenes) {
-			if (rand < getBeneficialMutationProbability()
-					&& numberOfDeleteriousHousekeepingAlleles > 0) {
-				numberOfDeleteriousHousekeepingAlleles--;
-			} else if (numberOfDeleteriousHousekeepingAlleles < numberOfHousekeepingGenes) {
-				numberOfDeleteriousHousekeepingAlleles++;
-			}
-		} else {
-			int newAllele = -1;
-			gene -= numberOfHousekeepingGenes;
-			if (rand < getBeneficialMutationProbability())
-				newAllele = getEnvironment().getIdealAllele(gene);
-			else if (rand < 2 * getBeneficialMutationProbability())
-				newAllele = (getEnvironment().getIdealAllele(gene) + 1) % 2;
+			if (gene < numberOfDeleteriousHousekeepingAlleles)
+				numberOfDeleteriousHousekeepingAlleles = Math.max(
+						numberOfDeleteriousHousekeepingAlleles - 1, 0);
 			else
-				newAllele = 2;
-			environmentalAlleles[gene] = newAllele;
+				numberOfDeleteriousHousekeepingAlleles = Math.min(
+						numberOfDeleteriousHousekeepingAlleles + 1,
+						numberOfHousekeepingGenes);
+		} else {
+			gene -= numberOfHousekeepingGenes;
+			int allele = environmentalAlleles[gene];
+			if (rand < 0.5)
+				allele = (allele + 1) % 3;
+			else
+				allele = (allele + 2) % 3;
+			environmentalAlleles[gene] = allele;
 		}
 	}
 
@@ -197,14 +195,14 @@ public class SimpleBacteria implements Serializable, Bacteria {
 	public double getFitness() {
 		if (fitness == -1
 				|| getEnvironment().getLastEnvironmentalChange() > update) {
-			double s = getSelectionCoefficient();
 			int deleteriousMutations = numberOfDeleteriousHousekeepingAlleles;
 			for (int gene = 0; gene < environmentalAlleles.length; gene++) {
 				if (getEnvironment().getIdealAllele(gene) != environmentalAlleles[gene]) {
 					deleteriousMutations++;
 				}
 			}
-			fitness = Math.pow((1 - s), deleteriousMutations);
+			fitness = Math.pow((1 - getSelectionCoefficient()),
+					deleteriousMutations);
 			update = Simulation.getInstance().getTick();
 		}
 		return fitness;
