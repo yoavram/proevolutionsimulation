@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+           http://www.springframework.org/schema/beans/spring-beans-3.0.xsd">
+
+	<bean id="model" class="il.ac.tau.yoavram.pes.SerializableModel"
+		factory-method="deserialize">
+		<constructor-arg name="filename"
+			value="tests/test_model_serialization.ser" />
+	</bean>
+
+	<bean id="model2" class="il.ac.tau.yoavram.pes.SerializableModel"
+		factory-method="deserialize">
+		<constructor-arg name="filename"
+			value="tests/test_model_serialization.ser" />
+		<property name="ID">
+			<bean class="java.util.Date" />
+		</property>
+	</bean>
+
+</beans>

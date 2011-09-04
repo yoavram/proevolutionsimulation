@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+           http://www.springframework.org/schema/beans/spring-beans-3.0.xsd"
+	default-init-method="init" default-destroy-method="close">
+
+	<bean class="il.ac.tau.yoavram.pes.utils.CsvCollector">
+		<property name="path"
+			value="D:\yoavram\proevolution\results\pes2010\29-12_envch" />
+		<property name="writer">
+			<bean class="il.ac.tau.yoavram.pes.io.CsvWriter">
+				<property name="filename" value="sim_freq" /> 
+				<!--<property name="filename" value="mean_fitness" />-->
+				<!--<property name="filename" value="mean_mu" /> -->
+				<property name="directory"
+					value="D:\yoavram\proevolution\results\pes2010\29-12_envch" />
+			</bean>
+		</property>
+		<property name="collector">
+		<bean class="il.ac.tau.yoavram.pes.statistics.collectors.LastRow"> 
+				<property name="ticks" value="40000000" /> <property name="column" value="1" 
+				/> </bean> 
+			<!--<bean class="il.ac.tau.yoavram.pes.statistics.collectors.Average">
+				<property name="column" value="2" />
+				<property name="onlyPositives" value="true" />
+				<property name="rows" value="4000" />
+			</bean>-->   <!-- mu is 6, fitness is 2 -->
+		</property>
+		<property name="filter">
+			<bean class="org.apache.commons.io.filefilter.WildcardFileFilter">
+				<constructor-arg name="wildcard" value="pop.*.csv" />
+			</bean>
+		</property>
+	</bean>
+</beans>
+	

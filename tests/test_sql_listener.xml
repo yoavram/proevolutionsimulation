@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd"
+	default-init-method="init" default-destroy-method="destroy">
+
+
+	<bean class="il.ac.tau.yoavram.pes.statistics.listeners.SqlListener">
+		<property name="dataSource">
+			<bean id="pesDataSource" class="org.apache.commons.dbcp.BasicDataSource">
+				<property name="driverClassName" value="com.mysql.jdbc.Driver" />
+				<property name="url" value="jdbc:mysql://192.168.78.128/pes" />
+				<property name="username" value="root" />
+				<property name="password" value="password" />
+			</bean>
+		</property>
+		<property name="jobName" value="test" />
+		<property name="table" value="SQL_LISTENER_TEST" />
+		<property name="timeString" value="2010-Nov-05_03-21-50-529_IST" />
+	</bean>
+
+</beans>
