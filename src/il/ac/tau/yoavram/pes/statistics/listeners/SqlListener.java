@@ -41,7 +41,8 @@ public class SqlListener implements DataListener {
 	private static final String JOB_NAME_KEY = SimulationConfigurer.JOB_NAME_KEY;
 	private static final String TIME = SimulationConfigurer.TIME;
 
-	private String columns;
+	private String columnsStr;
+	private List<String> columns;
 	private String table;
 	private String jobName;
 	private String time;
@@ -59,10 +60,17 @@ public class SqlListener implements DataListener {
 
 	@Override
 	public void listen(Number[] data) {
+		// TODO: When in doubt, use PreparedStatement
+		// (http://www.zentus.com/sqlitejdbc/usage.html)
 		String values = StringUtils.join(data, ", ");
-		String sql = String.format(SQL_TEMPLATE, getTable(), columns,
+		String sql = String.format(SQL_TEMPLATE, getTable(), columnsStr,
 				getJobName(), getTime(), values);
-		int rows = jdbcTemplate.update(sql);
+		int rows = 0;
+		try {
+			rows = jdbcTemplate.update(sql);
+		} catch (Exception e) {
+			logger.error("Database update failed: " + e);
+		}
 		if (rows < 1) {
 			logger.warn(String.format("Database update (%s) affected %d rows",
 					sql, rows));
@@ -75,8 +83,23 @@ public class SqlListener implements DataListener {
 
 	@Override
 	public void setDataFieldNames(List<String> dataFieldNames) {
-		columns = String.format("`%s`, `%s`, `%s`", JOB_NAME_KEY, TIME,
+		columns = dataFieldNames;
+		columnsStr = String.format("`%s`, `%s`, `%s`", JOB_NAME_KEY, TIME,
 				StringUtils.join(dataFieldNames, "`, `"));
+		// create table
+		StringBuilder sql = new StringBuilder();
+		sql.append(String.format(
+				"CREATE TABLE IF NOT EXISTS `%s` (`%s` CHAR ,`%s` DATETIME",
+				getTable(), JOB_NAME_KEY, TIME));
+		for (String col : columns) {
+			if (col.equals("ticks")) {
+				sql.append(", `ticks` INTEGER");
+			} else {
+				sql.append(", `" + col + "` FLOAT");
+			}
+		}
+		sql.append(")");
+		jdbcTemplate.execute(sql.toString());
 	}
 
 	public String getTable() {
@@ -109,7 +132,7 @@ public class SqlListener implements DataListener {
 
 	public void setDataSource(DataSource dataSource) {
 		jdbcTemplate = new JdbcTemplate(dataSource);
-		jdbcTemplate.setLazyInit(true);
+		jdbcTemplate.setLazyInit(false);
 	}
 
 }

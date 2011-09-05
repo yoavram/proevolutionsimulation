@@ -2,7 +2,11 @@ package il.ac.tau.yoavram.simba;
 
 import il.ac.tau.yoavram.pes.utils.RandomUtils;
 
+import java.util.List;
+
 import org.apache.log4j.Logger;
+
+import com.google.common.collect.Lists;
 
 public class ModifierEnvironment extends SimpleEnvironment implements
 		Environment {
@@ -22,7 +26,7 @@ public class ModifierEnvironment extends SimpleEnvironment implements
 	private int numOfTransformationModifiers = 0;
 	private int numOfThresholdModifiers = 0;
 
-	private int[] fitnessGenes;
+	private Integer[] fitnessGenes;
 	private int[] mutationRateModifiers;
 	private int[] transformationRateModifiers;
 	private int[] thresholdModifiers;
@@ -38,7 +42,7 @@ public class ModifierEnvironment extends SimpleEnvironment implements
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see il.ac.tau.yoavram.simba.IEnvironment#init()
+	 * @see il.ac.tau.yoavram.simba.Environment#init()
 	 */
 	@Override
 	public void init() {
@@ -48,50 +52,47 @@ public class ModifierEnvironment extends SimpleEnvironment implements
 			alleles[gene] = RandomUtils.nextInt(0, 1);
 			types[gene] = GeneType.Fitness;
 		}
-		mutationRateModifiers = new int[getNumOfMutationModifiers()];
-		transformationRateModifiers = new int[getNumOfTransformationModifiers()];
-		thresholdModifiers = new int[getNumOfThresholdModifiers()];
+		
+		List<Integer> genes = Lists.newArrayList();
+		for (int gene = 0; gene < getNumberOfGenes(); gene++)
+			genes.add(gene);
+		
+		mutationRateModifiers = new int[getNumberOfMutationModifiers()];
+		transformationRateModifiers = new int[getNumberOfTransformationModifiers()];
+		thresholdModifiers = new int[getNumberOfThresholdModifiers()];
 
-		for (int mods = 0; mods < getNumOfMutationModifiers(); mods++) {
-			int gene = randomFitnessGene();
+		for (int mods = 0; mods < getNumberOfMutationModifiers(); mods++) {
+			int gene = genes.remove(RandomUtils.nextInt(0, genes.size()));
 			types[gene] = GeneType.MutationRate;
 			alleles[gene] = -1;
 			mutationRateModifiers[mods] = gene;
 		}
-		for (int mods = 0; mods < getNumOfTransformationModifiers(); mods++) {
-			int gene = randomFitnessGene();
+		for (int mods = 0; mods < getNumberOfTransformationModifiers(); mods++) {
+			int gene = genes.remove(RandomUtils.nextInt(0, genes.size()));
 			types[gene] = GeneType.TransformationRate;
 			alleles[gene] = -1;
 			transformationRateModifiers[mods] = gene;
 		}
-		for (int mods = 0; mods < getNumOfThresholdModifiers(); mods++) {
-			int gene = randomFitnessGene();
+		for (int mods = 0; mods < getNumberOfThresholdModifiers(); mods++) {
+			int gene = genes.remove(RandomUtils.nextInt(0, genes.size()));
 			types[gene] = GeneType.Threshold;
 			alleles[gene] = -1;
 			thresholdModifiers[mods] = gene;
 		}
 
-		fitnessGenes = new int[alleles.length - getNumOfMutationModifiers()
-				- getNumOfTransformationModifiers()
-				- getNumOfThresholdModifiers()];
-		int index = 0;
-		for (int gene = 0; gene < alleles.length; gene++) {
-			if (types[gene] == GeneType.Fitness) {
-				fitnessGenes[index++] = gene;
-			}
-		}
+		fitnessGenes = genes.toArray(new Integer[0]);
 	}
 
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see il.ac.tau.yoavram.simba.IEnvironment#change(double)
+	 * @see il.ac.tau.yoavram.simba.Environment#change(double)
 	 */
 	@Override
 	public void change(double fractionOfGenesToChange) {
 		double toChange = Math.ceil(fractionOfGenesToChange * alleles.length);
 		for (int i = 0; i < toChange; i++) {
-			int gene = randomFitnessGene();
+			int gene = getRandomFitnessGene();
 			int currentAllele = alleles[gene];
 			int newAllele = (currentAllele + 1) % 2;
 			alleles[gene] = newAllele;
@@ -103,16 +104,8 @@ public class ModifierEnvironment extends SimpleEnvironment implements
 		}
 	}
 
-	private int randomFitnessGene() {
-		int gene = RandomUtils.nextInt(0, alleles.length - 1);
-		while (types[gene] != GeneType.Fitness) {
-			gene = RandomUtils.nextInt(0, alleles.length - 1);
-		}
-		return gene;
-	}
-
 	public int getRandomFitnessGene() {
-		return RandomUtils.nextInt(0, fitnessGenes.length - 1);
+		return fitnessGenes[RandomUtils.nextInt(0, fitnessGenes.length - 1)];
 	}
 
 	public int[] getMutationRateModifiers() {
@@ -139,32 +132,12 @@ public class ModifierEnvironment extends SimpleEnvironment implements
 		return getNumberOfEnvironmentalGenes();
 	}
 
-	public int getNumOfMutationModifiers() {
+	public int getNumberOfMutationModifiers() {
 		return numOfMutationModifiers;
 	}
 
-	public void setNumOfMutationModifiers(int numOfMutationModifiers) {
-		this.numOfMutationModifiers = numOfMutationModifiers;
-	}
-
-	public int getNumOfTransformationModifiers() {
+	public int getNumberOfTransformationModifiers() {
 		return numOfTransformationModifiers;
-	}
-
-	public void setNumOfTransformationModifiers(int numOfTransformationModifiers) {
-		this.numOfTransformationModifiers = numOfTransformationModifiers;
-	}
-
-	public int getNumOfThresholdModifiers() {
-		return numOfThresholdModifiers;
-	}
-
-	public void setNumOfThresholdModifiers(int numOfThresholdModifiers) {
-		this.numOfThresholdModifiers = numOfThresholdModifiers;
-	}
-
-	public void setNumberOfMutationModifiers(int numOfMutationModifiers) {
-		this.numOfMutationModifiers = numOfMutationModifiers;
 	}
 
 	public void setNumberOfTransformationModifiers(
@@ -172,8 +145,16 @@ public class ModifierEnvironment extends SimpleEnvironment implements
 		this.numOfTransformationModifiers = numOfTransformationModifiers;
 	}
 
+	public int getNumberOfThresholdModifiers() {
+		return numOfThresholdModifiers;
+	}
+
 	public void setNumberOfThresholdModifiers(int numOfThresholdModifiers) {
 		this.numOfThresholdModifiers = numOfThresholdModifiers;
+	}
+
+	public void setNumberOfMutationModifiers(int numOfMutationModifiers) {
+		this.numOfMutationModifiers = numOfMutationModifiers;
 	}
 
 }

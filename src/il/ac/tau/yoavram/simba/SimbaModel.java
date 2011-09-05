@@ -91,7 +91,7 @@ public class SimbaModel extends SerializableModel<Bacteria> {
 			logger.debug("Changing the environment");
 			getEnvironment().change(getFractionOfGenesToChange());
 		} else if (getEnvironmentalChangeFrequency() < 0) {
-			if (Simulation.getInstance().getTick() % period == 0) {
+			if (Simulation.getInstance().getTick() % getPeriod() == 0) {
 				logger.debug("Changing the environment");
 				getEnvironment().change(getFractionOfGenesToChange());
 			}
@@ -172,6 +172,14 @@ public class SimbaModel extends SerializableModel<Bacteria> {
 
 	public Invasion<Bacteria, ? extends Bacteria> getInvasion() {
 		return invasion;
+	}
+
+	public double getPeriod() {
+		return period;
+	}
+
+	public void setPeriod(double period) {
+		this.period = period;
 	}
 
 }

@@ -79,5 +79,4 @@ public class RandomUtils {
 			array[i] = tmp;
 		}
 	}
-
 }

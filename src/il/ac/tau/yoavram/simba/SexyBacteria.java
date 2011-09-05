@@ -5,9 +5,6 @@ import il.ac.tau.yoavram.pes.utils.RandomUtils;
 
 import java.io.ObjectInputStream;
 import java.util.Arrays;
-
-import javax.lang.model.element.Modifier;
-
 import org.apache.log4j.Logger;
 
 public class SexyBacteria implements Bacteria {
@@ -27,13 +24,15 @@ public class SexyBacteria implements Bacteria {
 	protected double mutationRate;
 	protected double transformationRate;
 	protected double selectionCoefficient;
-	private double fitnessThreshold = 0;
-	private double mutationRateModifier = 1;
-	private double transformationRateModifier = 1;
-	private boolean sim = false;
-	private boolean sir = false;
-	private boolean cr = false;
-	private boolean cm = false;
+	protected double fitnessThreshold = -1;
+	protected double mutationRateModifier = -1;
+	protected double transformationRateModifier = -1;
+
+	/*
+	 * private transient boolean sim = false; private transient boolean sir =
+	 * false; private transient boolean cr = false; private transient boolean cm
+	 * = false;
+	 */
 
 	protected transient double fitness = DEFAULT_FITNESS;
 	protected transient long update = DEFAULT_UPDATE;
@@ -60,10 +59,10 @@ public class SexyBacteria implements Bacteria {
 		mutationRate = other.mutationRate;
 		transformationRate = other.transformationRate;
 		selectionCoefficient = other.selectionCoefficient;
-		fitnessThreshold = other.fitnessThreshold;
-		mutationRateModifier = other.mutationRateModifier;
-		transformationRateModifier = other.transformationRateModifier;
-
+		/*
+		 * mutationRateModifier = other.mutationRateModifier;
+		 * transformationRateModifier = other.transformationRateModifier;
+		 */
 		fitness = DEFAULT_FITNESS;
 		update = DEFAULT_UPDATE;
 	}
@@ -152,24 +151,15 @@ public class SexyBacteria implements Bacteria {
 	 */
 	@Override
 	public void mutate() {
-		int gene = RandomUtils.nextInt(0, alleles.length);
+		int gene = getEnvironment().getRandomFitnessGene();
 		double rand = RandomUtils.nextDouble();
-
-		switch (getEnvironment().getGeneType(gene)){
-			case Fitness:
-				int allele = alleles[gene];
-				if (rand < 0.5)
-					allele = (allele + 1) % 3;
-				else
-					allele = (allele + 2) % 3;
-				alleles[gene] = allele;
-			default:
-				allele = alleles[gene];
-				if (rand<0.5)
-					allele = Math.min(allele+1, alleles.length);
-				else
-					allele = Math.max(allele-1,0);
-				alleles[gene]=allele;				
+		// TODO mutate modifiers??
+		int allele = alleles[gene];
+		if (rand < 0.5)
+			allele = (allele + 1) % 3;
+		else
+			allele = (allele + 2) % 3;
+		alleles[gene] = allele;
 	}
 
 	/*
@@ -205,7 +195,8 @@ public class SexyBacteria implements Bacteria {
 				|| getEnvironment().getLastEnvironmentalChange() > update) {
 			int deleteriousMutations = 0;
 			for (int gene = 0; gene < alleles.length; gene++) {
-				if (getEnvironment().getIdealAllele(gene) != alleles[gene]) {
+				int idealAllele = getEnvironment().getIdealAllele(gene);
+				if (idealAllele != -1 && idealAllele != alleles[gene]) {
 					deleteriousMutations++;
 				}
 			}
@@ -284,28 +275,66 @@ public class SexyBacteria implements Bacteria {
 	}
 
 	public void setFitnessThreshold(double fitnessThreshold) {
-		this.fitnessThreshold = fitnessThreshold;
+		this.fitnessThreshold = -1;
+		setModifier(mutationRateModifier, getEnvironment()
+				.getMutationRateModifiers(), 1 - getSelectionCoefficient());
 	}
 
 	@Override
 	public double getFitnessThreshold() {
+		if (fitnessThreshold == -1) {
+			fitnessThreshold = clacModifier(getEnvironment()
+					.getMutationRateModifiers(), 1 - getSelectionCoefficient());
+		}
 		return fitnessThreshold;
 	}
 
 	public void setMutationRateModifier(double mutationRateModifier) {
-		this.mutationRateModifier = mutationRateModifier;
+		this.mutationRateModifier = -1;
+		setModifier(mutationRateModifier, getEnvironment()
+				.getMutationRateModifiers(), 2);
 	}
 
 	public void setTransformationRateModifier(double transformationRateModifier) {
-		this.transformationRateModifier = transformationRateModifier;
+		this.transformationRateModifier = -1;
+		setModifier(transformationRateModifier, getEnvironment()
+				.getTransformationRateModifiers(), 2);
+	}
+
+	private void setModifier(double modifier, int[] modifierIndex, double power) {
+		int modifierInt = (int) (Math.log(mutationRateModifier) / Math
+				.log(power));
+		int allele = modifierInt / modifierIndex.length;
+		for (int gene : modifierIndex) {
+			alleles[gene] = allele;
+		}
+		int remainder = modifierInt % modifierIndex.length;
+		alleles[modifierIndex[0]] += remainder;
+	}
+
+	private double clacModifier(int[] modifierIndex, double power) {
+		int modifierSum = 0;
+		for (int modifier : modifierIndex) {
+			modifierSum += alleles[modifier];
+		}
+		return Math.pow(power, modifierSum);
 	}
 
 	public double getMutationRateModifier() {
+		if (mutationRateModifier == -1) {
+			mutationRateModifier = clacModifier(getEnvironment()
+					.getMutationRateModifiers(), 2);
+		}
 		return mutationRateModifier;
 	}
 
 	public double getTransformationRateModifier() {
+		if (transformationRateModifier == -1) {
+			transformationRateModifier = clacModifier(getEnvironment()
+					.getTransformationRateModifiers(), 2);
+		}
 		return transformationRateModifier;
+
 	}
 
 	public boolean isMutator() {
@@ -316,36 +345,23 @@ public class SexyBacteria implements Bacteria {
 		return ((isSir() && getFitness() < getFitnessThreshold()) || isCr());
 	}
 
-	public void setSim(boolean sim) {
-		this.sim = sim;
-	}
-
-	public void setCm(boolean cm) {
-		this.cm = cm;
-	}
-
-	public void setCr(boolean cr) {
-		this.cr = cr;
-	}
-
 	public boolean isSim() {
-		return sim;
+		return getMutationRateModifier() != 1 && getFitnessThreshold() > 0
+				&& getFitnessThreshold() < 1;
 	}
 
 	public boolean isCm() {
-		return cm;
+		return getFitnessThreshold() == 1 && getMutationRateModifier() != 1;
 	}
 
 	public boolean isCr() {
-		return cr;
+		return getFitnessThreshold() == 1
+				&& getTransformationRateModifier() != 1;
 	}
 
 	public boolean isSir() {
-		return sir;
-	}
-
-	public void setSir(boolean sir) {
-		this.sir = sir;
+		return getTransformationRateModifier() != 1
+				&& getFitnessThreshold() > 0 && getFitnessThreshold() < 1;
 	}
 
 }

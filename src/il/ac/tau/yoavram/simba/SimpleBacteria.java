@@ -231,8 +231,8 @@ public class SimpleBacteria implements Serializable, Bacteria {
 	protected SimpleEnvironment getEnvironment() {
 		return SimpleEnvironment.getInstance();
 	}
-
-	public int[] getEnvironmentalAlleles() {
+	
+	public int[] getAlleles() {
 		return environmentalAlleles;
 	}
 

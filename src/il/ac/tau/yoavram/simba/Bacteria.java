@@ -17,6 +17,8 @@ public interface Bacteria extends Serializable {
 	public abstract int getID();
 
 	public abstract boolean equals(Object obj);
+	
+	public abstract int[] getAlleles();
 
 	public abstract double getMutationRate();
 
