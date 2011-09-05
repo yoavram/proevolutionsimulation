@@ -16,8 +16,8 @@ public class SimpleEnvironment implements Environment {
 	private static SimpleEnvironment INSTANCE = null;
 
 	private int numberOfEnvironmentalGenes;
-	private int[] alleles;
-	private transient long lastEnvironmentalChange = 0;
+	protected int[] alleles;
+	protected transient long lastEnvironmentalChange = 0;
 
 	// TODO make this private and lazy init in getInstance, and remove set
 	// instance from readObject()
@@ -88,7 +88,7 @@ public class SimpleEnvironment implements Environment {
 		return lastEnvironmentalChange;
 	}
 
-	private long getTick() {
+	protected long getTick() {
 		return Simulation.getInstance().getTick();
 	}
 

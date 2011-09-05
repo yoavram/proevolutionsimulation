@@ -40,7 +40,6 @@ public class SimpleBacteria implements Serializable, Bacteria {
 	protected int[] environmentalAlleles;
 	protected double mutationRate;
 	protected double selectionCoefficient;
-	protected double beneficialMutationProbability;
 	private double fitnessThreshold = 0;
 	private double mutationRateModifier = 1;
 
@@ -262,15 +261,6 @@ public class SimpleBacteria implements Serializable, Bacteria {
 		return selectionCoefficient;
 	}
 
-	public double getBeneficialMutationProbability() {
-		return beneficialMutationProbability;
-	}
-
-	public void setBeneficialMutationProbability(
-			double beneficialMutationProbability) {
-		this.beneficialMutationProbability = beneficialMutationProbability;
-	}
-
 	public int getNumberOfDeleteriousHousekeepingGenes() {
 		return numberOfDeleteriousHousekeepingAlleles;
 	}
@@ -292,6 +282,7 @@ public class SimpleBacteria implements Serializable, Bacteria {
 		this.fitnessThreshold = fitnessThreshold;
 	}
 
+	@Override
 	public double getFitnessThreshold() {
 		return fitnessThreshold;
 	}
@@ -323,17 +314,8 @@ public class SimpleBacteria implements Serializable, Bacteria {
 	}
 
 	@Override
-	public int recombinate() {
+	public int transform(int[] genome) {
 		return 0;
 	}
 
-	@Override
-	public double getMutationThreshold() {
-		return fitnessThreshold;
-	}
-
-	@Override
-	public double getTransformationThreshold() {
-		return Double.NaN;
-	}
 }
