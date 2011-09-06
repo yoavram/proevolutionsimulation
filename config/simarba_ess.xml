@@ -7,8 +7,8 @@
 	<!-- bean id="pesDataSource" class="org.apache.commons.dbcp.BasicDataSource"> 
 		<property name="driverClassName" value="com.mysql.jdbc.Driver" /> <property 
 		name="url" value="jdbc:mysql://192.168.78.128/pes" /> <property name="username" 
-		value="root" /> <property name="password" value="password" /> </bean -->
-	<!--bean id="propertiesPersister" class="il.ac.tau.yoavram.pes.io.PropertiesSqlPersister"> 
+		value="root" /> <property name="password" value="password" /> </bean 
+	bean id="propertiesPersister" class="il.ac.tau.yoavram.pes.io.PropertiesSqlPersister"> 
 		<property name="dataSource" ref="pesDataSource" /> <property name="table" 
 		value="simulation" /> </bean -->
 	<bean id="simulation" class="il.ac.tau.yoavram.pes.Simulation">
@@ -74,7 +74,7 @@
 						</bean>
 					</property>
 				</bean>
-				<bean class="il.ac.tau.yoavram.pes.statistics.listeners.SqlListener">
+				<!-- bean class="il.ac.tau.yoavram.pes.statistics.listeners.SqlListener">
 					<property name="dataSource">
 						<bean class="org.apache.commons.dbcp.BasicDataSource">
 							<property name="driverClassName" value="org.sqlite.JDBC" />
@@ -85,7 +85,7 @@
 					<property name="jobName" value="${jobName}" />
 					<property name="time" value="${time}" />
 					<property name="table" value="fitness" />
-				</bean>
+				</bean-->
 				<bean class="il.ac.tau.yoavram.pes.statistics.listeners.ChartDrawer">
 					<property name="title" value="fitness.${jobName}.${time}" />
 					<property name="showApplet" value="${simulation.block}" />
@@ -117,7 +117,7 @@
 			</list>
 		</property>
 	</bean>
-	<bean id="mutationDataGatherer" class="il.ac.tau.yoavram.simba.statistics.SimbaDataGatherer">
+	<!-- bean id="mutationDataGatherer" class="il.ac.tau.yoavram.simba.statistics.SimbaDataGatherer">
 		<property name="model" ref="simarbaModel" />
 		<property name="interval" value="${statistics.interval}" />
 		<property name="filters">
@@ -177,15 +177,15 @@
 					<property name="meanAggregator" ref="meanMutationRate" />
 				</bean>
 
-				<!--<ref bean="meanFitnessThreshold" /> <bean class="il.ac.tau.yoavram.simba.statistics.aggregators.MinimumFitnessThreshold"> 
+				<ref bean="meanFitnessThreshold" /> <bean class="il.ac.tau.yoavram.simba.statistics.aggregators.MinimumFitnessThreshold"> 
 					<property name="name" value="min fitness threshold" /> </bean> <bean class="il.ac.tau.yoavram.simba.statistics.aggregators.MaximumFitnessThreshold"> 
 					<property name="name" value="max fitness threshold" /> </bean> <bean class="il.ac.tau.yoavram.simba.statistics.aggregators.StandardDeviationFitnessThreshold"> 
 					<property name="name" value="stdev fitness threshold" /> <property name="meanAggregator" 
-					ref="meanFitnessThreshold" /> </bean> -->
+					ref="meanFitnessThreshold" /> </bean>
 			</list>
 		</property>
-	</bean>
-	<bean id="transformationDataGatherer" class="il.ac.tau.yoavram.simba.statistics.SimbaDataGatherer">
+	</bean-->
+	<!-- bean id="transformationDataGatherer" class="il.ac.tau.yoavram.simba.statistics.SimbaDataGatherer">
 		<property name="model" ref="simarbaModel" />
 		<property name="interval" value="${statistics.interval}" />
 		<property name="filters">
@@ -246,12 +246,12 @@
 				</bean>
 			</list>
 		</property>
-	</bean>
+	</bean-->
 	<bean id="meanFitness"
 		class="il.ac.tau.yoavram.simba.statistics.aggregators.MeanFitness">
 		<property name="name" value="mean fitness" />
 	</bean>
-	<bean id="meanMutationRate"
+	<!--bean id="meanMutationRate"
 		class="il.ac.tau.yoavram.simba.statistics.aggregators.MeanMutationRate">
 		<property name="name" value="mean mutation rate" />
 	</bean>
@@ -259,6 +259,6 @@
 		class="il.ac.tau.yoavram.simba.statistics.aggregators.MeanTransformationRate">
 		<property name="name" value="mean transformation rate" />
 	</bean>
-	<!-- bean id="meanFitnessThreshold" class="il.ac.tau.yoavram.simba.statistics.aggregators.MeanFitnessThreshold"> 
+	 <bean id="meanFitnessThreshold" class="il.ac.tau.yoavram.simba.statistics.aggregators.MeanFitnessThreshold"> 
 		<property name="name" value="mean fitness threshold" /> </bean -->
 </beans>
