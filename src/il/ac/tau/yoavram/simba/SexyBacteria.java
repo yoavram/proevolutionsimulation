@@ -137,9 +137,10 @@ public class SexyBacteria implements Bacteria {
 		if (numOfMutations > 0) {
 			logger.debug("new organism " + getID() + " has " + numOfMutations
 					+ " mutations");
-		}
-		for (int i = 0; i < numOfMutations; i++) {
-			child.mutate();
+
+			for (int i = 0; i < numOfMutations; i++) {
+				child.mutate();
+			}
 		}
 		return child;
 	}

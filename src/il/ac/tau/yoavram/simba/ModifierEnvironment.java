@@ -96,8 +96,7 @@ public class ModifierEnvironment extends SimpleEnvironment implements
 			int currentAllele = alleles[gene];
 			int newAllele = (currentAllele + 1) % 2;
 			alleles[gene] = newAllele;
-			logger.debug("Changed the  gene " + gene + " from " + currentAllele
-					+ " to " + newAllele);
+			logger.debug(String.format("Changed the allele in gene %d from %d to %d" , gene,currentAllele,newAllele));
 		}
 		if (toChange > 0) {
 			lastEnvironmentalChange = getTick();

@@ -41,6 +41,7 @@
 		<property name="transformationRate" value="${transformationRate}" />
 		<property name="fitnessThreshold" value="${fitnessThreshold}" />
 		<property name="numberOfGenes" value="${numberOfGenes}" />
+		<property name="selectionCoefficient" value="${selectionCoefficient}" />
 	</bean>
 	<bean id="simarbaModel" class="il.ac.tau.yoavram.simba.SimarbaModel">
 		<property name="populationSize" value="${populationSize}" />
@@ -72,6 +73,18 @@
 
 						</bean>
 					</property>
+				</bean>
+				<bean class="il.ac.tau.yoavram.pes.statistics.listeners.SqlListener">
+					<property name="dataSource">
+						<bean class="org.apache.commons.dbcp.BasicDataSource">
+							<property name="driverClassName" value="org.sqlite.JDBC" />
+							<property name="url"
+								value="jdbc:sqlite:${output.dir}/${jobName}/fitness.${jobName}.${time}.sqlite" />
+						</bean>
+					</property>
+					<property name="jobName" value="${jobName}" />
+					<property name="time" value="${time}" />
+					<property name="table" value="fitness" />
 				</bean>
 				<bean class="il.ac.tau.yoavram.pes.statistics.listeners.ChartDrawer">
 					<property name="title" value="fitness.${jobName}.${time}" />
@@ -122,6 +135,18 @@
 
 						</bean>
 					</property>
+				</bean>
+				<bean class="il.ac.tau.yoavram.pes.statistics.listeners.SqlListener">
+					<property name="dataSource">
+						<bean class="org.apache.commons.dbcp.BasicDataSource">
+							<property name="driverClassName" value="org.sqlite.JDBC" />
+							<property name="url"
+								value="jdbc:sqlite:${output.dir}/${jobName}/mutation.${jobName}.${time}.sqlite" />
+						</bean>
+					</property>
+					<property name="jobName" value="${jobName}" />
+					<property name="time" value="${time}" />
+					<property name="table" value="mutation" />
 				</bean>
 				<bean class="il.ac.tau.yoavram.pes.statistics.listeners.ChartDrawer">
 					<property name="title" value="mutation.${jobName}.${time}" />
