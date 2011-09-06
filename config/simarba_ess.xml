@@ -23,8 +23,8 @@
 		<property name="dataGatherers">
 			<list>
 				<ref bean="fitnessDataGatherer" />
-				<ref bean="mutationDataGatherer" />
-				<ref bean="transformationDataGatherer" />
+				<!--ref bean="mutationDataGatherer" />
+				<ref bean="transformationDataGatherer" /-->
 			</list>
 		</property>
 		<property name="blockAtEnd" value="${simulation.block}" />
