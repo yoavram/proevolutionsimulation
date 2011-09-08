@@ -311,7 +311,8 @@ public class SexyBacteria implements Bacteria {
 	}
 
 	private void setModifier(double modifier, int[] modifierIndex, double power) {
-		int modifierInt = (int) (Math.log(mutationRateModifier) / Math
+		//TODO !!!
+		int modifierInt = (int) (Math.log(modifier) / Math
 				.log(power));
 		int allele = modifierInt / modifierIndex.length;
 		for (int gene : modifierIndex) {

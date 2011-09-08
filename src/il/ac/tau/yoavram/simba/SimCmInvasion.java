@@ -1,13 +1,15 @@
 package il.ac.tau.yoavram.simba;
 
-import il.ac.tau.yoavram.pes.AbstractInvasion;
 import il.ac.tau.yoavram.pes.DoubleInvasion;
 
 public class SimCmInvasion extends
 		DoubleInvasion<SimpleBacteria, SimpleBacteria> {
-	protected AbstractInvasion<SimpleBacteria, SimpleBacteria> invasion1 = new SimInvasion();
-	protected AbstractInvasion<SimpleBacteria, SimpleBacteria> invasion2 = new SimInvasion();
 
+	public SimCmInvasion() {
+		invasion1 = new SimInvasion();
+		invasion2 = new SimInvasion();
+	}
+	
 	public void init() {
 		((SimInvasion) invasion2).setFitnessThreshold(1.0);
 	}

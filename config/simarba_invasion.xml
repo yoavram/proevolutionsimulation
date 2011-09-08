@@ -102,12 +102,11 @@
 		</property>
 	</bean>
 	<bean id="simDataGatherer" class="il.ac.tau.yoavram.simba.statistics.SimbaDataGatherer">
-		<property name="model" ref="simbaModel" />
+		<property name="model" ref="simarbaModel" />
 		<property name="interval" value="${statistics.interval}" />
 		<property name="filters">
 			<list>
-				<bean id="simFilter"
-					class="il.ac.tau.yoavram.simba.statistics.filters.SimBacteriaFilter" />
+				<ref bean="simFilter" />
 			</list>
 		</property>
 		<property name="listeners">
@@ -195,4 +194,6 @@
 		class="il.ac.tau.yoavram.simba.statistics.aggregators.MeanTransformationRate">
 		<property name="name" value="mean transformation rate" />
 	</bean>
+	<bean id="simFilter"
+		class="il.ac.tau.yoavram.simba.statistics.filters.SimBacteriaFilter" />
 </beans>

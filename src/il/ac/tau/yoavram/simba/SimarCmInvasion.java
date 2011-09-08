@@ -1,12 +1,13 @@
 package il.ac.tau.yoavram.simba;
 
-import il.ac.tau.yoavram.pes.AbstractInvasion;
 import il.ac.tau.yoavram.pes.DoubleInvasion;
 
-public class SimarCmInvasion extends
-		DoubleInvasion<SexyBacteria, SexyBacteria> {
-	protected AbstractInvasion<SexyBacteria, SexyBacteria> invasion1 = new SimarInvasion();
-	protected AbstractInvasion<SexyBacteria, SexyBacteria> invasion2 = new SimarInvasion();
+public class SimarCmInvasion extends DoubleInvasion<SexyBacteria, SexyBacteria> {
+
+	public SimarCmInvasion() {
+		invasion1 = new SimarInvasion();
+		invasion2 = new SimarInvasion();
+	}
 
 	public void init() {
 		((SimarInvasion) invasion2).setFitnessThreshold(1.0);
@@ -25,7 +26,8 @@ public class SimarCmInvasion extends
 	}
 
 	public void setSimMutationRateModifier(double mutationRateModifier) {
-		((SimarInvasion) invasion1).setMutationRateModifier(mutationRateModifier);
+		((SimarInvasion) invasion1)
+				.setMutationRateModifier(mutationRateModifier);
 	}
 
 	public double getCmMutationRateModifier() {
@@ -33,6 +35,7 @@ public class SimarCmInvasion extends
 	}
 
 	public void setCmMutationRateModifier(double mutationRateModifier) {
-		((SimarInvasion) invasion2).setMutationRateModifier(mutationRateModifier);
+		((SimarInvasion) invasion2)
+				.setMutationRateModifier(mutationRateModifier);
 	}
 }

@@ -2,6 +2,7 @@ package il.ac.tau.yoavram.simba;
 
 import il.ac.tau.yoavram.pes.utils.RandomUtils;
 
+import java.io.ObjectInputStream;
 import java.util.List;
 
 import org.apache.log4j.Logger;
@@ -37,6 +38,11 @@ public class ModifierEnvironment extends SimpleEnvironment implements
 
 	public static ModifierEnvironment getInstance() {
 		return INSTANCE;
+	}
+	
+	private void readObject(ObjectInputStream ois) throws Exception {
+		ois.defaultReadObject();
+		INSTANCE = this;
 	}
 
 	/*
