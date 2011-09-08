@@ -3,15 +3,15 @@ package il.ac.tau.yoavram.simba;
 import il.ac.tau.yoavram.pes.AbstractInvasion;
 
 public class SimarInvasion extends AbstractInvasion<SexyBacteria, SexyBacteria> {
-	private double fitnessThreshold;
-	private double mutationRateModifier;
-	private double transformationRateModifier;
+	private double fitnessThreshold=0;
+	private double mutationRateModifier=1;
+	private double transformationRateModifier=1;
 
 	@Override
 	protected SexyBacteria transform(SexyBacteria bacteria) {
 		bacteria.setFitnessThreshold(getFitnessThreshold());
 		bacteria.setMutationRateModifier(getMutationRateModifier());
-		bacteria.setTransformationRateModifier(getMutationRateModifier());
+		bacteria.setTransformationRateModifier(getTransformationRateModifier());
 		return bacteria;
 	}
 

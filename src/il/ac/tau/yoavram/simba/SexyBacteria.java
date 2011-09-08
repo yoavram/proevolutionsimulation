@@ -155,12 +155,17 @@ public class SexyBacteria implements Bacteria {
 		int gene = getEnvironment().getRandomFitnessGene();
 		double rand = RandomUtils.nextDouble();
 		// TODO mutate modifiers??
-		int allele = alleles[gene];
+		int currentAllele = alleles[gene];
+		int newAllele = -1;
 		if (rand < 0.5)
-			allele = (allele + 1) % 3;
+			newAllele = (currentAllele + 1) % 3;
 		else
-			allele = (allele + 2) % 3;
-		alleles[gene] = allele;
+			newAllele = (currentAllele + 2) % 3;
+		alleles[gene] = newAllele;
+		logger.info(String.format(
+				"Tick %d: Bacteria %d mutated in locus %d from %d to %d",
+				Simulation.getInstance().getTick(), getID(), gene,
+				currentAllele, newAllele));
 	}
 
 	/*
@@ -174,6 +179,9 @@ public class SexyBacteria implements Bacteria {
 		int count = 0;
 		int pos = RandomUtils.nextInt(0, getAlleles().length - 1);
 
+		logger.info(String.format(
+				"Tick %d: Bacteria %d transforming %d loci from locus %d",
+				Simulation.getInstance().getTick(), getID(), length, pos));
 		while (count < length) {
 			if (pos >= alleles.length) {
 				pos -= alleles.length;

@@ -45,4 +45,20 @@ public abstract class DoubleInvasion<T, E extends T> implements Invasion<T, E> {
 	public String getInvaderName() {
 		return invasion1.getInvaderName() + ", " + invasion2.getInvaderName();
 	}
+
+	public AbstractInvasion<T, E> getInvasion1() {
+		return invasion1;
+	}
+
+	public void setInvasion1(AbstractInvasion<T, E> invasion1) {
+		this.invasion1 = invasion1;
+	}
+
+	public AbstractInvasion<T, E> getInvasion2() {
+		return invasion2;
+	}
+
+	public void setInvasion2(AbstractInvasion<T, E> invasion2) {
+		this.invasion2 = invasion2;
+	}
 }
