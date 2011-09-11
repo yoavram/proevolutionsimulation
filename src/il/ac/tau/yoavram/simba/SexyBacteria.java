@@ -69,7 +69,7 @@ public class SexyBacteria implements Bacteria {
 	 * @param other
 	 */
 	protected SexyBacteria create() {
-		logger.debug("creating new " + SexyBacteria.class.getName());
+		//logger.debug("creating new " + SexyBacteria.class.getSimpleName());
 		return new SexyBacteria();
 	}
 
