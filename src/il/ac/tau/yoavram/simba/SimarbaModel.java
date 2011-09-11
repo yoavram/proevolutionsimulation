@@ -28,13 +28,14 @@ public class SimarbaModel extends SimbaModel {
 				int numOfTransformations = RandomUtils.nextPoisson(child
 						.getTransformationRate());
 				if (numOfTransformations > 0) {
-					logger.debug("new organism " + getID() + " has "
+					logger.debug("new organism " + child.getID() + " has "
 							+ numOfTransformations + " transformations");
+					for (int i = 0; i < numOfTransformations; i++) {
+						SexyBacteria dnaDoner = randomSexyBacteria();
+						child.transform(dnaDoner.getAlleles());
+					}
 				}
-				for (int i = 0; i < numOfTransformations; i++) {
-					SexyBacteria dnaDoner = randomSexyBacteria();
-					child.transform(dnaDoner.getAlleles());
-				}
+
 				// add to population
 				getPopulations().get(0).add(child);
 				// log

@@ -1,29 +1,21 @@
 package il.ac.tau.yoavram.simba;
 
 public class IdealSexyAncestor extends SexyBacteria {
-
 	private static final long serialVersionUID = 867656401286313696L;
-	private int numberOfGenes;
+
+	protected int numberOfGenes;
 
 	public IdealSexyAncestor() {
 		super();
 	}
 
 	public void init() {
-		int[] genome = new int[getNumberOfGenes()];
-		for (int i = 0; i < genome.length; i++) {
-			genome[i] = getEnvironment().getIdealAllele(i);
+		int[] alleles = new int[getNumberOfGenes()];
+		for (int i = 0; i < alleles.length; i++) {
+			alleles[i] = getEnvironment().getIdealAllele(i);
 		}
-		for (int modifier : getEnvironment().getMutationRateModifiers()) {
-			genome[modifier] = 0;
-		}
-		for (int modifier : getEnvironment().getTransformationRateModifiers()) {
-			genome[modifier] = 0;
-		}
-		for (int modifier : getEnvironment().getThresholdModifiers()) {
-			genome[modifier] = Integer.MAX_VALUE;
-		}
-		setAlleles(genome);
+		
+		setAlleles(alleles);
 		super.setMutationRateModifier(mutationRateModifier);
 		super.setTransformationRateModifier(transformationRateModifier);
 		super.setFitnessThreshold(fitnessThreshold);

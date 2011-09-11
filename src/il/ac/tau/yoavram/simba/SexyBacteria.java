@@ -5,6 +5,7 @@ import il.ac.tau.yoavram.pes.utils.RandomUtils;
 
 import java.io.ObjectInputStream;
 import java.util.Arrays;
+
 import org.apache.log4j.Logger;
 
 public class SexyBacteria implements Bacteria {
@@ -12,9 +13,10 @@ public class SexyBacteria implements Bacteria {
 	private static final long serialVersionUID = 641538952239456807L;
 	private static final Logger logger = Logger.getLogger(SexyBacteria.class);
 
-	private static final double DEFAULT_FITNESS = -1;
 	private static final long DEFAULT_UPDATE = Long.MAX_VALUE;
 	private static final int[] EMPTY_INT_ARRAY = new int[0];
+	private static final int DEFAULT_INT = -1;
+	private static final double RATE_CONSTANT = 0.1;
 
 	protected static SexyBacteria trash = null;
 	private static int nextID = 0;
@@ -24,17 +26,11 @@ public class SexyBacteria implements Bacteria {
 	protected double mutationRate;
 	protected double transformationRate;
 	protected double selectionCoefficient;
-	protected double fitnessThreshold = -1;
-	protected double mutationRateModifier = -1;
-	protected double transformationRateModifier = -1;
-
-	/*
-	 * private transient boolean sim = false; private transient boolean sir =
-	 * false; private transient boolean cr = false; private transient boolean cm
-	 * = false;
-	 */
-
-	protected transient double fitness = DEFAULT_FITNESS;
+	
+	protected transient double fitnessThreshold = Double.NaN;
+	protected transient double mutationRateModifier = Double.NaN;
+	protected transient double transformationRateModifier = Double.NaN;
+	protected transient int harmfulAlleles = DEFAULT_INT;
 	protected transient long update = DEFAULT_UPDATE;
 
 	public SexyBacteria() {
@@ -59,12 +55,12 @@ public class SexyBacteria implements Bacteria {
 		mutationRate = other.mutationRate;
 		transformationRate = other.transformationRate;
 		selectionCoefficient = other.selectionCoefficient;
-		/*
-		 * mutationRateModifier = other.mutationRateModifier;
-		 * transformationRateModifier = other.transformationRateModifier;
-		 */
-		fitness = DEFAULT_FITNESS;
+
+		harmfulAlleles = DEFAULT_INT;
 		update = DEFAULT_UPDATE;
+		fitnessThreshold = Double.NaN;
+		mutationRateModifier = Double.NaN;
+		transformationRateModifier = Double.NaN;
 	}
 
 	/**
@@ -91,8 +87,11 @@ public class SexyBacteria implements Bacteria {
 
 	private void readObject(ObjectInputStream ois) throws Exception {
 		ois.defaultReadObject();
-		fitness = DEFAULT_FITNESS;
+		harmfulAlleles = DEFAULT_INT;
 		update = DEFAULT_UPDATE;
+		fitnessThreshold = Double.NaN;
+		mutationRateModifier = Double.NaN;
+		transformationRateModifier = Double.NaN;
 	}
 
 	/*
@@ -200,20 +199,25 @@ public class SexyBacteria implements Bacteria {
 	 */
 	@Override
 	public double getFitness() {
-		if (fitness == -1
+		double fitness = Math.pow((1 - getSelectionCoefficient()),
+				numberOfHarmfulAlleles());
+		return fitness;
+	}
+
+	protected int numberOfHarmfulAlleles() {
+		if (harmfulAlleles == DEFAULT_INT
 				|| getEnvironment().getLastEnvironmentalChange() > update) {
-			int deleteriousMutations = 0;
+
+			harmfulAlleles = 0;
 			for (int gene = 0; gene < alleles.length; gene++) {
 				int idealAllele = getEnvironment().getIdealAllele(gene);
 				if (idealAllele != -1 && idealAllele != alleles[gene]) {
-					deleteriousMutations++;
+					harmfulAlleles++;
 				}
 			}
-			fitness = Math.pow((1 - getSelectionCoefficient()),
-					deleteriousMutations);
 			update = Simulation.getInstance().getTick();
 		}
-		return fitness;
+		return harmfulAlleles;
 	}
 
 	/*
@@ -283,95 +287,99 @@ public class SexyBacteria implements Bacteria {
 		}
 	}
 
-	public void setFitnessThreshold(double fitnessThreshold) {
-		this.fitnessThreshold = -1;
-		setModifier(mutationRateModifier, getEnvironment()
-				.getMutationRateModifiers(), 1 - getSelectionCoefficient());
-	}
-
-	@Override
-	public double getFitnessThreshold() {
-		if (fitnessThreshold == -1) {
-			fitnessThreshold = clacModifier(getEnvironment()
-					.getMutationRateModifiers(), 1 - getSelectionCoefficient());
+	private void setModifier(double modifier, int[] modifierIndex) {
+		if (modifierIndex.length > 0) {
+			int allele = (int) (modifier / modifierIndex.length);
+			for (int gene : modifierIndex) {
+				alleles[gene] = allele;
+			}
+			int remainder = (int) (modifier % modifierIndex.length);
+			alleles[modifierIndex[0]] += remainder;
 		}
-		return fitnessThreshold;
+
 	}
 
-	public void setMutationRateModifier(double mutationRateModifier) {
-		this.mutationRateModifier = -1;
-		setModifier(mutationRateModifier, getEnvironment()
-				.getMutationRateModifiers(), 2);
-	}
-
-	public void setTransformationRateModifier(double transformationRateModifier) {
-		this.transformationRateModifier = -1;
-		setModifier(transformationRateModifier, getEnvironment()
-				.getTransformationRateModifiers(), 2);
-	}
-
-	private void setModifier(double modifier, int[] modifierIndex, double power) {
-		//TODO !!!
-		int modifierInt = (int) (Math.log(modifier) / Math
-				.log(power));
-		int allele = modifierInt / modifierIndex.length;
-		for (int gene : modifierIndex) {
-			alleles[gene] = allele;
-		}
-		int remainder = modifierInt % modifierIndex.length;
-		alleles[modifierIndex[0]] += remainder;
-	}
-
-	private double clacModifier(int[] modifierIndex, double power) {
+	private double clacModifier(int[] modifierIndex) {
 		int modifierSum = 0;
 		for (int modifier : modifierIndex) {
 			modifierSum += alleles[modifier];
 		}
-		return Math.pow(power, modifierSum);
+		return modifierSum;
+	}
+
+	public void setMutationRateModifier(double mutationRateModifier) {
+		this.mutationRateModifier = Double.NaN;
+		setModifier(mutationRateModifier / RATE_CONSTANT, getEnvironment()
+				.getMutationRateModifiers());
+	}
+
+	public void setTransformationRateModifier(double transformationRateModifier) {
+		this.transformationRateModifier = Double.NaN;
+		setModifier(transformationRateModifier / RATE_CONSTANT,
+				getEnvironment().getTransformationRateModifiers());
+	}
+
+	public void setFitnessThreshold(double fitnessThreshold) {
+		this.fitnessThreshold = Double.NaN;
+		setModifier(fitnessThreshold, getEnvironment().getThresholdModifiers());
 	}
 
 	public double getMutationRateModifier() {
-		if (mutationRateModifier == -1) {
+		if (Double.isNaN(mutationRateModifier)) {
 			mutationRateModifier = clacModifier(getEnvironment()
-					.getMutationRateModifiers(), 2);
+					.getMutationRateModifiers()) * RATE_CONSTANT;
+			if (mutationRateModifier < 0)
+				mutationRateModifier = 1 / (-mutationRateModifier);
 		}
 		return mutationRateModifier;
 	}
 
 	public double getTransformationRateModifier() {
-		if (transformationRateModifier == -1) {
+		if (Double.isNaN(transformationRateModifier)) {
 			transformationRateModifier = clacModifier(getEnvironment()
-					.getTransformationRateModifiers(), 2);
+					.getTransformationRateModifiers()) * RATE_CONSTANT;
+			if (transformationRateModifier < 0)
+				transformationRateModifier = 1 / (-transformationRateModifier);
 		}
 		return transformationRateModifier;
 
 	}
 
+	@Override
+	public double getFitnessThreshold() {
+		if (Double.isNaN(fitnessThreshold)) {
+			fitnessThreshold = clacModifier(getEnvironment()
+					.getThresholdModifiers());
+		}
+		return fitnessThreshold;
+	}
+
 	public boolean isMutator() {
-		return ((isSim() && getFitness() < getFitnessThreshold()) || isCm());
+		return ((isSim() && numberOfHarmfulAlleles() >= getFitnessThreshold()) || isCm());
 	}
 
 	public boolean isRecombinator() {
-		return ((isSir() && getFitness() < getFitnessThreshold()) || isCr());
+		return ((isSir() && numberOfHarmfulAlleles() >= getFitnessThreshold()) || isCr());
 	}
 
 	public boolean isSim() {
 		return getMutationRateModifier() != 1 && getFitnessThreshold() > 0
-				&& getFitnessThreshold() < 1;
-	}
-
-	public boolean isCm() {
-		return getFitnessThreshold() == 1 && getMutationRateModifier() != 1;
-	}
-
-	public boolean isCr() {
-		return getFitnessThreshold() == 1
-				&& getTransformationRateModifier() != 1;
+				&& getFitnessThreshold() <= alleles.length;
 	}
 
 	public boolean isSir() {
 		return getTransformationRateModifier() != 1
-				&& getFitnessThreshold() > 0 && getFitnessThreshold() < 1;
+				&& getFitnessThreshold() > 0
+				&& getFitnessThreshold() <= alleles.length;
+	}
+
+	public boolean isCm() {
+		return getFitnessThreshold() == 0 && getMutationRateModifier() != 1;
+	}
+
+	public boolean isCr() {
+		return getFitnessThreshold() == 0
+				&& getTransformationRateModifier() != 1;
 	}
 
 }
