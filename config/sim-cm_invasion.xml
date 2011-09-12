@@ -53,7 +53,7 @@
 						<bean class="il.ac.tau.yoavram.pes.io.CsvWriter">
 							<property name="filename" value="pop.${jobName}.${time}" />
 							<property name="directory" value="${output.dir}/${jobName}" />
-
+							<property name="writeTempFile" value="true" />
 						</bean>
 					</property>
 				</bean>
@@ -104,6 +104,7 @@
 						<bean class="il.ac.tau.yoavram.pes.io.CsvWriter">
 							<property name="filename" value="sim.${jobName}.${time}" />
 							<property name="directory" value="${output.dir}/${jobName}" />
+							<property name="writeTempFile" value="true" />
 
 						</bean>
 					</property>
@@ -156,6 +157,7 @@
 						<bean class="il.ac.tau.yoavram.pes.io.CsvWriter">
 							<property name="filename" value="cm.${jobName}.${time}" />
 							<property name="directory" value="${output.dir}/${jobName}" />
+							<property name="writeTempFile" value="true" />
 
 						</bean>
 					</property>
