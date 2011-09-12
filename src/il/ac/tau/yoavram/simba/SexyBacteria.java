@@ -26,7 +26,7 @@ public class SexyBacteria implements Bacteria {
 	protected double mutationRate;
 	protected double transformationRate;
 	protected double selectionCoefficient;
-	
+
 	protected transient double fitnessThreshold = Double.NaN;
 	protected transient double mutationRateModifier = Double.NaN;
 	protected transient double transformationRateModifier = Double.NaN;
@@ -69,7 +69,7 @@ public class SexyBacteria implements Bacteria {
 	 * @param other
 	 */
 	protected SexyBacteria create() {
-		//logger.debug("creating new " + SexyBacteria.class.getSimpleName());
+		// logger.debug("creating new " + SexyBacteria.class.getSimpleName());
 		return new SexyBacteria();
 	}
 
@@ -176,7 +176,7 @@ public class SexyBacteria implements Bacteria {
 	public int transform(int[] genome) {
 		int length = RandomUtils.nextInt(1, getAlleles().length);
 		int count = 0;
-		int pos = RandomUtils.nextInt(0, getAlleles().length - 1);
+		int pos = RandomUtils.nextInt(0, getAlleles().length / 2);
 
 		logger.info(String.format(
 				"Tick %d: Bacteria %d transforming %d loci from locus %d",
