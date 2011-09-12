@@ -39,7 +39,7 @@ public class ModifierEnvironment extends SimpleEnvironment implements
 	public static ModifierEnvironment getInstance() {
 		return INSTANCE;
 	}
-	
+
 	private void readObject(ObjectInputStream ois) throws Exception {
 		ois.defaultReadObject();
 		INSTANCE = this;
@@ -58,11 +58,11 @@ public class ModifierEnvironment extends SimpleEnvironment implements
 			alleles[gene] = RandomUtils.nextInt(0, 1);
 			types[gene] = GeneType.Fitness;
 		}
-		
+
 		List<Integer> genes = Lists.newArrayList();
 		for (int gene = 0; gene < getNumberOfGenes(); gene++)
 			genes.add(gene);
-		
+
 		mutationRateModifiers = new int[getNumberOfMutationModifiers()];
 		transformationRateModifiers = new int[getNumberOfTransformationModifiers()];
 		thresholdModifiers = new int[getNumberOfThresholdModifiers()];
@@ -72,18 +72,24 @@ public class ModifierEnvironment extends SimpleEnvironment implements
 			types[gene] = GeneType.MutationRate;
 			alleles[gene] = -1;
 			mutationRateModifiers[mods] = gene;
+			logger.info(String.format("Locus %d is designated as a %s", gene,
+					"Mutation Rate Modifier"));
 		}
 		for (int mods = 0; mods < getNumberOfTransformationModifiers(); mods++) {
 			int gene = genes.remove(RandomUtils.nextInt(0, genes.size()));
 			types[gene] = GeneType.TransformationRate;
 			alleles[gene] = -1;
 			transformationRateModifiers[mods] = gene;
+			logger.info(String.format("Locus %d is designated as a %s", gene,
+					"Transformation Rate Modifier"));
 		}
 		for (int mods = 0; mods < getNumberOfThresholdModifiers(); mods++) {
 			int gene = genes.remove(RandomUtils.nextInt(0, genes.size()));
 			types[gene] = GeneType.Threshold;
 			alleles[gene] = -1;
 			thresholdModifiers[mods] = gene;
+			logger.info(String.format("Locus %d is designated as a %s", gene,
+					"Fitness Threshold Modifier"));
 		}
 
 		fitnessGenes = genes.toArray(new Integer[0]);
@@ -97,15 +103,18 @@ public class ModifierEnvironment extends SimpleEnvironment implements
 	@Override
 	public void change(double fractionOfGenesToChange) {
 		double toChange = Math.ceil(fractionOfGenesToChange * alleles.length);
+		long tick = getTick();
 		for (int i = 0; i < toChange; i++) {
 			int gene = getRandomFitnessGene();
 			int currentAllele = alleles[gene];
 			int newAllele = (currentAllele + 1) % 2;
 			alleles[gene] = newAllele;
-			logger.debug(String.format("Changed the allele in gene %d from %d to %d" , gene,currentAllele,newAllele));
+			logger.debug(String.format(
+					"Tick %d: Changed the allele in gene %d from %d to %d",
+					tick, gene, currentAllele, newAllele));
 		}
 		if (toChange > 0) {
-			lastEnvironmentalChange = getTick();
+			lastEnvironmentalChange = tick;
 		}
 	}
 
