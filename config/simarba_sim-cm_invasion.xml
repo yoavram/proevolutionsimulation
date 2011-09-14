@@ -16,11 +16,7 @@
 				</bean>
 				<bean class="il.ac.tau.yoavram.pes.terminators.ExtinctionTerminator">
 					<property name="model" ref="simarbaModel" />
-					<property name="filter">
-						<bean class="il.ac.tau.yoavram.pes.filters.NotFilter">
-							<property name="filter" ref="simFilter" />
-						</bean>
-					</property>
+					<property name="filter" ref="cmFilter" />
 				</bean>
 			</list>
 		</property>
@@ -163,8 +159,7 @@
 		<property name="interval" value="${statistics.interval}" />
 		<property name="filters">
 			<list>
-				<bean id="cmFilter"
-					class="il.ac.tau.yoavram.simba.statistics.filters.CmBacteriaFilter" />
+				<ref bean="cmFilter" />
 			</list>
 		</property>
 		<property name="listeners">
@@ -246,4 +241,6 @@
 	</bean>
 	<bean id="simFilter"
 		class="il.ac.tau.yoavram.simba.statistics.filters.SimBacteriaFilter" />
+	<bean id="cmFilter"
+	class="il.ac.tau.yoavram.simba.statistics.filters.CmBacteriaFilter" />
 </beans>
