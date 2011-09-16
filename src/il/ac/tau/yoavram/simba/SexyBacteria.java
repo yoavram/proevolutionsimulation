@@ -162,8 +162,8 @@ public class SexyBacteria implements Bacteria {
 			newAllele = (currentAllele + 2) % 3;
 		alleles[gene] = newAllele;
 		logger.info(String.format(
-				"Tick %d: Bacteria %d mutated in locus %d from %d to %d",
-				Simulation.getInstance().getTick(), getID(), gene,
+				"Tick %d: %s (mutated in locus %d from %d to %d",
+				Simulation.getInstance().getTick(), toString(), gene,
 				currentAllele, newAllele));
 	}
 
@@ -179,8 +179,8 @@ public class SexyBacteria implements Bacteria {
 		int pos = RandomUtils.nextInt(0, getAlleles().length / 2);
 
 		logger.info(String.format(
-				"Tick %d: Bacteria %d transforming %d loci from locus %d",
-				Simulation.getInstance().getTick(), getID(), length, pos));
+				"Tick %d: %s transforming %d loci from locus %d",
+				Simulation.getInstance().getTick(), toString(), length, pos));
 		while (count < length) {
 			if (pos >= alleles.length) {
 				pos -= alleles.length;
@@ -382,4 +382,26 @@ public class SexyBacteria implements Bacteria {
 				&& getTransformationRateModifier() != 1;
 	}
 
+	@Override
+	public String toString() {
+		String mutator = "NM";
+		if (isCm())
+			mutator = "CM";
+		else if (isSim()) {
+			if (isMutator())
+				mutator = "SIM+";
+			else
+				mutator = "SIM-";
+		}
+		String recombinator = "NR";
+		if (isCr())
+			recombinator = "CR";
+		else if (isSir()) {
+			if (isRecombinator())
+				recombinator = "SIR+";
+			else
+				recombinator = "SIR-";
+		}
+		return String.format("%s(%d %s %s)", getClass().getSimpleName(), getID(), mutator, recombinator);
+	}
 }
