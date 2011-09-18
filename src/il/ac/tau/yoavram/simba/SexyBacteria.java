@@ -130,17 +130,14 @@ public class SexyBacteria implements Bacteria {
 	 */
 	@Override
 	public SexyBacteria reproduce() {
-		// logger.debug(getID() + " reproducing");
 		SexyBacteria child = spawn();
 		int numOfMutations = RandomUtils.nextPoisson(getMutationRate());
-		if (numOfMutations > 0) {
-			logger.debug("new organism " + getID() + " has " + numOfMutations
-					+ " mutations");
-
-			for (int i = 0; i < numOfMutations; i++) {
-				child.mutate();
-			}
+		for (int i = 0; i < numOfMutations; i++) {
+			child.mutate();
 		}
+		logger.debug(String.format("Tick %d: %s reproduced, child is %s",
+				Simulation.getInstance().getTick(), toString(),
+				child.toString()));
 		return child;
 	}
 
@@ -161,9 +158,9 @@ public class SexyBacteria implements Bacteria {
 		else
 			newAllele = (currentAllele + 2) % 3;
 		alleles[gene] = newAllele;
-		logger.info(String.format(
-				"Tick %d: %s (mutated in locus %d from %d to %d",
-				Simulation.getInstance().getTick(), toString(), gene,
+		logger.debug(String.format(
+				"Tick %d: %s mutated in locus %d from %d to %d", Simulation
+						.getInstance().getTick(), toString(), gene,
 				currentAllele, newAllele));
 	}
 
@@ -178,9 +175,9 @@ public class SexyBacteria implements Bacteria {
 		int count = 0;
 		int pos = RandomUtils.nextInt(0, getAlleles().length / 2);
 
-		logger.info(String.format(
-				"Tick %d: %s transforming %d loci from locus %d",
-				Simulation.getInstance().getTick(), toString(), length, pos));
+		logger.debug(String.format(
+				"Tick %d: %s transforming %d loci from locus %d", Simulation
+						.getInstance().getTick(), toString(), length, pos));
 		while (count < length) {
 			if (pos >= alleles.length) {
 				pos -= alleles.length;
@@ -402,6 +399,7 @@ public class SexyBacteria implements Bacteria {
 			else
 				recombinator = "SIR-";
 		}
-		return String.format("%s(%d %s %s)", getClass().getSimpleName(), getID(), mutator, recombinator);
+		return String.format("%s(%d %s %s)", getClass().getSimpleName(),
+				getID(), mutator, recombinator);
 	}
 }

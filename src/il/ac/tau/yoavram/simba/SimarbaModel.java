@@ -39,22 +39,15 @@ public class SimarbaModel extends SimbaModel {
 				// transform
 				int numOfTransformations = RandomUtils.nextPoisson(child
 						.getTransformationRate());
-				if (numOfTransformations > 0) {
-					logger.info(String.format(
-							"New organism %s %d has %d transformations", child
-									.getClass().getSimpleName(), child.getID(),
-							numOfTransformations));
-					for (int i = 0; i < numOfTransformations; i++) {
-						Bacteria dnaDoner = graveyard.random();
-						if (dnaDoner == null) {
-							logger.warn("Could not continue with transformation, no organisms in the graveyard");
-						} else {
-							logger.info(String
-									.format("Transforming %s %d with DNA from dead bacteria %d",
-											child.getClass().getSimpleName(),
-											child.getID(), dnaDoner.getID()));
-							child.transform(dnaDoner.getAlleles());
-						}
+				for (int i = 0; i < numOfTransformations; i++) {
+					Bacteria dnaDoner = graveyard.random();
+					if (dnaDoner == null) {
+						logger.warn("Could not continue with transformation, no organisms in the graveyard");
+					} else {
+						logger.debug(String
+								.format("Transforming %s with DNA from dead %s",
+										child.toString(), dnaDoner.toString()));
+						child.transform(dnaDoner.getAlleles());
 					}
 				}
 
@@ -70,11 +63,9 @@ public class SimarbaModel extends SimbaModel {
 		// change environment
 		if (getEnvironmentalChangeFrequency() > 0
 				&& RandomUtils.nextDouble() < getEnvironmentalChangeFrequency()) {
-			logger.debug("Changing the environment");
 			getEnvironment().change(getFractionOfGenesToChange());
 		} else if (getEnvironmentalChangeFrequency() < 0) {
 			if (Simulation.getInstance().getTick() % getPeriod() == 0) {
-				logger.debug("Changing the environment");
 				getEnvironment().change(getFractionOfGenesToChange());
 			}
 		}
