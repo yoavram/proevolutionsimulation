@@ -143,6 +143,7 @@ public class SimpleDataGatherer<T> implements DataGatherer<T> {
 
 	@Override
 	public void close() throws IOException {
+		gather(); // one last gathering, this one will also go to the final listeners.
 		for (DataListener listener : getFinalListeners()) {
 			listener.listen(data);
 			listener.close();
