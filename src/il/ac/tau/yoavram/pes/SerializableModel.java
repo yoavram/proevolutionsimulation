@@ -192,9 +192,9 @@ public abstract class SerializableModel<T extends Object> implements Model<T>,
 						+ deserialized.getID().toString() + " from "
 						+ file.getAbsolutePath());
 			} catch (IOException e) {
-				logger.error("Deserialization failed: " + e);
+				logger.fatal("Deserialization failed: " + e);
 			} catch (ClassNotFoundException e) {
-				logger.error("Deserialization failed: " + e);
+				logger.fatal("Deserialization failed: " + e);
 			}
 			return deserialized;
 		}

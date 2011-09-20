@@ -10,7 +10,7 @@ public class SimarCmInvasion extends DoubleInvasion<SexyBacteria, SexyBacteria> 
 	}
 
 	public void init() {
-		((SimarInvasion) invasion2).setFitnessThreshold(1.0);
+		((SimarInvasion) invasion2).setFitnessThreshold(0.0);
 	}
 
 	public double getFitnessThreshold() {
