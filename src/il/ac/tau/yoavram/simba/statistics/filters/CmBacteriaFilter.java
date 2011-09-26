@@ -10,7 +10,7 @@ public class CmBacteriaFilter implements Filter<Bacteria> {
 	@Override
 	public boolean filter(Bacteria filtrate) {
 		return (filtrate instanceof SexyBacteria && ((SexyBacteria) filtrate)
-				.isMutator())
+				.isCm())
 				|| (filtrate instanceof SimpleBacteria && ((SimpleBacteria) filtrate)
 						.isCm());
 	}
