@@ -18,8 +18,8 @@ public class FixedSizedQueue<B> implements Serializable {
 	}
 
 	/**
-	 * add b to the queue. if queue is full, remove the oldest item in the
-	 * queue and return it. otherwise return null.
+	 * add b to the queue. if queue is full, remove the oldest item in the queue
+	 * and return it. otherwise return null.
 	 * 
 	 * @param b
 	 *            item to add
@@ -36,6 +36,18 @@ public class FixedSizedQueue<B> implements Serializable {
 	}
 
 	/**
+	 * remove the oldest item in the queue and return it.
+	 * 
+	 * @return the oldest item in the queue that is now removed or null if the queue is empty.
+	 */
+	public B remove() {
+		if (list.size() > 0)
+			return list.remove(0);
+		else
+			return null;
+	}
+
+	/**
 	 * randomly choose an item from the queue, remove it and return it.
 	 * 
 	 * @return the randomly removed item
@@ -46,8 +58,8 @@ public class FixedSizedQueue<B> implements Serializable {
 	}
 
 	/**
-	 * randomly choose an item from the queue and return it, leaving it in
-	 * the queue.
+	 * randomly choose an item from the queue and return it, leaving it in the
+	 * queue.
 	 * 
 	 * @return randomly chosen item
 	 */
