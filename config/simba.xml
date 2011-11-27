@@ -47,14 +47,14 @@
 	<bean id="bacteriaDataGatherer" class="il.ac.tau.yoavram.simba.statistics.SimbaDataGatherer">
 		<property name="model" ref="simbaModel" />
 		<property name="interval" value="${statistics.interval}" />
-		<property name="filters">
+		<!--property name="filters">
 			<list>
 				<bean id="bacteriaFilter" class="il.ac.tau.yoavram.simba.Bacteria.Filter" />
 			</list>
-		</property>
+		</property-->
 		<property name="listeners">
 			<list>
-				<bean class="il.ac.tau.yoavram.pes.statistics.listeners.DataLogger" />
+				<!--bean class="il.ac.tau.yoavram.pes.statistics.listeners.DataLogger" /-->
 				<bean class="il.ac.tau.yoavram.pes.statistics.listeners.ThreadListener">
 					<property name="inner">
 						<bean
@@ -77,7 +77,7 @@
 								value="${output.dir}/${jobName}/${jobName}.${time}" />
 						</bean>
 					</property>
-				</bean>
+				</bean-->
 			</list>
 		</property>
 		<property name="aggregators">
@@ -111,9 +111,9 @@
 		class="il.ac.tau.yoavram.simba.statistics.aggregators.MeanFitness">
 		<property name="name" value="mean fitness" />
 	</bean>
-	<bean id="meanMutationRate"
+	<!--bean id="meanMutationRate"
 		class="il.ac.tau.yoavram.simba.statistics.aggregators.MeanMutationRate">
 		<property name="name" value="mean mutation rate" />
-	</bean>
+	</bean-->
 
 </beans>

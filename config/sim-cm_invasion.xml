@@ -10,6 +10,15 @@
 				<bean id="tickTerminator" class="il.ac.tau.yoavram.pes.terminators.TickTerminator">
 					<property name="endAtTick" value="${numberOfTicks}" />
 				</bean>
+				<bean class="il.ac.tau.yoavram.pes.terminators.ExtinctionTerminator">
+                                        <property name="model" ref="simbaModel"/>
+                                        <property name="filter" ref="simFilter"/>
+                                </bean>
+
+                                <bean class="il.ac.tau.yoavram.pes.terminators.ExtinctionTerminator">
+                                        <property name="model" ref="simbaModel"/>
+                                        <property name="filter" ref="cmFilter"/>
+                                </bean>			
 			</list>
 		</property>
 		<property name="model" ref="simbaModel" />
@@ -31,7 +40,7 @@
 		factory-bean="modelFactory" factory-method="deserialize">
 		<property name="serializedAtEnd" value="false" />
 		<property name="ID" value="${jobName}.${time}" />
-		<property name="changeEnvironmentOnStartup" value="true" />
+		<property name="changeEnvironmentOnStartup" value="${changeEnvironmentOnStartup}" />
 		<property name="fractionOfGenesToChange" value="${fractionOfGenesToChange}" />
 		<property name="environmentalChangeFrequency" value="${environmentalChangeFrequency}" />
 		<property name="invasion">
@@ -50,17 +59,17 @@
 			<list>
 				<bean class="il.ac.tau.yoavram.pes.statistics.listeners.CsvWriterListener">
 					<property name="csvWriter">
-						<bean class="il.ac.tau.yoavram.pes.io.CsvWriter">
+						<bean class="il.ac.tau.yoavram.pes.io.csv.CsvWriter">
 							<property name="filename" value="pop.${jobName}.${time}" />
 							<property name="directory" value="${output.dir}/${jobName}" />
 							<property name="writeTempFile" value="true" />
 						</bean>
 					</property>
 				</bean>
-				<!--<bean class="il.ac.tau.yoavram.pes.statistics.listeners.ChartDrawer"> 
+				<bean class="il.ac.tau.yoavram.pes.statistics.listeners.ChartDrawer"> 
 					<property name="title" value="pop.${jobName}.${time}" /> <property name="showApplet" 
 					value="${simulation.block}" /> <property name="filename" value="${output.dir}/${jobName}/pop.${jobName}.${time}" 
-					/> </bean> -->
+					/> </bean> 
 			</list>
 		</property>
 		<property name="aggregators">
@@ -88,20 +97,20 @@
 			</list>
 		</property>
 	</bean>
+	<bean id="simFilter" class="il.ac.tau.yoavram.simba.statistics.filters.SimBacteriaFilter" />
 	<bean id="simDataGatherer" class="il.ac.tau.yoavram.simba.statistics.SimbaDataGatherer">
 		<property name="model" ref="simbaModel" />
 		<property name="interval" value="${statistics.interval}" />
 		<property name="filters">
 			<list>
-				<bean id="simFilter"
-					class="il.ac.tau.yoavram.simba.statistics.filters.SimBacteriaFilter" />
+				<ref bean="simFilter"/>			
 			</list>
 		</property>
 		<property name="listeners">
 			<list>
 				<bean class="il.ac.tau.yoavram.pes.statistics.listeners.CsvWriterListener">
 					<property name="csvWriter">
-						<bean class="il.ac.tau.yoavram.pes.io.CsvWriter">
+						<bean class="il.ac.tau.yoavram.pes.io.csv.CsvWriter">
 							<property name="filename" value="sim.${jobName}.${time}" />
 							<property name="directory" value="${output.dir}/${jobName}" />
 							<property name="writeTempFile" value="true" />
@@ -141,20 +150,20 @@
 			</list>
 		</property>
 	</bean>
+	 <bean id="cmFilter" class="il.ac.tau.yoavram.simba.statistics.filters.CmBacteriaFilter" />
 	<bean id="cmDataGatherer" class="il.ac.tau.yoavram.simba.statistics.SimbaDataGatherer">
 		<property name="model" ref="simbaModel" />
 		<property name="interval" value="${statistics.interval}" />
 		<property name="filters">
 			<list>
-				<bean id="cmFilter"
-					class="il.ac.tau.yoavram.simba.statistics.filters.CmBacteriaFilter" />
+				<ref bean="cmFilter"/>		
 			</list>
 		</property>
 		<property name="listeners">
 			<list>
 				<bean class="il.ac.tau.yoavram.pes.statistics.listeners.CsvWriterListener">
 					<property name="csvWriter">
-						<bean class="il.ac.tau.yoavram.pes.io.CsvWriter">
+						<bean class="il.ac.tau.yoavram.pes.io.csv.CsvWriter">
 							<property name="filename" value="cm.${jobName}.${time}" />
 							<property name="directory" value="${output.dir}/${jobName}" />
 							<property name="writeTempFile" value="true" />
