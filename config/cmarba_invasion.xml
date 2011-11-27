@@ -137,7 +137,7 @@
 					class="il.ac.tau.yoavram.simba.statistics.aggregators.MutatorFraction">
 					<property name="name" value="mutator fraction" />
 				</bean>
-				<ref bean="simMeanFitness" />
+				<ref bean="cmMeanFitness" />
 				<ref bean="maxFitness" />
 				<ref bean="minFitness" />
 				<bean
@@ -145,7 +145,7 @@
 					<property name="name" value="stdev fitness" />
 					<property name="meanAggregator" ref="cmMeanFitness" />
 				</bean>
-				<ref bean="simMeanMutationRate" />
+				<ref bean="cmMeanMutationRate" />
 				<ref bean="minMutationRate" />
 				<ref bean="maxMutationRate" />
 				<bean
