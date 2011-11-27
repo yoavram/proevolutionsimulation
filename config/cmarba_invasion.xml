@@ -102,7 +102,7 @@
 			</list>
 		</property>
 	</bean>
-	<bean id="simDataGatherer" class="il.ac.tau.yoavram.simba.statistics.SimbaDataGatherer">
+	<bean id="cmDataGatherer" class="il.ac.tau.yoavram.simba.statistics.SimbaDataGatherer">
 		<property name="model" ref="simarbaModel" />
 		<property name="interval" value="${statistics.interval}" />
 		<property name="filters">
