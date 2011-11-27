@@ -39,15 +39,19 @@ public class SimarbaModel extends SimbaModel {
 				// transform
 				int numOfTransformations = RandomUtils.nextPoisson(child
 						.getTransformationRate());
-				for (int i = 0; i < numOfTransformations; i++) {
+				int attempts = numOfTransformations * graveyard.size();
+				while (numOfTransformations > 0 && attempts > 0) {
 					Bacteria dnaDoner = graveyard.random();
+					attempts--;
 					if (dnaDoner == null) {
 						logger.warn("Could not continue with transformation, no organisms in the graveyard");
 					} else {
-						logger.debug(String
-								.format("Transforming %s with DNA from dead %s",
-										child.toString(), dnaDoner.toString()));
-						child.transform(dnaDoner.getAlleles());
+						if (child.transform(dnaDoner.getAlleles()) > 0) {
+							logger.debug(String.format(
+									"Transforming %s with DNA from dead %s",
+									child.toString(), dnaDoner.toString()));
+							numOfTransformations--;
+						}
 					}
 				}
 
