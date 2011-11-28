@@ -107,7 +107,8 @@ public class ModifierEnvironment extends SimpleEnvironment implements
 		for (int i = 0; i < toChange; i++) {
 			int gene = getRandomFitnessGene();
 			int currentAllele = alleles[gene];
-			int newAllele = (currentAllele + 1) % 2;
+			// the favorable allele is either 0 or 1
+			int newAllele = (currentAllele + 1) % 2; 
 			alleles[gene] = newAllele;
 			logger.debug(String.format(
 					"Tick %d: Changed the allele in gene %d from %d to %d",
