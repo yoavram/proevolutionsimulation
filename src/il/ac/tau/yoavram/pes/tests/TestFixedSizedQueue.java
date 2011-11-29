@@ -51,7 +51,7 @@ public class TestFixedSizedQueue {
 		assertNull(queue.add(1));
 		int count = 0;
 		for (int i = 0; i < 1000; i++)
-			count += queue.random();
+			count += queue.randomGet();
 		assertTrue(count > 300 && count < 700);
 		System.out.println(count);
 	}
