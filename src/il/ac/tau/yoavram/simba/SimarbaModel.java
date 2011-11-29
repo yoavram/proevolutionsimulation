@@ -1,17 +1,23 @@
 package il.ac.tau.yoavram.simba;
 
+import java.util.Map;
+
 import il.ac.tau.yoavram.pes.Simulation;
 import il.ac.tau.yoavram.pes.utils.FixedSizedQueue;
+import il.ac.tau.yoavram.pes.utils.OneKeyMap;
 import il.ac.tau.yoavram.pes.utils.RandomUtils;
 
 import org.apache.log4j.Logger;
+
+import com.google.common.collect.Maps;
 
 public class SimarbaModel extends SimbaModel {
 	private static final long serialVersionUID = -9092311069010612572L;
 
 	private static final Logger logger = Logger.getLogger(SimarbaModel.class);
 
-	private FixedSizedQueue<Bacteria> graveyard;
+	private Map<Integer, FixedSizedQueue<Bacteria>> graveyardMap;
+
 	private int graveyardSize = 10;
 	private boolean recombinationBarriers = false;
 
@@ -22,8 +28,12 @@ public class SimarbaModel extends SimbaModel {
 	@Override
 	public void init() {
 		super.init();
-		if (graveyard == null)
-			graveyard = new FixedSizedQueue<Bacteria>(getGraveyardSize());
+		if (graveyardMap == null) {
+			if (isRecombinationBarriers())
+				graveyardMap = Maps.newHashMapWithExpectedSize(2);
+			else
+				graveyardMap = new OneKeyMap<Integer, FixedSizedQueue<Bacteria>>();
+		}
 	}
 
 	@Override
@@ -33,7 +43,10 @@ public class SimarbaModel extends SimbaModel {
 		Bacteria dead = getPopulations().get(0).remove(kill);
 		logger.debug(String.format("Killed %s %d", dead.getClass()
 				.getSimpleName(), dead.getID()));
-		dead = graveyard.add(dead);
+		if (isRecombinationBarriers())
+			dead = getGraveyard(getStrain(dead)).add(dead);
+		else
+			dead = getGraveyard().add(dead);
 		if (dead != null)
 			dead.die();
 
@@ -70,35 +83,31 @@ public class SimarbaModel extends SimbaModel {
 		}
 	}
 
-	public boolean transform(Bacteria bacterium) {
-		boolean changed = false;
-		if (getGraveyard().size() == 0) {
-			logger.warn("Could not continue with transformation, no organisms in the graveyard");
-			return changed;
-		}
-		int numOfTransformations = RandomUtils.nextPoisson(bacterium
+	public boolean transform(Bacteria recipient) {
+		int numOfTransformations = RandomUtils.nextPoisson(recipient
 				.getTransformationRate());
 		if (numOfTransformations == 0)
-			return changed;
+			return false;
+
+		int strain = getStrain(recipient);
+		FixedSizedQueue<Bacteria> graveyard = (isRecombinationBarriers()) ? getGraveyard(strain)
+				: getGraveyard();
+		if (graveyard.size() == 0) {
+			logger.warn("Could not continue with transformation, no organisms in graveyard "
+					+ strain);
+			return false;
+		}
 
 		while (numOfTransformations > 0) {
-			Bacteria dnaDoner = getGraveyard().randomRemove();
-			if (!isRecombinationBarriers()
-					|| getStrain(bacterium) == getStrain(dnaDoner)) {
-				int genes = bacterium.transform(dnaDoner.getAlleles());
-				logger.debug(String
-						.format("Transformed %s with DNA from dead %s: %d genes exchanged",
-								bacterium.toString(), dnaDoner.toString(),
-								genes));
-				changed = changed || genes > 0;
-			} else {
-				logger.debug(String
-						.format("Transformation of %s with DNA from dead %s failed to to recombination barrier",
-								bacterium.toString(), dnaDoner.toString()));
-			}
+			Bacteria dnaDoner = graveyard.randomRemove();
+
+			int genes = recipient.transform(dnaDoner.getAlleles());
+			logger.debug(String.format(
+					"Transformed %s with DNA from dead %s: %d genes exchanged",
+					recipient.toString(), dnaDoner.toString(), genes));
 			numOfTransformations--;
 		}
-		return changed;
+		return true;
 	}
 
 	public int getStrain(Bacteria bacteria) {
@@ -147,11 +156,18 @@ public class SimarbaModel extends SimbaModel {
 	}
 
 	public FixedSizedQueue<Bacteria> getGraveyard() {
-		return graveyard;
+		return getGraveyard(0);
 	}
 
-	public void setGraveyard(FixedSizedQueue<Bacteria> graveyard) {
-		this.graveyard = graveyard;
+	public FixedSizedQueue<Bacteria> getGraveyard(int strain) {
+		if (graveyardMap.containsKey(strain))
+			return graveyardMap.get(strain);
+		else {
+			FixedSizedQueue<Bacteria> newGraveyard = new FixedSizedQueue<Bacteria>(
+					getGraveyardSize());
+			graveyardMap.put(strain, newGraveyard);
+			return newGraveyard;
+		}
 	}
 
 }
