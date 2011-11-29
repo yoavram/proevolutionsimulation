@@ -16,7 +16,8 @@ public class SexyBacteria implements Bacteria {
 	private static final long DEFAULT_UPDATE = Long.MAX_VALUE;
 	private static final int[] EMPTY_INT_ARRAY = new int[0];
 	private static final int DEFAULT_INT = -1;
-	private static final double RATE_CONSTANT = 0.1;
+	private static final double MUTATION_RATE_MODIFIER_CONSTANT = 0.1;
+	private static final double TRANSFORMATION_RATE_MODIFIER_CONSTANT = 0.1;
 
 	protected static SexyBacteria trash = null;
 	private static int nextID = 0;
@@ -320,13 +321,13 @@ public class SexyBacteria implements Bacteria {
 
 	public void setMutationRateModifier(double mutationRateModifier) {
 		this.mutationRateModifier = Double.NaN;
-		setModifier(mutationRateModifier / RATE_CONSTANT, getEnvironment()
+		setModifier(mutationRateModifier / MUTATION_RATE_MODIFIER_CONSTANT, getEnvironment()
 				.getMutationRateModifiers());
 	}
 
 	public void setTransformationRateModifier(double transformationRateModifier) {
 		this.transformationRateModifier = Double.NaN;
-		setModifier(transformationRateModifier / RATE_CONSTANT,
+		setModifier(transformationRateModifier / TRANSFORMATION_RATE_MODIFIER_CONSTANT,
 				getEnvironment().getTransformationRateModifiers());
 	}
 
@@ -338,7 +339,7 @@ public class SexyBacteria implements Bacteria {
 	public double getMutationRateModifier() {
 		if (Double.isNaN(mutationRateModifier)) {
 			mutationRateModifier = clacModifier(getEnvironment()
-					.getMutationRateModifiers()) * RATE_CONSTANT;
+					.getMutationRateModifiers()) * MUTATION_RATE_MODIFIER_CONSTANT;
 			if (mutationRateModifier < 0)
 				mutationRateModifier = 1 / (-mutationRateModifier);
 		}
@@ -348,7 +349,7 @@ public class SexyBacteria implements Bacteria {
 	public double getTransformationRateModifier() {
 		if (Double.isNaN(transformationRateModifier)) {
 			transformationRateModifier = clacModifier(getEnvironment()
-					.getTransformationRateModifiers()) * RATE_CONSTANT;
+					.getTransformationRateModifiers()) * TRANSFORMATION_RATE_MODIFIER_CONSTANT;
 			if (transformationRateModifier < 0)
 				transformationRateModifier = 1 / (-transformationRateModifier);
 		}

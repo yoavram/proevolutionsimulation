@@ -7,14 +7,23 @@ import il.ac.tau.yoavram.pes.utils.RandomUtils;
 import org.apache.log4j.Logger;
 
 public class SimarbaModel extends SimbaModel {
-	private static final long serialVersionUID = 3652521078393600882L;
+	private static final long serialVersionUID = -9092311069010612572L;
+
 	private static final Logger logger = Logger.getLogger(SimarbaModel.class);
 
 	private FixedSizedQueue<Bacteria> graveyard;
+	private int graveyardSize = 10;
+	private boolean recombinationBarriers = false;
 
 	public SimarbaModel() {
 		super();
-		graveyard = new FixedSizedQueue<Bacteria>(10);
+	}
+
+	@Override
+	public void init() {
+		super.init();
+		if (graveyard == null)
+			graveyard = new FixedSizedQueue<Bacteria>(getGraveyardSize());
 	}
 
 	@Override
@@ -32,28 +41,14 @@ public class SimarbaModel extends SimbaModel {
 		int tries = 0;
 		while (getPopulations().get(0).size() < getPopulationSize()) {
 			Bacteria mother = randomBacteria();
+			Bacteria child = null;
 			if (mother.getFitness() > RandomUtils.nextDouble()
 					|| tries++ > getPopulationSize()) {
 				// reproduce (incl. mutation)
-				Bacteria child = mother.reproduce();
+				child = mother.reproduce();
+
 				// transform
-				int numOfTransformations = RandomUtils.nextPoisson(child
-						.getTransformationRate());
-				int attempts = numOfTransformations * graveyard.size();
-				while (numOfTransformations > 0 && attempts > 0) {
-					Bacteria dnaDoner = graveyard.random();
-					attempts--;
-					if (dnaDoner == null) {
-						logger.warn("Could not continue with transformation, no organisms in the graveyard");
-					} else {
-						if (child.transform(dnaDoner.getAlleles()) > 0) {
-							logger.debug(String.format(
-									"Transforming %s with DNA from dead %s",
-									child.toString(), dnaDoner.toString()));
-							numOfTransformations--;
-						}
-					}
-				}
+				transform(child);
 
 				// add to population
 				getPopulations().get(0).add(child);
@@ -73,6 +68,90 @@ public class SimarbaModel extends SimbaModel {
 				getEnvironment().change(getFractionOfGenesToChange());
 			}
 		}
+	}
+
+	public boolean transform(Bacteria bacterium) {
+		boolean changed = false;
+		if (getGraveyard().size() == 0) {
+			logger.warn("Could not continue with transformation, no organisms in the graveyard");
+			return changed;
+		}
+		int numOfTransformations = RandomUtils.nextPoisson(bacterium
+				.getTransformationRate());
+		if (numOfTransformations == 0)
+			return changed;
+
+		while (numOfTransformations > 0) {
+			Bacteria dnaDoner = getGraveyard().randomRemove();
+			if (!isRecombinationBarriers()
+					|| getStrain(bacterium) == getStrain(dnaDoner)) {
+				int genes = bacterium.transform(dnaDoner.getAlleles());
+				logger.debug(String
+						.format("Transformed %s with DNA from dead %s: %d genes exchanged",
+								bacterium.toString(), dnaDoner.toString(),
+								genes));
+				changed = changed || genes > 0;
+			} else {
+				logger.debug(String
+						.format("Transformation of %s with DNA from dead %s failed to to recombination barrier",
+								bacterium.toString(), dnaDoner.toString()));
+			}
+			numOfTransformations--;
+		}
+		return changed;
+	}
+
+	public int getStrain(Bacteria bacteria) {
+		if (bacteria instanceof SexyBacteria) {
+			SexyBacteria sexyBacteria = (SexyBacteria) bacteria;
+			if (sexyBacteria.isCm()) {
+				if (sexyBacteria.isCr())
+					return 1; // CM-CR
+				else if (sexyBacteria.isSir())
+					return 2; // CM-SIR
+				else
+					return 3; // CM-WT
+			} else if (sexyBacteria.isSim()) {
+				if (sexyBacteria.isCr())
+					return 4; // SIM-CM
+				else if (sexyBacteria.isSir())
+					return 5; // SIM-SIR
+				else
+					return 6; // SIM-WT
+			} else if (sexyBacteria.isCr())
+				return 7; // WT-CR
+			else if (sexyBacteria.isSir())
+				return 8; // WT-SIR
+			else
+				return 0; // WT-WT
+		} else {
+			return 0; // WT-WT
+		}
+
+	}
+
+	public int getGraveyardSize() {
+		return graveyardSize;
+	}
+
+	public void setGraveyardSize(int graveyardSize) {
+		this.graveyardSize = graveyardSize;
+	}
+
+	public boolean isRecombinationBarriers() {
+		return recombinationBarriers;
+	}
+
+	public void setRecombinationBarriers(boolean recombinationBarriers) {
+		this.recombinationBarriers = recombinationBarriers;
+	}
+
+	public FixedSizedQueue<Bacteria> getGraveyard() {
+		return graveyard;
+	}
+
+	public void setGraveyard(FixedSizedQueue<Bacteria> graveyard) {
+		this.graveyard = graveyard;
 	}
 
 }
