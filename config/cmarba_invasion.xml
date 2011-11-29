@@ -79,7 +79,7 @@
 		<property name="aggregators">
 			<list>
 				<ref bean="ticker" />
-				<bean class="il.ac.tau.yoavram.simba.statistics.aggregators.SimFraction">
+				<bean class="il.ac.tau.yoavram.simba.statistics.aggregators.CmFraction">
 					<property name="name" value="cm fraction" />
 				</bean>
 				<ref bean="popMeanFitness" />
@@ -126,7 +126,7 @@
 					<property name="title" value="sim.${jobName}.${time}" />
 					<property name="showApplet" value="${simulation.block}" />
 					<property name="filename"
-						value="${output.dir}/${jobName}/sim.${jobName}.${time}" />
+						value="${output.dir}/${jobName}/cm.${jobName}.${time}" />
 				</bean>
 			</list>
 		</property>
