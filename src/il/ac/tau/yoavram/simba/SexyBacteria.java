@@ -22,6 +22,7 @@ public class SexyBacteria implements Bacteria {
 	private static int nextID = 0;
 	private int id = nextID++;
 
+	protected double allelesPerLocus = 3;
 	protected int[] alleles;
 	protected double mutationRate;
 	protected double transformationRate;
@@ -55,12 +56,14 @@ public class SexyBacteria implements Bacteria {
 		mutationRate = other.mutationRate;
 		transformationRate = other.transformationRate;
 		selectionCoefficient = other.selectionCoefficient;
-
+		allelesPerLocus = other.allelesPerLocus;
+		
 		harmfulAlleles = DEFAULT_INT;
 		update = DEFAULT_UPDATE;
 		fitnessThreshold = Double.NaN;
 		mutationRateModifier = Double.NaN;
 		transformationRateModifier = Double.NaN;
+		
 	}
 
 	/**
@@ -149,14 +152,17 @@ public class SexyBacteria implements Bacteria {
 	@Override
 	public void mutate() {
 		int gene = getEnvironment().getRandomFitnessGene();
-		double rand = RandomUtils.nextDouble();
 		// TODO mutate modifiers??
 		int currentAllele = alleles[gene];
 		int newAllele = -1;
-		if (rand < 0.5)
-			newAllele = (currentAllele + 1) % 3;
-		else
-			newAllele = (currentAllele + 2) % 3;
+		// if currentAllele is favorable, it will change to harmful with probability 1
+		// if currentAllele is harmful, it will change to favorable with probability 1/(allelesPerLocus-1)
+		double rand = RandomUtils.nextDouble();
+		for (int i = 1; i <= allelesPerLocus; i++) {
+			if (rand <= i / allelesPerLocus) {
+				newAllele = (currentAllele + i) % (int) allelesPerLocus;
+			}
+		}
 		alleles[gene] = newAllele;
 		logger.debug(String.format(
 				"Tick %d: %s mutated in locus %d from %d to %d", Simulation
@@ -248,6 +254,14 @@ public class SexyBacteria implements Bacteria {
 
 	public double getSelectionCoefficient() {
 		return selectionCoefficient;
+	}
+
+	public double getAllelesPerLocus() {
+		return allelesPerLocus;
+	}
+
+	public void setAllelesPerLocus(double allelesPerLocus) {
+		this.allelesPerLocus = allelesPerLocus;
 	}
 
 	public int[] getAlleles() {
