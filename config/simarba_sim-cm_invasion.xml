@@ -42,6 +42,7 @@
 		<property name="changeEnvironmentOnStartup" value="${changeEnvironmentOnStartup}" />
 		<property name="fractionOfGenesToChange" value="${fractionOfGenesToChange}" />
 		<property name="environmentalChangeFrequency" value="${environmentalChangeFrequency}" />
+		<property name="recombinationBarriers" value="${recombinationBarriers}" />
 		<property name="invasion">
 			<bean class="il.ac.tau.yoavram.simba.SimarCmInvasion">
 				<property name="invasionRate" value="${invasionRate}" />
@@ -79,9 +80,8 @@
 				<bean class="il.ac.tau.yoavram.simba.statistics.aggregators.SimFraction">
 					<property name="name" value="sim fraction" />
 				</bean>
-				<!--bean class="il.ac.tau.yoavram.simba.statistics.aggregators.CmFraction">
-					<property name="name" value="cm fraction" />
-				</bean-->
+				<!--bean class="il.ac.tau.yoavram.simba.statistics.aggregators.CmFraction"> 
+					<property name="name" value="cm fraction" /> </bean -->
 				<ref bean="popMeanFitness" />
 				<ref bean="maxFitness" />
 				<ref bean="minFitness" />
@@ -245,5 +245,5 @@
 	<bean id="simFilter"
 		class="il.ac.tau.yoavram.simba.statistics.filters.SimBacteriaFilter" />
 	<bean id="cmFilter"
-	class="il.ac.tau.yoavram.simba.statistics.filters.CmBacteriaFilter" />
+		class="il.ac.tau.yoavram.simba.statistics.filters.CmBacteriaFilter" />
 </beans>

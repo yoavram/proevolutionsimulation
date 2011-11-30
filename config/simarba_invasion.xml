@@ -46,6 +46,7 @@
 		<property name="changeEnvironmentOnStartup" value="${changeEnvironmentOnStartup}" />
 		<property name="fractionOfGenesToChange" value="${fractionOfGenesToChange}" />
 		<property name="environmentalChangeFrequency" value="${environmentalChangeFrequency}" />
+		<property name="recombinationBarriers" value="${recombinationBarriers}"/>
 		<property name="invasion">
 			<bean class="il.ac.tau.yoavram.simba.SimarInvasion">
 				<property name="invasionRate" value="${invasionRate}" />
