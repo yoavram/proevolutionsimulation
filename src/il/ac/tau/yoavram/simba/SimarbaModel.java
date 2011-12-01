@@ -1,6 +1,8 @@
 package il.ac.tau.yoavram.simba;
 
+import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import il.ac.tau.yoavram.pes.Simulation;
 import il.ac.tau.yoavram.pes.utils.FixedSizedQueue;
@@ -41,8 +43,8 @@ public class SimarbaModel extends SimbaModel {
 		// kill random bacteria and put it in the graveyard
 		int kill = randomBacteriaIndex();
 		Bacteria dead = getPopulations().get(0).remove(kill);
-		logger.debug(String.format("Killed %s %d", dead.getClass()
-				.getSimpleName(), dead.getID()));
+		logger.debug(String.format("Tick %d: Killed %s", Simulation
+				.getInstance().getTick(), dead.toString()));
 		if (isRecombinationBarriers())
 			dead = getGraveyard(getStrain(dead)).add(dead);
 		else
@@ -66,19 +68,43 @@ public class SimarbaModel extends SimbaModel {
 				// add to population
 				getPopulations().get(0).add(child);
 				// log
-				logger.debug(String.format("Reproduced %s %d, child is %s %d",
-						mother.getClass().getSimpleName(), mother.getID(),
-						child.getClass().getSimpleName(), child.getID()));
+				logger.debug(String.format(
+						"Tick %d: Reproduced %s, child is %s", Simulation
+								.getInstance().getTick(), mother.toString(),
+						child.toString()));
 			}
 		}
 
 		// change environment
 		if (getEnvironmentalChangeFrequency() > 0
 				&& RandomUtils.nextDouble() < getEnvironmentalChangeFrequency()) {
-			getEnvironment().change(getFractionOfGenesToChange());
+			changeEnvironment();
 		} else if (getEnvironmentalChangeFrequency() < 0) {
 			if (Simulation.getInstance().getTick() % getPeriod() == 0) {
-				getEnvironment().change(getFractionOfGenesToChange());
+				changeEnvironment();
+			}
+		}
+	}
+
+	@Override
+	public void changeEnvironment() {
+		logger.info(String.format("Tick %d: Changing %f of the environment",
+				Simulation.getInstance().getTick(),
+				getFractionOfGenesToChange()));
+		Map<Integer, Integer> changedGenes = getEnvironment().change(
+				getFractionOfGenesToChange());
+		// check if the new allele at the changed genes is present
+		for (List<Bacteria> pop : getPopulations()) {
+			for (Bacteria b : pop) {
+				for (Entry<Integer, Integer> e : changedGenes.entrySet()) {
+					int gene = e.getKey();
+					int allele = e.getValue();
+					if (b.getAlleles()[gene] == allele) {
+						logger.info(String
+								.format("New allele %d in gene %d already exists in bacteria %s",
+										allele, gene, b.toString()));
+					}
+				}
 			}
 		}
 	}
@@ -93,8 +119,9 @@ public class SimarbaModel extends SimbaModel {
 		FixedSizedQueue<Bacteria> graveyard = (isRecombinationBarriers()) ? getGraveyard(strain)
 				: getGraveyard();
 		if (graveyard.size() == 0) {
-			logger.warn("Could not continue with transformation, no organisms in graveyard "
-					+ strain);
+			logger.warn(String
+					.format("Tick %d: Could not continue with transformation, no organisms in graveyard %d",
+							Simulation.getInstance().getTick(), strain));
 			return false;
 		}
 
@@ -102,9 +129,10 @@ public class SimarbaModel extends SimbaModel {
 			Bacteria dnaDoner = graveyard.randomRemove();
 
 			int genes = recipient.transform(dnaDoner.getAlleles());
-			logger.debug(String.format(
-					"Transformed %s with DNA from dead %s: %d genes exchanged",
-					recipient.toString(), dnaDoner.toString(), genes));
+			logger.debug(String
+					.format("Tick %d: Transformed %s with DNA from dead %s - %d genes exchanged",
+							Simulation.getInstance().getTick(),
+							recipient.toString(), dnaDoner.toString(), genes));
 			numOfTransformations--;
 		}
 		return true;

@@ -95,28 +95,16 @@ public class ModifierEnvironment extends SimpleEnvironment implements
 		fitnessGenes = genes.toArray(new Integer[0]);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see il.ac.tau.yoavram.simba.Environment#change(double)
-	 */
 	@Override
-	public void change(double fractionOfGenesToChange) {
-		double toChange = Math.ceil(fractionOfGenesToChange * alleles.length);
-		long tick = getTick();
-		for (int i = 0; i < toChange; i++) {
-			int gene = getRandomFitnessGene();
-			int currentAllele = alleles[gene];
-			// the favorable allele is either 0 or 1
-			int newAllele = (currentAllele + 1) % 2; 
-			alleles[gene] = newAllele;
-			logger.debug(String.format(
-					"Tick %d: Changed the allele in gene %d from %d to %d",
-					tick, gene, currentAllele, newAllele));
-		}
-		if (toChange > 0) {
-			lastEnvironmentalChange = tick;
-		}
+	protected int chooseRandomGeneToChange() {
+		return getRandomFitnessGene();
+	}
+
+	@Override
+	protected void geneChangedMsg(int gene, int currentAllele, int newAllele) {
+		logger.debug(String.format(
+				"Tick %d: Changed the allele in gene %d from %d to %d",
+				getTick(), gene, currentAllele, newAllele));
 	}
 
 	public int getRandomFitnessGene() {

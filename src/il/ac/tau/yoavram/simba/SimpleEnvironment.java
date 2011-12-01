@@ -5,8 +5,11 @@ import il.ac.tau.yoavram.pes.utils.RandomUtils;
 
 import java.io.ObjectInputStream;
 import java.util.Arrays;
+import java.util.Map;
 
 import org.apache.log4j.Logger;
+
+import com.google.common.collect.Maps;
 
 public class SimpleEnvironment implements Environment {
 	private static final long serialVersionUID = 8898297052351732121L;
@@ -53,19 +56,36 @@ public class SimpleEnvironment implements Environment {
 	 * @see il.ac.tau.yoavram.simba.IEnvironment#change(double)
 	 */
 	@Override
-	public void change(double fractionOfGenesToChange) {
-		double toChange = Math.ceil(fractionOfGenesToChange * alleles.length);
+	public Map<Integer, Integer> change(double fractionOfGenesToChange) {
+		int toChange = (int) Math
+				.ceil(fractionOfGenesToChange * alleles.length);
+		Map<Integer, Integer> genesChanged = Maps.newTreeMap();
 		for (int i = 0; i < toChange; i++) {
-			int gene = RandomUtils.nextInt(0, alleles.length - 1);
-			int currentAllele = alleles[gene];
-			int newAllele = (currentAllele + 1) % 2;
-			alleles[gene] = newAllele;
-			logger.debug("Changed the environmental gene " + gene + " from "
-					+ currentAllele + " to " + newAllele);
+			int gene = chooseRandomGeneToChange();
+			int newAllele = changeGene(gene);
+			genesChanged.put(gene, newAllele);
 		}
 		if (toChange > 0) {
 			lastEnvironmentalChange = getTick();
 		}
+		return genesChanged;
+	}
+
+	protected int chooseRandomGeneToChange() {
+		return RandomUtils.nextInt(0, alleles.length - 1);
+	}
+
+	protected int changeGene(int gene) {
+		int currentAllele = alleles[gene];
+		int newAllele = (currentAllele + 1) % 2;
+		alleles[gene] = newAllele;
+		geneChangedMsg(gene, currentAllele, newAllele);
+		return newAllele;
+	}
+
+	protected void geneChangedMsg(int gene, int currentAllele, int newAllele) {
+		logger.debug("Changed the environmental gene " + gene + " from "
+				+ currentAllele + " to " + newAllele);
 	}
 
 	/*

@@ -46,9 +46,7 @@ public class SimbaModel extends SerializableModel<Bacteria> {
 			logger.debug("Population already inhibited");
 		}
 		if (isChangeEnvironmentOnStartup()) {
-			logger.info(String.format("Changing %f of the environment",
-					getFractionOfGenesToChange()));
-			getEnvironment().change(getFractionOfGenesToChange());
+			changeEnvironment();
 		}
 		if (getInvasion() != null) {
 			logger.info(String.format(
@@ -88,14 +86,19 @@ public class SimbaModel extends SerializableModel<Bacteria> {
 		// change environment
 		if (getEnvironmentalChangeFrequency() > 0
 				&& RandomUtils.nextDouble() < getEnvironmentalChangeFrequency()) {
-			logger.debug("Changing the environment");
-			getEnvironment().change(getFractionOfGenesToChange());
+			changeEnvironment();
 		} else if (getEnvironmentalChangeFrequency() < 0) {
 			if (Simulation.getInstance().getTick() % getPeriod() == 0) {
-				logger.debug("Changing the environment");
-				getEnvironment().change(getFractionOfGenesToChange());
+				changeEnvironment();
 			}
 		}
+	}
+
+	public void changeEnvironment() {
+		logger.info(String.format("Tick %d: Changing %f of the environment",
+				Simulation.getInstance().getTick(),
+				getFractionOfGenesToChange()));
+		getEnvironment().change(getFractionOfGenesToChange());
 	}
 
 	protected Bacteria randomBacteria() {

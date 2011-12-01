@@ -82,18 +82,24 @@ public class OneKeyMap<K, V> implements Map<K, V>, Serializable {
 
 	@Override
 	public Set<K> keySet() {
-		return Sets.newHashSet(k);
+		Set<K> s = Sets.newHashSet();
+		s.add(k);
+		return s;
 	}
 
 	@Override
 	public Collection<V> values() {
-		return Sets.newHashSet(v);
+		Collection<V> c = Sets.newHashSet();
+		c.add(v);
+		return c;
 	}
 
 	@Override
 	public Set<Map.Entry<K, V>> entrySet() {
-		Map.Entry<K, V> e = new AbstractMap.SimpleEntry(k, v);
-		return Sets.newHashSet(e);
+		Map.Entry<K, V> e = new AbstractMap.SimpleEntry<K, V>(k, v);
+		Set<Map.Entry<K, V>> set = Sets.newHashSet();
+		set.add(e);
+		return set;
 	}
 
 }
