@@ -1,13 +1,12 @@
 package il.ac.tau.yoavram.simba;
 
+import il.ac.tau.yoavram.pes.Simulation;
+import il.ac.tau.yoavram.pes.utils.FixedSizedQueue;
+import il.ac.tau.yoavram.pes.utils.RandomUtils;
+
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-
-import il.ac.tau.yoavram.pes.Simulation;
-import il.ac.tau.yoavram.pes.utils.FixedSizedQueue;
-import il.ac.tau.yoavram.pes.utils.OneKeyMap;
-import il.ac.tau.yoavram.pes.utils.RandomUtils;
 
 import org.apache.log4j.Logger;
 
@@ -31,10 +30,7 @@ public class SimarbaModel extends SimbaModel {
 	public void init() {
 		super.init();
 		if (graveyardMap == null) {
-			if (isRecombinationBarriers())
-				graveyardMap = Maps.newHashMapWithExpectedSize(2);
-			else
-				graveyardMap = new OneKeyMap<Integer, FixedSizedQueue<Bacteria>>();
+			graveyardMap = Maps.newHashMapWithExpectedSize(2);
 		}
 	}
 
@@ -187,6 +183,10 @@ public class SimarbaModel extends SimbaModel {
 		return getGraveyard(0);
 	}
 
+	public void setGraveyard(FixedSizedQueue<Bacteria> graveyard) {
+		setGraveyard(0, graveyard);
+	}
+
 	public FixedSizedQueue<Bacteria> getGraveyard(int strain) {
 		if (graveyardMap.containsKey(strain))
 			return graveyardMap.get(strain);
@@ -198,4 +198,7 @@ public class SimarbaModel extends SimbaModel {
 		}
 	}
 
+	public void setGraveyard(int strain, FixedSizedQueue<Bacteria> graveyard) {
+		graveyardMap.put(strain, graveyard);
+	}
 }
