@@ -159,8 +159,8 @@ public class SexyBacteria implements Bacteria {
 		// if currentAllele is favorable, it will change to harmful with probability 1
 		// if currentAllele is harmful, it will change to favorable with probability 1/(allelesPerLocus-1)
 		double rand = RandomUtils.nextDouble();
-		for (int i = 1; i <= allelesPerLocus; i++) {
-			if (rand <= i / allelesPerLocus) {
+		for (int i = 1; i < allelesPerLocus; i++) {
+			if (rand <= i / (allelesPerLocus-1)) {
 				newAllele = (currentAllele + i) % (int) allelesPerLocus;
 			}
 		}
