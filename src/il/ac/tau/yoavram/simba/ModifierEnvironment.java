@@ -102,7 +102,7 @@ public class ModifierEnvironment extends SimpleEnvironment implements
 
 	@Override
 	protected void geneChangedMsg(int gene, int currentAllele, int newAllele) {
-		logger.debug(String.format(
+		logger.info(String.format(
 				"Tick %d: Changed the allele in gene %d from %d to %d",
 				getTick(), gene, currentAllele, newAllele));
 	}

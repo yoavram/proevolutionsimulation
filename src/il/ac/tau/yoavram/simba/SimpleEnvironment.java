@@ -84,7 +84,7 @@ public class SimpleEnvironment implements Environment {
 	}
 
 	protected void geneChangedMsg(int gene, int currentAllele, int newAllele) {
-		logger.debug("Changed the environmental gene " + gene + " from "
+		logger.info("Changed the environmental gene " + gene + " from "
 				+ currentAllele + " to " + newAllele);
 	}
 
