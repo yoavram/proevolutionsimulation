@@ -85,7 +85,7 @@ public class SimarbaModel extends SimbaModel {
 
 	@Override
 	public void changeEnvironment() {
-		logger.info(String.format("Tick %d: Changing %f of the environment",
+		logger.info(String.format("Tick %s: Changing %f of the environment",
 				NumberUtils.formatNumber(Simulation.getInstance().getTick()),
 				getFractionOfGenesToChange()));
 		Map<Integer, Integer> changedGenes = getEnvironment().change(

@@ -1,5 +1,6 @@
 package il.ac.tau.yoavram.simba;
 
+import il.ac.tau.yoavram.pes.utils.NumberUtils;
 import il.ac.tau.yoavram.pes.utils.RandomUtils;
 
 import java.io.ObjectInputStream;
@@ -103,8 +104,8 @@ public class ModifierEnvironment extends SimpleEnvironment implements
 	@Override
 	protected void geneChangedMsg(int gene, int currentAllele, int newAllele) {
 		logger.info(String.format(
-				"Tick %d: Changed the allele in gene %d from %d to %d",
-				getTick(), gene, currentAllele, newAllele));
+				"Tick %s: Changed the allele in gene %d from %d to %d",
+				NumberUtils.formatNumber(getTick()), gene, currentAllele, newAllele));
 	}
 
 	public int getRandomFitnessGene() {
