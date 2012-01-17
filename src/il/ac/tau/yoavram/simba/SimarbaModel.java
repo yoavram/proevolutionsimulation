@@ -2,6 +2,7 @@ package il.ac.tau.yoavram.simba;
 
 import il.ac.tau.yoavram.pes.Simulation;
 import il.ac.tau.yoavram.pes.utils.FixedSizedQueue;
+import il.ac.tau.yoavram.pes.utils.NumberUtils;
 import il.ac.tau.yoavram.pes.utils.RandomUtils;
 
 import java.util.List;
@@ -85,7 +86,7 @@ public class SimarbaModel extends SimbaModel {
 	@Override
 	public void changeEnvironment() {
 		logger.info(String.format("Tick %d: Changing %f of the environment",
-				Simulation.getInstance().getTick(),
+				NumberUtils.formatNumber(Simulation.getInstance().getTick()),
 				getFractionOfGenesToChange()));
 		Map<Integer, Integer> changedGenes = getEnvironment().change(
 				getFractionOfGenesToChange());

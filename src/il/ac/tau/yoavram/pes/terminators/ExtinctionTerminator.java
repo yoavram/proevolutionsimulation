@@ -3,6 +3,7 @@ package il.ac.tau.yoavram.pes.terminators;
 import il.ac.tau.yoavram.pes.Model;
 import il.ac.tau.yoavram.pes.Simulation;
 import il.ac.tau.yoavram.pes.filters.Filter;
+import il.ac.tau.yoavram.pes.utils.NumberUtils;
 
 import java.util.List;
 
@@ -27,9 +28,9 @@ public class ExtinctionTerminator<T> extends AbstractTerminator implements
 			}
 		}
 		logger.info(String.format(
-				"Tick %d: %s found nothing in the population", Simulation
-						.getInstance().getTick(), filter.getClass()
-						.getSimpleName()));
+				"Tick %d: %s found nothing in the population",
+				NumberUtils.formatNumber(Simulation.getInstance().getTick()),
+				filter.getClass().getSimpleName()));
 		return true;
 	}
 
