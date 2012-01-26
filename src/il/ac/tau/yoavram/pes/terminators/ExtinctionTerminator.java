@@ -28,7 +28,7 @@ public class ExtinctionTerminator<T> extends AbstractTerminator implements
 			}
 		}
 		logger.info(String.format(
-				"Tick %d: %s found nothing in the population",
+				"Tick %s: %s found nothing in the population",
 				NumberUtils.formatNumber(Simulation.getInstance().getTick()),
 				filter.getClass().getSimpleName()));
 		return true;
