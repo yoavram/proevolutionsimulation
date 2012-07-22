@@ -1,11 +1,15 @@
 cat("Starting\n")
 setwd("~/workspace/proevolutionsimulation/output")
 output <- matrix(0,0,26)
-for (folder in dir(pattern="*envch*")) { # pattern used to avoid ess folders
+for (pat in c("sim-cm*")){#, "cm-nm*", "sim-cm*")) {
+for (folder in dir(pattern=pat)) { # pattern used to avoid ess folders
 setwd(folder)
 cat(folder)
 cat('\n')
 files <- dir(pattern="pop.*.csv") # filenames
+if (length(files)==0) {
+next
+}
 splits <- strsplit(files, split=".", fixed=T) # split filenames on dots, used for subtitle, rb, start
 params <- strsplit(files, split="\\D+\\.") # split on non-digits followed by dot, used for numberical parameters
 for (i in seq(length(files))) {
@@ -28,10 +32,10 @@ output <- rbind(output, v)
 }
 setwd("..")
 }
+}
 output <- as.data.frame(output)
 names(output) <- c("title","subtitle","mu","r","pi.original","muM","rM","piM","apl","tau","pi","in","envch","start","rb",names(last.row))
 #cat(names(output))
-setwd("~/workspace/proevolutionsimulation")
 fout <- gzfile("aggregation.csv.gz")
 write.csv(output, fout, row.names=F, quote=F)
 cat("\nWriting to aggregation.csv.gz\n")
