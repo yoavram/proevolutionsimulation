@@ -19,7 +19,7 @@ public class ModifierEnvironment extends SimpleEnvironment implements
 
 	private static final long serialVersionUID = -1046262126111003968L;
 
-	protected static final Logger logger = Logger.getLogger(ModifierEnvironment.class);
+	protected static final Logger logger = Logger.getLogger(Environment.class);
 
 	protected static ModifierEnvironment INSTANCE = null;
 
