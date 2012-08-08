@@ -19,19 +19,19 @@ public class ModifierEnvironment extends SimpleEnvironment implements
 
 	private static final long serialVersionUID = -1046262126111003968L;
 
-	private static final Logger logger = Logger.getLogger(Environment.class);
+	protected static final Logger logger = Logger.getLogger(ModifierEnvironment.class);
 
-	private static ModifierEnvironment INSTANCE = null;
+	protected static ModifierEnvironment INSTANCE = null;
 
-	private GeneType[] types;
-	private int numOfMutationModifiers = 0;
-	private int numOfTransformationModifiers = 0;
-	private int numOfThresholdModifiers = 0;
+	protected GeneType[] types;
+	protected int numOfMutationModifiers = 0;
+	protected int numOfTransformationModifiers = 0;
+	protected int numOfThresholdModifiers = 0;
 
-	private Integer[] fitnessGenes;
-	private int[] mutationRateModifiers;
-	private int[] transformationRateModifiers;
-	private int[] thresholdModifiers;
+	protected Integer[] fitnessGenes;
+	protected int[] mutationRateModifiers;
+	protected int[] transformationRateModifiers;
+	protected int[] thresholdModifiers;
 
 	public ModifierEnvironment() {
 		INSTANCE = this;
