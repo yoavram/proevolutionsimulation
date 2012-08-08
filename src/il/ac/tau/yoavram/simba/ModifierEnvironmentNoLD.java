@@ -10,16 +10,17 @@ import com.google.common.collect.Lists;
 
 /**
  * This is the same class as {@link ModifierEnvironment} with the exception that
- * all modifier genes are clustered together at the end of the genome.
+ * all modifier genes are spread over the genome with maximum distance between
+ * them.
  * 
  * @author yoavram
  * @since 8/8/2012
- * 
  */
-public class ModifierEnvironmentWithLD extends ModifierEnvironment implements Environment {
-	private static final long serialVersionUID = -5216103196113345377L;
-	private static final Logger logger = Logger
-			.getLogger(ModifierEnvironmentWithLD.class);
+public class ModifierEnvironmentNoLD extends ModifierEnvironment implements
+		Environment {
+
+	private static final long serialVersionUID = -1265328720468462124L;
+	protected static final Logger logger = Logger.getLogger(Environment.class);
 
 	/*
 	 * (non-Javadoc)
@@ -43,8 +44,13 @@ public class ModifierEnvironmentWithLD extends ModifierEnvironment implements En
 		transformationRateModifiers = new int[getNumberOfTransformationModifiers()];
 		thresholdModifiers = new int[getNumberOfThresholdModifiers()];
 
+		int distance = getNumberOfGenes()
+				/ (getNumberOfMutationModifiers()
+						+ getNumberOfTransformationModifiers() + getNumberOfThresholdModifiers());
+		int pos = 0;
 		for (int mods = 0; mods < getNumberOfMutationModifiers(); mods++) {
-			int gene = genes.remove(genes.size()-1);
+			int gene = genes.remove(pos);
+			pos += distance;
 			types[gene] = GeneType.MutationRate;
 			alleles[gene] = -1;
 			mutationRateModifiers[mods] = gene;
@@ -52,7 +58,8 @@ public class ModifierEnvironmentWithLD extends ModifierEnvironment implements En
 					"Mutation Rate Modifier"));
 		}
 		for (int mods = 0; mods < getNumberOfTransformationModifiers(); mods++) {
-			int gene = genes.remove(genes.size()-1);
+			int gene = genes.remove(pos);
+			pos += distance;
 			types[gene] = GeneType.TransformationRate;
 			alleles[gene] = -1;
 			transformationRateModifiers[mods] = gene;
@@ -60,7 +67,8 @@ public class ModifierEnvironmentWithLD extends ModifierEnvironment implements En
 					"Transformation Rate Modifier"));
 		}
 		for (int mods = 0; mods < getNumberOfThresholdModifiers(); mods++) {
-			int gene = genes.remove(genes.size()-1);
+			int gene = genes.remove(pos);
+			pos += distance;
 			types[gene] = GeneType.Threshold;
 			alleles[gene] = -1;
 			thresholdModifiers[mods] = gene;
