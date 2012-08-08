@@ -30,13 +30,10 @@
 		<property name="blockAtEnd" value="${simulation.block}" />
 		<property name="ID" value="${jobName}.${time}" />
 	</bean>
-	<bean id="environment" class="il.ac.tau.yoavram.simba.ModifierEnvironment">
+	<bean id="environment" class="il.ac.tau.yoavram.simba.SimpleEnvironment">
 		<property name="numberOfEnvironmentalGenes" value="${numberOfGenes}" />
-		<property name="numberOfMutationModifiers" value="${numberOfMutationModifiers}" />
-		<property name="numberOfTransformationModifiers" value="${numberOfTransformationModifiers}" />
-		<property name="numberOfThresholdModifiers" value="${numberOfThresholdModifiers}" />
 	</bean>
-	<bean id="ancestor" class="il.ac.tau.yoavram.simba.IdealSexyAncestor">
+	<bean id="ancestor" class="il.ac.tau.yoavram.simba.IdealModifierAncestor">
 		<property name="mutationRate" value="${mutationRate}" />
 		<property name="transformationRate" value="${transformationRate}" />
 		<property name="numberOfGenes" value="${numberOfGenes}" />
