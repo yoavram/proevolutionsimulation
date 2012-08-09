@@ -136,8 +136,8 @@ public class SimarbaModel extends SimbaModel {
 	}
 
 	public int getStrain(Bacteria bacteria) {
-		if (bacteria instanceof SexyBacteria) {
-			SexyBacteria sexyBacteria = (SexyBacteria) bacteria;
+		if (bacteria instanceof ModifierBacteria) {
+			ModifierBacteria sexyBacteria = (ModifierBacteria) bacteria;
 			if (sexyBacteria.isCm()) {
 				if (sexyBacteria.isCr())
 					return 1; // CM-CR

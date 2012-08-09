@@ -2,7 +2,7 @@ package il.ac.tau.yoavram.simba;
 
 import il.ac.tau.yoavram.pes.DoubleInvasion;
 
-public class SimarCmInvasion extends DoubleInvasion<SexyBacteria, SexyBacteria> {
+public class SimarCmInvasion extends DoubleInvasion<ModifierBacteria, ModifierBacteria> {
 
 	public SimarCmInvasion() {
 		invasion1 = new SimarInvasion();

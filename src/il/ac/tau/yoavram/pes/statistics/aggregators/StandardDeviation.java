@@ -31,8 +31,11 @@ public abstract class StandardDeviation<T> extends AbstractAggregator<T>
 
 	@Override
 	public Number result() {
-		return Math.sqrt(mean
+		double res = Math.sqrt(mean
 				- Math.pow(meanAggregator.result().doubleValue(), 2));
+		if (res < 1e-8) res = 0;
+		return res;
+		
 	}
 
 	public void setMeanAggregator(Mean<T> meanAggregator) {

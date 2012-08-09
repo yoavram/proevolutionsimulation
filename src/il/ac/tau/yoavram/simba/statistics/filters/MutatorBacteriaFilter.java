@@ -12,7 +12,7 @@ public class MutatorBacteriaFilter implements Filter<Bacteria> {
 	public boolean filter(Bacteria filtrate) {
 		return (filtrate instanceof SexyBacteria && ((SexyBacteria) filtrate)
 				.isMutator())
-				|| (filtrate instanceof SexyBacteria && ((ModifierBacteria) filtrate)
+				|| (filtrate instanceof ModifierBacteria && ((ModifierBacteria) filtrate)
 						.isMutator())
 						|| (filtrate instanceof SimpleBacteria && ((SimpleBacteria) filtrate)
 						.isMutator());

@@ -36,23 +36,26 @@ import org.apache.log4j.Logger;
 import com.google.common.collect.Lists;
 
 /**
- * This class controls a single simulation. It contains the {@link Model}, which has the logic of the simulation; 
- * the {@link DataGatherer}s that collect and save statistics; the {@link Terminator}s that control the stopping conditions of the simulations; 
- * and the timing of the simulation.
+ * This class controls a single simulation. It contains the {@link Model}, which
+ * has the logic of the simulation; the {@link DataGatherer}s that collect and
+ * save statistics; the {@link Terminator}s that control the stopping conditions
+ * of the simulations; and the timing of the simulation.
  * <p>
- * Simulation fulfills the Singleton pattern and therefore can be obtained by any other class by calling <code>Simulation.getInstance()</code>.
+ * Simulation fulfills the Singleton pattern and therefore can be obtained by
+ * any other class by calling <code>Simulation.getInstance()</code>.
  * <p>
- * An instance should be created by a runner, such as the {@link SpringRunner}</br>
- * The flow of a simulation is as follows:
+ * An instance should be created by a runner, such as the {@link SpringRunner}
+ * </br> The flow of a simulation is as follows:
  * <ul>
  * <li>1 initiation</li>
  * <li>2 time increment</li>
  * <li>3 one model step</li>
  * <li>4 all {@link DataGatherer}s gather data</li>
- * <li>5 all {@link Terminator}s are checked for stopping condition<ul>
- * 	<li>5.1 if any terminator was positive for termination, proceed to 6</li>
- *  <li>5.2 otherwise return to (2)</li>
- *  </ul>
+ * <li>5 all {@link Terminator}s are checked for stopping condition
+ * <ul>
+ * <li>5.1 if any terminator was positive for termination, proceed to 6</li>
+ * <li>5.2 otherwise return to (2)</li>
+ * </ul>
  * <li>6 finish simulaiton and close all gatherers</li>
  * </ul>
  * 
@@ -69,7 +72,7 @@ public class Simulation {
 	private List<DataGatherer<?>> dataGatherers;
 	private List<Terminator> terminators;
 	private Object id;
-	private int tickInterval = 100000;
+	private int tickInterval = 0;
 	private boolean blockAtEnd = false;
 
 	public static Simulation getInstance() {
@@ -94,7 +97,7 @@ public class Simulation {
 		long start = System.currentTimeMillis();
 		logger.info("Starting simulation id " + getID());
 		while (running) {
-			if (getTick() % getTickInterval() == 0)
+			if (getTickInterval() != 0 && getTick() % getTickInterval() == 0)
 				logger.info("tick " + NumberUtils.formatNumber(getTick()));
 			incrementTick();
 
