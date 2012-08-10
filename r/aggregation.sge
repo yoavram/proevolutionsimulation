@@ -1,9 +1,0 @@
-#!/bin/bash
-#$ -V
-#$ -cwd
-#$ -j y
-#$ -N pes_agg 
-#$ -l lilach,h_rt=48:00:00,mem_free=1G
-
-module load R/R215
-R --vanilla --slave -f ~/workspace/proevolutionsimulation/r/aggregation.r
