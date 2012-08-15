@@ -1,12 +1,15 @@
 import gzip 
 import re
 import os
+import os.path
 import pickle
 import glob
 import pandas
 
 
 def parse_two_line_file(filename):
+    if not os.path.exists(filename):
+	return None
     fin = open(filename)
     head = fin.readline() 
     tail = fin.readline() 
@@ -39,7 +42,7 @@ for fold in folders:
             m_filename = "mean"+filename[5:]
             m_record = parse_two_line_file(m_filename)
             if m_record:
-                for k,v in m_record:
+                for k,v in m_record.items():
                     record["mean "+k] = v
         record.update(params)
 
@@ -51,6 +54,6 @@ os.chdir("/groups/lilach_hadany/yoavram/workspace/proevolutionsimulation/r/")
 df = pandas.DataFrame(records)
 fout_name = "aggregation.csv.gz"
 fout = gzip.open(fout_name, 'wb')
-df.to_csv(fout)
+df.to_csv(fout, index=False)
 fout.close()
 print "Written output data frame file in csv format compressed withe gzip",fout_name
