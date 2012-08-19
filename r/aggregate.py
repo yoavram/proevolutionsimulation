@@ -20,8 +20,9 @@ def parse_two_line_file(filename):
     return record
 
 # final.pop.invasion.pop.3.mu.0.003.r.0.003.pi.1001.apl.11.pi.0.tau.10.rho.1.in.0.5.envch.0.00000002.start.false.rb.false.2012-Aug-10_00-12-50-001_IDT.csv
+# final.pop.invasion2.pop.3.mu.0.003.r.0.003.pi.1001.apl.11.pi1.1.tau1.10.rho1.1.pi2.0.tau2.2.9.rho2.1.in.0.5.envch.0.00000004.start.false.rb.false.2012-Aug-18_03-52-03-632_IDT.csv
 
-pattern = re.compile(r"^final.(?P<filter>\w+)\.(?P<jobname>[\w-]*)\.pop\.(?P<pop>\d+)\.mu\.(?P<mu>\d\.\d+)\.r\.(?P<r>\d\.\d+)\.pi\.(?P<pi_original>\d+)\.apl\.(?P<apl>\d+)\.pi\.(?P<pi>\d+)\.tau\.(?P<tau>[\.\d]+)\.rho\.(?P<rho>[\.\d]+)\.in\.(?P<in>\d\.\d+)\.envch\.(?P<envch>\d\.?\d*)\.start\.(?P<start>[\w]+)\.rb\.(?P<rb>[\w]+)(?:\.(?P<time>\d{4}-\w{3}-\d{1,2}_\d{2}-\d{2}-\d{2}-\d{3}_\w{3})\.(?P<filetype>\w+))?$")
+pattern = re.compile(r"^final.(?P<filter>\w+)\.(?P<jobname>[\w-]*)\.pop\.(?P<pop>\d+)\.mu\.(?P<mu>\d\.\d+)\.r\.(?P<r>\d\.\d+)\.pi\.(?P<pi_original>\d+)\.apl\.(?P<apl>\d+)\.((?:pi1\.(?P<pi1>\d+)\.tau1\.(?P<tau1>[\.\d]+)\.rho1\.(?P<rho1>[\.\d]+)\.pi2\.(?P<pi2>\d+)\.tau2\.(?P<tau2>[\.\d]+)\.rho2\.(?P<rho2>[\.\d]+))|(?:pi\.(?P<pi>\d+)\.tau\.(?P<tau>[\.\d]+)\.rho\.(?P<rho>[\.\d]+)))\.in\.(?P<in>\d\.\d+)\.envch\.(?P<envch>\d\.?\d*)\.start\.(?P<start>[\w]+)\.rb\.(?P<rb>[\w]+)(?:\.(?P<time>\d{4}-\w{3}-\d{1,2}_\d{2}-\d{2}-\d{2}-\d{3}_\w{3})\.(?P<filetype>\w+))?$")
 
 os.chdir("/groups/lilach_hadany/yoavram/workspace/proevolutionsimulation/output/")
 folders = glob.glob('invasion*')
