@@ -5,7 +5,7 @@ source("multiplot.r")
 alpha <- 0.05
 
 get.data <- function() {
-  data<-read.csv("D:/projects/simarba/analysis/aggregation_190812_1234.csv.gz",header=T)
+  data<-read.csv("D:/projects/simarba/analysis/aggregation_190812_0927.csv.gz",header=T)
   data$rb <- as.logical(data$rb)
   data$start <- as.logical(data$start)
   return (data)
@@ -33,7 +33,7 @@ my.func <- function(df) {
     }
   }
   finish.rate <- 1-sum(df$invader.fraction!=1 & df$invader.fraction!=0)/N
-  avg.tau <- mean(df$mean.mean.mutation.rate/df$mu, na.rm=T)
+  avg.tau <- mean(df$mean.mean.mutation.rate/df$mu)
   v <- c(N, fixation, p.value, ci.high, ci.low, selection, finish.rate, avg.tau)
   names(v) <- c("N", "fixation", "p.value", "ci.high", "ci.low", "selection", "finish.rate", "avg.tau")
   return(v)
@@ -41,10 +41,10 @@ my.func <- function(df) {
 
 fixation.summary <- function(data, use.pop=FALSE) {
   if (use.pop) {
-    fraction.summary <- ddply(data, .(apl, envch, in., jobname, mu, pi, pi_original, pop, r, rb, rho, start, tau), my.func)
+    fraction.summary <- ddply(data, .(apl, envch, in., jobname, mu, pi1, pi2, pi_original, pop, r, rb, rho1, rho2, start, tau1, tau2), my.func)
     fraction.summary$pop <- factor(fraction.summary$pop)
   } else {
-    fraction.summary <- ddply(data, .(apl, envch, in., jobname, mu, pi, pi_original, r, rb, rho, start, tau), my.func)
+    fraction.summary <- ddply(data, .(apl, envch, in., jobname, mu, pi1, pi2, pi_original, r, rb, rho1, rho2, start, tau1, tau2), my.func)
   }
   
   fraction.summary$selection <- factor(fraction.summary$selection)
@@ -100,22 +100,22 @@ plot.finish.rate <- function(fix.sum, x.factor = 'tau', use.pop = FALSE, use.rb=
 plot.fixation <- function(fix.sum, x.factor = 'tau', use.pop = FALSE, use.rb=FALSE, x.lab=NULL, y.lab=expression("Mean fixation probability " %+-% " CI"), plot.title="untitled", label.avg.tau=F) {
   limits <- aes(ymax = ci.high, ymin=ci.low)    
   if (x.factor=='tau') {
-    q <- ggplot(fix.sum, aes(x=factor(tau), y=fixation,  fill=selection))
+    q <- ggplot(fix.sum, aes(x=factor(tau2), y=fixation,  fill=selection))
     if (is.null(x.lab)) {
       x.lab = expression(tau)
     }
   } else if (x.factor=='rho') {
-    q <- ggplot(fix.sum, aes(x=factor(rho), y=fixation,  fill=selection))
+    q <- ggplot(fix.sum, aes(x=factor(rho2), y=fixation,  fill=selection))
     if (is.null(x.lab)) {
       x.lab = expression(rho)
     }
   } else if (x.factor=='tau.rho') {
-    q <- ggplot(fix.sum, aes(x=factor(tau), y=fixation,  fill=selection))
+    q <- ggplot(fix.sum, aes(x=factor(tau2), y=fixation,  fill=selection))
     if (is.null(x.lab)) {
       x.lab = expression(tau == rho)
     }
   }else if (x.factor=='pi') {
-    q <- ggplot(fix.sum, aes(x=factor(pi), y=fixation,  fill=selection))
+    q <- ggplot(fix.sum, aes(x=factor(pi1), y=fixation,  fill=selection))
     if (is.null(x.lab)) {
       x.lab = expression(pi)
     }
@@ -140,6 +140,7 @@ plot.fixation <- function(fix.sum, x.factor = 'tau', use.pop = FALSE, use.rb=FAL
   }
   if (label.avg.tau) {
     q <- q + geom_text(aes(label=format(avg.tau, digits=2), y=fixation/2))
+    q <- q + geom_text(aes(label=format(tau2, digits=2), y=fixation/4))
   }
   if (use.rb) {
     q <- q + scale_alpha_manual(values=c(1,0.4), name='rb', labels=c('F','T'))
@@ -149,42 +150,13 @@ plot.fixation <- function(fix.sum, x.factor = 'tau', use.pop = FALSE, use.rb=FAL
 }
 
 data <- get.data()
-data <- subset(data, filter=='pop' & jobname=='invasion' )
+data <- subset(data, filter=='pop' & jobname=='invasion2')
 
-fs <- fixation.summary(subset(data, rho == 3.14), use.pop=T)
-nmr.nmr <- plot.fixation(fs,x.factor='rho', use.pop=T, plot.title='NMR vs. NMR')
-nmr.nmr2 <- plot.finish.rate(fs,x.factor='rho', use.pop=T, plot.title='NMR vs. NMR') 
-#multiplot(nmr.nmr, nmr.nmr2, cols=2)
+fs <- fixation.summary(subset(data, pi1>0 & tau1 > 1 & rho1 == 1 & pi2 == 0 & tau2>1 & rho2 == 1))
+sim.cm <- plot.fixation(fs,x.factor='pi', plot.title='SIM vs. CM', label.avg.tau=T)
+sim.cm
 
-fs <- fixation.summary(subset(data, pi==0 & tau > 1 & rho == 1))
-cm.nm <- plot.fixation(fs,x.factor='tau', plot.title='CM vs. NM')
-cm.nm2 <- plot.finish.rate(fs,x.factor='tau', plot.title='CM vs. NM')
-#multiplot(cm.nm, cm.nm2, cols=2)
+fs <- fixation.summary(subset(data, pi1>0 & tau1 > 1 & rho1 > 1 & pi2 == 0 & tau2>1 & rho2 > 1))
+simr.cmr <- plot.fixation(fs,x.factor='pi', plot.title='SIMR vs. CMR', label.avg.tau=T)
+simr.cmr
 
-fs <- fixation.summary(subset(data, pi>0 & tau > 1 & rho == 1))
-sim.nm <- plot.fixation(fs,x.factor='pi', plot.title='SIM vs. NM', label.avg.tau=T)
-sim.nm2 <- plot.finish.rate(fs,x.factor='pi', plot.title='SIM vs. NM')
-#multiplot(sim.nm, sim.nm2, cols=2)
-
-fs <- fixation.summary(subset(data, pi==0 & tau == 1 & rho > 1 & r > 0))
-cr.nr <- plot.fixation(fs,x.factor='rho', plot.title='CR vs. NR')
-cr.nr2 <- plot.finish.rate(fs,x.factor='rho', plot.title='CR vs. NR')
-#multiplot(cr.nr, cr.nr2, cols=2)
-
-fs <- fixation.summary(subset(data, pi > 0 & tau == 1 & rho > 1 & r > 0))
-sir.nr <- plot.fixation(fs,x.factor='pi', plot.title='SIR vs. NR')
-sir.nr2 <- plot.finish.rate(fs,x.factor='pi', plot.title='SIR vs. NR')
-#multiplot(sir.nr, sir.nr2, cols=2)
-
-fs <- fixation.summary(subset(data, pi==0 & tau > 1 & rho > 1))
-cmr.nmr <- plot.fixation(fs,x.factor='tau.rho', plot.title='CMR vs. NMR')
-cmr.nmr2 <- plot.finish.rate(fs,x.factor='tau.rho', plot.title='CMR vs. NMR')
-#multiplot(cmr.nmr, cmr.nmr2, cols=2)
-
-fs <- fixation.summary(subset(data, pi > 0 & tau > 1 & rho > 1 & r > 0))
-simr.nmr <- plot.fixation(fs,x.factor='pi', plot.title='SIMR vs. NMR', label.avg.tau=T)
-simr.nmr2 <- plot.finish.rate(fs,x.factor='pi', plot.title='SIMR vs. NMR')
-#multiplot(simr.nmr, simr.nmr2, cols=2)
-
-multiplot(cm.nm, sim.nm, cr.nr, sir.nr, cmr.nmr, simr.nmr, cols=2)
-multiplot(cm.nm2, sim.nm2, cr.nr2, sir.nr2, cmr.nmr2, simr.nmr2, cols=2)
