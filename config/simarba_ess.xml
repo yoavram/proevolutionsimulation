@@ -41,7 +41,7 @@
 		<property name="mutationRateModifier" value="${mutationRateModifier}" />
 		<property name="transformationRateModifier" value="${transformationRateModifier}" />
 		<property name="mutationRateFitnessThreshold" value="${mutationRateFitnessThreshold}" />
-		<property name="transformationRateFitnessThreshold" value="${transformationRateFitnessThreshold" />
+		<property name="transformationRateFitnessThreshold" value="${transformationRateFitnessThreshold}" />
 		<property name="allelesPerLocus" value="${allelesPerLocus}"/>
 	</bean>
 	<bean id="simarbaModel" class="il.ac.tau.yoavram.simba.SimarbaModel">
