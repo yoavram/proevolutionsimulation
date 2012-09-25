@@ -12,30 +12,34 @@ import java.util.Arrays;
 import org.apache.log4j.Logger;
 
 /**
+ * This replaces {@link SexyBacteria}.
+ * 
  * @author yoavram
  * @since 8/8/2012
  */
 public class ModifierBacteria implements Bacteria {
 	private static final long serialVersionUID = 2097663119090595125L;
-	private static final Logger logger = Logger.getLogger(ModifierBacteria.class);
+	private static final Logger logger = Logger
+			.getLogger(ModifierBacteria.class);
 
 	private static final long DEFAULT_UPDATE = Long.MAX_VALUE;
 	private static final int[] EMPTY_INT_ARRAY = new int[0];
 	private static final int DEFAULT_INT = -1;
-	
+
 	protected static ModifierBacteria trash = null;
 	private static int nextID = 0;
 	private int id = nextID++;
-	
+
 	protected double allelesPerLocus = 11;
 	protected int[] alleles;
 	protected double mutationRate;
 	protected double transformationRate;
 	protected double selectionCoefficient;
-	protected double fitnessThreshold = Double.POSITIVE_INFINITY;
+	protected double mutationRateFitnessThreshold = Double.POSITIVE_INFINITY;
+	protected double transformationRateFitnessThreshold = Double.POSITIVE_INFINITY;
 	protected double mutationRateModifier = 1;
 	protected double transformationRateModifier = 1;
-	
+
 	protected transient int harmfulAlleles = DEFAULT_INT;
 	protected transient long update = DEFAULT_UPDATE;
 
@@ -47,7 +51,7 @@ public class ModifierBacteria implements Bacteria {
 		this();
 		copy(other);
 	}
-	
+
 	/**
 	 * should be overridden if new members are given
 	 * 
@@ -62,14 +66,15 @@ public class ModifierBacteria implements Bacteria {
 		transformationRate = other.transformationRate;
 		selectionCoefficient = other.selectionCoefficient;
 		allelesPerLocus = other.allelesPerLocus;
-		fitnessThreshold = other.fitnessThreshold;
+		mutationRateFitnessThreshold = other.mutationRateFitnessThreshold;
+		transformationRateFitnessThreshold = other.transformationRateFitnessThreshold;
 		mutationRateModifier = other.mutationRateModifier;
 		transformationRateModifier = other.transformationRateModifier;
-		
+
 		harmfulAlleles = DEFAULT_INT;
-		update = DEFAULT_UPDATE;	
+		update = DEFAULT_UPDATE;
 	}
-	
+
 	/**
 	 * should be overridden by new types
 	 * 
@@ -96,8 +101,10 @@ public class ModifierBacteria implements Bacteria {
 		harmfulAlleles = DEFAULT_INT;
 		update = DEFAULT_UPDATE;
 	}
-	
-	/* (non-Javadoc)
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see il.ac.tau.yoavram.simba.Bacteria#die()
 	 */
 	@Override
@@ -106,7 +113,9 @@ public class ModifierBacteria implements Bacteria {
 
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see il.ac.tau.yoavram.simba.Bacteria#spawn()
 	 */
 	@Override
@@ -123,7 +132,9 @@ public class ModifierBacteria implements Bacteria {
 		return recycled;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see il.ac.tau.yoavram.simba.Bacteria#reproduce()
 	 */
 	@Override
@@ -139,19 +150,23 @@ public class ModifierBacteria implements Bacteria {
 		return child;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see il.ac.tau.yoavram.simba.Bacteria#mutate()
 	 */
 	@Override
 	public void mutate() {
-		int gene = RandomUtils.nextInt(0, alleles.length-1);
+		int gene = RandomUtils.nextInt(0, alleles.length - 1);
 		int currentAllele = alleles[gene];
 		int newAllele = -1;
-		// if currentAllele is favorable, it will change to harmful with probability 1
-		// if currentAllele is harmful, it will change to favorable with probability 1/(allelesPerLocus-1)
+		// if currentAllele is favorable, it will change to harmful with
+		// probability 1
+		// if currentAllele is harmful, it will change to favorable with
+		// probability 1/(allelesPerLocus-1)
 		double rand = RandomUtils.nextDouble();
 		for (int i = 1; i < allelesPerLocus; i++) {
-			if (rand <= i / (allelesPerLocus-1)) {
+			if (rand <= i / (allelesPerLocus - 1)) {
 				newAllele = (currentAllele + i) % (int) allelesPerLocus;
 			}
 		}
@@ -161,8 +176,10 @@ public class ModifierBacteria implements Bacteria {
 						.getInstance().getTick(), toString(), gene,
 				currentAllele, newAllele));
 	}
-	
-	/* (non-Javadoc)
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see il.ac.tau.yoavram.simba.Bacteria#transform(int[])
 	 */
 	@Override
@@ -185,7 +202,9 @@ public class ModifierBacteria implements Bacteria {
 		return count;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see il.ac.tau.yoavram.simba.Bacteria#getFitness()
 	 */
 	@Override
@@ -194,7 +213,7 @@ public class ModifierBacteria implements Bacteria {
 				numberOfHarmfulAlleles());
 		return fitness;
 	}
-	
+
 	protected int numberOfHarmfulAlleles() {
 		if (harmfulAlleles == DEFAULT_INT
 				|| getEnvironment().getLastEnvironmentalChange() > update) {
@@ -211,14 +230,16 @@ public class ModifierBacteria implements Bacteria {
 		return harmfulAlleles;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see il.ac.tau.yoavram.simba.Bacteria#getID()
 	 */
 	@Override
 	public int getID() {
 		return id;
 	}
-	
+
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -229,12 +250,14 @@ public class ModifierBacteria implements Bacteria {
 		return obj instanceof ModifierBacteria
 				&& this.getID() == ((Bacteria) obj).getID();
 	}
-	
+
 	protected SimpleEnvironment getEnvironment() {
 		return SimpleEnvironment.getInstance();
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see il.ac.tau.yoavram.simba.Bacteria#getAlleles()
 	 */
 	@Override
@@ -242,7 +265,9 @@ public class ModifierBacteria implements Bacteria {
 		return alleles;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see il.ac.tau.yoavram.simba.Bacteria#getMutationRate()
 	 */
 	@Override
@@ -254,7 +279,9 @@ public class ModifierBacteria implements Bacteria {
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see il.ac.tau.yoavram.simba.Bacteria#getTransformationRate()
 	 */
 	@Override
@@ -265,15 +292,28 @@ public class ModifierBacteria implements Bacteria {
 			return transformationRate;
 		}
 	}
-	
-	/* (non-Javadoc)
-	 * @see il.ac.tau.yoavram.simba.Bacteria#getFitnessThreshold()
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see il.ac.tau.yoavram.simba.Bacteria#getMutationRateFitnessThreshold()
 	 */
 	@Override
-	public double getFitnessThreshold() {
-		return fitnessThreshold;
+	public double getMutationRateFitnessThreshold() {
+		return mutationRateFitnessThreshold;
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see il.ac.tau.yoavram.simba.Bacteria#getTransformationRateFitnessThreshold()
+	 */
+	@Override
+	public double getTransformationRateFitnessThreshold() {
+		return transformationRateFitnessThreshold;
+	}
+
+	
 	public double getAllelesPerLocus() {
 		return allelesPerLocus;
 	}
@@ -326,35 +366,41 @@ public class ModifierBacteria implements Bacteria {
 		this.transformationRate = transformationRate;
 	}
 
-	public void setFitnessThreshold(double fitnessThreshold) {
-		this.fitnessThreshold = fitnessThreshold;
+	public void setMutationRateFitnessThreshold(double fitnessThreshold) {
+		this.mutationRateFitnessThreshold = fitnessThreshold;
 	}
 	
+	public void setTransformationRateFitnessThreshold(double fitnessThreshold) {
+		this.transformationRateFitnessThreshold = fitnessThreshold;
+	}
+
 	public boolean isMutator() {
-		return ((isSim() && numberOfHarmfulAlleles() >= getFitnessThreshold()) || isCm());
+		return ((isSim() && numberOfHarmfulAlleles() >= getMutationRateFitnessThreshold()) || isCm());
 	}
 
 	public boolean isRecombinator() {
-		return ((isSir() && numberOfHarmfulAlleles() >= getFitnessThreshold()) || isCr());
+		return ((isSir() && numberOfHarmfulAlleles() >= getTransformationRateFitnessThreshold()) || isCr());
 	}
 
 	public boolean isSim() {
-		return getMutationRateModifier() != 1 && getFitnessThreshold() > 0
-				&& getFitnessThreshold() <= alleles.length;
+		return getMutationRateModifier() != 1
+				&& getMutationRateFitnessThreshold() > 0
+				&& getMutationRateFitnessThreshold() <= alleles.length;
 	}
 
 	public boolean isSir() {
 		return getTransformationRateModifier() != 1
-				&& getFitnessThreshold() > 0
-				&& getFitnessThreshold() <= alleles.length;
+				&& getTransformationRateFitnessThreshold() > 0
+				&& getTransformationRateFitnessThreshold() <= alleles.length;
 	}
 
 	public boolean isCm() {
-		return getFitnessThreshold() == 0 && getMutationRateModifier() != 1;
+		return getMutationRateFitnessThreshold() == 0
+				&& getMutationRateModifier() != 1;
 	}
 
 	public boolean isCr() {
-		return getFitnessThreshold() == 0
+		return getTransformationRateFitnessThreshold() == 0
 				&& getTransformationRateModifier() != 1;
 	}
 

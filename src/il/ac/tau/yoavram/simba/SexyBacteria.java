@@ -358,7 +358,7 @@ public class SexyBacteria implements Bacteria {
 	}
 
 	@Override
-	public double getFitnessThreshold() {
+	public double getMutationRateFitnessThreshold() {
 		if (Double.isNaN(fitnessThreshold)) {
 			fitnessThreshold = clacModifier(getEnvironment()
 					.getThresholdModifiers());
@@ -367,30 +367,30 @@ public class SexyBacteria implements Bacteria {
 	}
 
 	public boolean isMutator() {
-		return ((isSim() && numberOfHarmfulAlleles() >= getFitnessThreshold()) || isCm());
+		return ((isSim() && numberOfHarmfulAlleles() >= getMutationRateFitnessThreshold()) || isCm());
 	}
 
 	public boolean isRecombinator() {
-		return ((isSir() && numberOfHarmfulAlleles() >= getFitnessThreshold()) || isCr());
+		return ((isSir() && numberOfHarmfulAlleles() >= getMutationRateFitnessThreshold()) || isCr());
 	}
 
 	public boolean isSim() {
-		return getMutationRateModifier() != 1 && getFitnessThreshold() > 0
-				&& getFitnessThreshold() <= alleles.length;
+		return getMutationRateModifier() != 1 && getMutationRateFitnessThreshold() > 0
+				&& getMutationRateFitnessThreshold() <= alleles.length;
 	}
 
 	public boolean isSir() {
 		return getTransformationRateModifier() != 1
-				&& getFitnessThreshold() > 0
-				&& getFitnessThreshold() <= alleles.length;
+				&& getMutationRateFitnessThreshold() > 0
+				&& getMutationRateFitnessThreshold() <= alleles.length;
 	}
 
 	public boolean isCm() {
-		return getFitnessThreshold() == 0 && getMutationRateModifier() != 1;
+		return getMutationRateFitnessThreshold() == 0 && getMutationRateModifier() != 1;
 	}
 
 	public boolean isCr() {
-		return getFitnessThreshold() == 0
+		return getMutationRateFitnessThreshold() == 0
 				&& getTransformationRateModifier() != 1;
 	}
 
@@ -416,5 +416,10 @@ public class SexyBacteria implements Bacteria {
 		}
 		return String.format("%s(%d %s %s)", getClass().getSimpleName(),
 				getID(), mutator, recombinator);
+	}
+
+	@Override
+	public double getTransformationRateFitnessThreshold() {
+		return fitnessThreshold;
 	}
 }

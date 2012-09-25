@@ -17,7 +17,8 @@ public class IdealModifierAncestor extends ModifierBacteria {
 		setAlleles(alleles);
 		super.setMutationRateModifier(mutationRateModifier);
 		super.setTransformationRateModifier(transformationRateModifier);
-		super.setFitnessThreshold(fitnessThreshold);
+		super.setMutationRateFitnessThreshold(mutationRateFitnessThreshold);
+		super.setTransformationRateFitnessThreshold(transformationRateFitnessThreshold);
 	}
 
 	@Override

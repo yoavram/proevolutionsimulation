@@ -26,6 +26,8 @@ public interface Bacteria extends Serializable {
 	
 	public abstract int transform(int[] genome) ;
 
-	public abstract double getFitnessThreshold();
+	public abstract double getMutationRateFitnessThreshold();
+	
+	public abstract double getTransformationRateFitnessThreshold();
 
 }

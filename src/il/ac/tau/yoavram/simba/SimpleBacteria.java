@@ -246,7 +246,7 @@ public class SimpleBacteria implements Serializable, Bacteria {
 
 	@Override
 	public double getMutationRate() {
-		if ((isSim() && getFitness() < getFitnessThreshold()) || isCm()) {
+		if ((isSim() && getFitness() < getMutationRateFitnessThreshold()) || isCm()) {
 			return getMutationRateModifier() * mutationRate;
 		} else {
 			return mutationRate;
@@ -283,7 +283,7 @@ public class SimpleBacteria implements Serializable, Bacteria {
 	}
 
 	@Override
-	public double getFitnessThreshold() {
+	public double getMutationRateFitnessThreshold() {
 		return fitnessThreshold;
 	}
 
@@ -296,16 +296,16 @@ public class SimpleBacteria implements Serializable, Bacteria {
 	}
 
 	public boolean isMutator() {
-		return getFitness() < getFitnessThreshold();
+		return getFitness() < getMutationRateFitnessThreshold();
 	}
 
 	public boolean isSim() {
-		return getMutationRateModifier() > 1 && getFitnessThreshold() > 0
-				&& getFitnessThreshold() < 1;
+		return getMutationRateModifier() > 1 && getMutationRateFitnessThreshold() > 0
+				&& getMutationRateFitnessThreshold() < 1;
 	}
 
 	public boolean isCm() {
-		return getMutationRateModifier() > 1 && getFitnessThreshold() == 1;
+		return getMutationRateModifier() > 1 && getMutationRateFitnessThreshold() == 1;
 	}
 
 	@Override
@@ -316,6 +316,11 @@ public class SimpleBacteria implements Serializable, Bacteria {
 	@Override
 	public int transform(int[] genome) {
 		return 0;
+	}
+
+	@Override
+	public double getTransformationRateFitnessThreshold() {
+		return fitnessThreshold;
 	}
 
 }
