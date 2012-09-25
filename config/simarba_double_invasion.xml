@@ -52,7 +52,8 @@
 				<property name="invasionRate" value="${invasionRate}" />
 				<property name="invasion1">
 					<bean class="il.ac.tau.yoavram.simba.SimarInvasion">
-						<property name="fitnessThreshold" value="${fitnessThreshold1}" />
+						<property name="mutationRateFitnessThreshold" value="${mutationRateFitnessThreshold1}" />
+						<property name="transformationRateFitnessThreshold" value="${transformationRateFitnessThreshold1}" />
 						<property name="mutationRateModifier" value="${mutationRateModifier1}" />
 						<property name="transformationRateModifier" value="${transformationRateModifier1}" />
 					</bean>
@@ -61,7 +62,8 @@
 				<!-- invasion2 changes all the individuals that were not changed by invasion1, 
 				so it changes the resident population --> 			
 					<bean class="il.ac.tau.yoavram.simba.SimarInvasion">
-						<property name="fitnessThreshold" value="${fitnessThreshold2}" />
+						<property name="mutationRateFitnessThreshold" value="${mutationRateFitnessThreshold2}" />
+						<property name="transformationRateFitnessThreshold" value="${transformationRateFitnessThreshold2}" />				
 						<property name="mutationRateModifier" value="${mutationRateModifier2}" />
 						<property name="transformationRateModifier" value="${transformationRateModifier2}" />
 					</bean>

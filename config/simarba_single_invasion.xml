@@ -51,7 +51,8 @@
 		<property name="invasion">
 			<bean class="il.ac.tau.yoavram.simba.SimarInvasion">
 				<property name="invasionRate" value="${invasionRate}" />
-				<property name="fitnessThreshold" value="${fitnessThreshold}" />
+				<property name="mutationRateFitnessThreshold" value="${mutationRateFitnessThreshold}" />				
+				<property name="transformationRateFitnessThreshold" value="${transformationRateFitnessThreshold}" />
 				<property name="mutationRateModifier" value="${mutationRateModifier}" />
 				<property name="transformationRateModifier" value="${transformationRateModifier}" />
 			</bean>
