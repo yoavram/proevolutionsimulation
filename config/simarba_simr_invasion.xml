@@ -84,6 +84,9 @@
 				<bean class="il.ac.tau.yoavram.simba.statistics.aggregators.SimFraction">
 					<property name="name" value="sim fraction" />
 				</bean>
+				<bean class="il.ac.tau.yoavram.simba.statistics.aggregators.SirFraction">
+                                        <property name="name" value="sir fraction" />
+                                </bean>
 				<ref bean="popMeanFitness" />
 				<ref bean="maxFitness" />
 				<ref bean="minFitness" />

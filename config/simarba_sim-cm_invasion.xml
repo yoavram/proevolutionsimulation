@@ -122,12 +122,12 @@
 						</bean>
 					</property>
 				</bean>
-				<bean class="il.ac.tau.yoavram.pes.statistics.listeners.ChartDrawer">
+				<!--bean class="il.ac.tau.yoavram.pes.statistics.listeners.ChartDrawer">
 					<property name="title" value="sim.${jobName}.${time}" />
 					<property name="showApplet" value="${simulation.block}" />
 					<property name="filename"
 						value="${output.dir}/${jobName}/sim.${jobName}.${time}" />
-				</bean>
+				</bean-->
 			</list>
 		</property>
 		<property name="aggregators">
@@ -176,12 +176,12 @@
 						</bean>
 					</property>
 				</bean>
-				<bean class="il.ac.tau.yoavram.pes.statistics.listeners.ChartDrawer">
+				<!--bean class="il.ac.tau.yoavram.pes.statistics.listeners.ChartDrawer">
 					<property name="title" value="cm.${jobName}.${time}" />
 					<property name="showApplet" value="${simulation.block}" />
 					<property name="filename"
 						value="${output.dir}/${jobName}/cm.${jobName}.${time}" />
-				</bean>
+				</bean-->
 			</list>
 		</property>
 		<property name="aggregators">

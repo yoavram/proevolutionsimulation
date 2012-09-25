@@ -1,0 +1,181 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+           http://www.springframework.org/schema/beans/spring-beans-3.0.xsd"
+	default-init-method="init" default-destroy-method="destroy">
+	<!-- bean id="pesDataSource" class="org.apache.commons.dbcp.BasicDataSource"> 
+		<property name="driverClassName" value="com.mysql.jdbc.Driver" /> <property 
+		name="url" value="jdbc:mysql://192.168.78.128/pes" /> <property name="username" 
+		value="root" /> <property name="password" value="password" /> </bean bean 
+		id="propertiesPersister" class="il.ac.tau.yoavram.pes.io.PropertiesSqlPersister"> 
+		<property name="dataSource" ref="pesDataSource" /> <property name="table" 
+		value="simulation" /> </bean -->
+	<bean id="simulation" class="il.ac.tau.yoavram.pes.Simulation">
+		<property name="terminators">
+			<list>
+				<bean id="tickTerminator" class="il.ac.tau.yoavram.pes.terminators.TickTerminator">
+					<property name="endAtTick" value="${numberOfTicks}" />
+				</bean>
+			</list>
+		</property>
+		<property name="model" ref="simarbaModel" />
+		<property name="dataGatherers">
+			<list>
+				<ref bean="fitnessDataGatherer" />
+				<!--ref bean="mutationDataGatherer" /> <ref bean="transformationDataGatherer" 
+					/ -->
+			</list>
+		</property>
+		<property name="blockAtEnd" value="${simulation.block}" />
+		<property name="ID" value="${jobName}.${time}" />
+	</bean>
+	<bean id="environment" class="il.ac.tau.yoavram.simba.ModifierEnvironment">
+		<property name="numberOfEnvironmentalGenes" value="${numberOfGenes}" />
+		<property name="numberOfMutationModifiers" value="${numberOfMutationModifiers}" />
+		<property name="numberOfTransformationModifiers" value="${numberOfTransformationModifiers}" />
+		<property name="numberOfThresholdModifiers" value="${numberOfThresholdModifiers}" />
+	</bean>
+	<bean id="ancestor" class="il.ac.tau.yoavram.simba.IdealSexyAncestor">
+		<property name="mutationRate" value="${mutationRate}" />
+		<property name="transformationRate" value="${transformationRate}" />
+		<property name="numberOfGenes" value="${numberOfGenes}" />
+		<property name="selectionCoefficient" value="${selectionCoefficient}" />
+		<property name="mutationRateModifier" value="${mutationRateModifier}" />
+		<property name="transformationRateModifier" value="${transformationRateModifier}" />
+		<property name="fitnessThreshold" value="${fitnessThreshold}" />
+		<property name="allelesPerLocus" value="${allelesPerLocus}"/>
+	</bean>
+	<bean id="simarbaModel" class="il.ac.tau.yoavram.simba.SimarbaModel">
+		<property name="populationSize" value="${populationSize}" />
+		<property name="environment" ref="environment" />
+		<property name="ancestor" ref="ancestor" />
+		<property name="serializedAtEnd" value="true" />
+		<property name="dir" value="${serialization.dir}/" />
+		<property name="ID" value="${jobName}.${time}" />
+		<property name="changeEnvironmentOnStartup" value="${changeEnvironmentOnStartup}" />
+		<property name="fractionOfGenesToChange" value="${fractionOfGenesToChange}" />
+		<property name="environmentalChangeFrequency" value="${environmentalChangeFrequency}" />
+		<property name="recombinationBarriers" value="${recombinationBarriers}"/>
+	</bean>
+
+	<bean id="fitnessDataGatherer" class="il.ac.tau.yoavram.simba.statistics.SimbaDataGatherer">
+		<property name="model" ref="simarbaModel" />
+		<property name="interval" value="${statistics.interval}" />
+		<property name="filters">
+			<list>
+			</list>
+		</property>
+		<property name="listeners">
+			<list>
+				<bean class="il.ac.tau.yoavram.pes.statistics.listeners.CsvWriterListener">
+					<property name="csvWriter">
+						<bean class="il.ac.tau.yoavram.pes.io.csv.CsvWriter">
+							<property name="filename" value="fitness.${jobName}.${time}" />
+							<property name="directory" value="${output.dir}/${jobName}" />
+							<property name="writeTempFile" value="true" />
+
+						</bean>
+					</property>
+				</bean>
+				<!-- bean class="il.ac.tau.yoavram.pes.statistics.listeners.SqlListener"> 
+					<property name="dataSource"> <bean class="org.apache.commons.dbcp.BasicDataSource"> 
+					<property name="driverClassName" value="org.sqlite.JDBC" /> <property name="url" 
+					value="jdbc:sqlite:${output.dir}/${jobName}/fitness.${jobName}.${time}.sqlite" 
+					/> </bean> </property> <property name="jobName" value="${jobName}" /> <property 
+					name="time" value="${time}" /> <property name="table" value="fitness" /> 
+					</bean -->
+				<bean class="il.ac.tau.yoavram.pes.statistics.listeners.ChartDrawer">
+					<property name="title" value="fitness.${jobName}.${time}" />
+					<property name="showApplet" value="${simulation.block}" />
+					<property name="filename"
+						value="${output.dir}/${jobName}/fitness.${jobName}.${time}" />
+
+				</bean>
+			</list>
+		</property>
+		<property name="aggregators">
+			<list>
+				<bean class="il.ac.tau.yoavram.pes.statistics.aggregators.Ticker">
+					<property name="name" value="tick" />
+				</bean>
+				<ref bean="meanFitness" />
+				<bean
+					class="il.ac.tau.yoavram.simba.statistics.aggregators.MinimumFitness">
+					<property name="name" value="min fitness" />
+				</bean>
+				<bean
+					class="il.ac.tau.yoavram.simba.statistics.aggregators.MaximumFitness">
+					<property name="name" value="max fitness" />
+				</bean>
+				<bean
+					class="il.ac.tau.yoavram.simba.statistics.aggregators.StandardDeviationFitness">
+					<property name="name" value="stdev fitness" />
+					<property name="meanAggregator" ref="meanFitness" />
+				</bean>
+			</list>
+		</property>
+	</bean>
+	<!-- bean id="mutationDataGatherer" class="il.ac.tau.yoavram.simba.statistics.SimbaDataGatherer"> 
+		<property name="model" ref="simarbaModel" /> <property name="interval" value="${statistics.interval}" 
+		/> <property name="filters"> <list> </list> </property> <property name="listeners"> 
+		<list> <bean class="il.ac.tau.yoavram.pes.statistics.listeners.CsvWriterListener"> 
+		<property name="csvWriter"> <bean class="il.ac.tau.yoavram.pes.io.csv.CsvWriter"> 
+		<property name="filename" value="mutation.${jobName}.${time}" /> <property 
+		name="directory" value="${output.dir}/${jobName}" /> <property name="writeTempFile" 
+		value="true" /> </bean> </property> </bean> <bean class="il.ac.tau.yoavram.pes.statistics.listeners.SqlListener"> 
+		<property name="dataSource"> <bean class="org.apache.commons.dbcp.BasicDataSource"> 
+		<property name="driverClassName" value="org.sqlite.JDBC" /> <property name="url" 
+		value="jdbc:sqlite:${output.dir}/${jobName}/mutation.${jobName}.${time}.sqlite" 
+		/> </bean> </property> <property name="jobName" value="${jobName}" /> <property 
+		name="time" value="${time}" /> <property name="table" value="mutation" /> 
+		</bean> <bean class="il.ac.tau.yoavram.pes.statistics.listeners.ChartDrawer"> 
+		<property name="title" value="mutation.${jobName}.${time}" /> <property name="showApplet" 
+		value="${simulation.block}" /> <property name="filename" value="${output.dir}/${jobName}/mutation.${jobName}.${time}" 
+		/> </bean> </list> </property> <property name="aggregators"> <list> <bean 
+		class="il.ac.tau.yoavram.pes.statistics.aggregators.Ticker"> <property name="name" 
+		value="tick" /> </bean> <ref bean="meanMutationRate" /> <bean class="il.ac.tau.yoavram.simba.statistics.aggregators.MinimumMutationRate"> 
+		<property name="name" value="min mutation rate" /> </bean> <bean class="il.ac.tau.yoavram.simba.statistics.aggregators.MaximumMutationRate"> 
+		<property name="name" value="max mutation rate" /> </bean> <bean class="il.ac.tau.yoavram.simba.statistics.aggregators.StandardDeviationMutationRate"> 
+		<property name="name" value="stdev mutation rate" /> <property name="meanAggregator" 
+		ref="meanMutationRate" /> </bean> <ref bean="meanFitnessThreshold" /> <bean 
+		class="il.ac.tau.yoavram.simba.statistics.aggregators.MinimumFitnessThreshold"> 
+		<property name="name" value="min fitness threshold" /> </bean> <bean class="il.ac.tau.yoavram.simba.statistics.aggregators.MaximumFitnessThreshold"> 
+		<property name="name" value="max fitness threshold" /> </bean> <bean class="il.ac.tau.yoavram.simba.statistics.aggregators.StandardDeviationFitnessThreshold"> 
+		<property name="name" value="stdev fitness threshold" /> <property name="meanAggregator" 
+		ref="meanFitnessThreshold" /> </bean> </list> </property> </bean -->
+	<!-- bean id="transformationDataGatherer" class="il.ac.tau.yoavram.simba.statistics.SimbaDataGatherer"> 
+		<property name="model" ref="simarbaModel" /> <property name="interval" value="${statistics.interval}" 
+		/> <property name="filters"> <list> </list> </property> <property name="listeners"> 
+		<list> <bean class="il.ac.tau.yoavram.pes.statistics.listeners.CsvWriterListener"> 
+		<property name="csvWriter"> <bean class="il.ac.tau.yoavram.pes.io.csv.CsvWriter"> 
+		<property name="filename" value="transformation.${jobName}.${time}" /> <property 
+		name="directory" value="${output.dir}/${jobName}" /> <property name="writeTempFile" 
+		value="true" /> </bean> </property> </bean> <bean class="il.ac.tau.yoavram.pes.statistics.listeners.SqlListener"> 
+		<property name="dataSource"> <bean class="org.apache.commons.dbcp.BasicDataSource"> 
+		<property name="driverClassName" value="org.sqlite.JDBC" /> <property name="url" 
+		value="jdbc:sqlite:${output.dir}/${jobName}/transformation.${jobName}.${time}.sqlite" 
+		/> </bean> </property> <property name="jobName" value="${jobName}" /> <property 
+		name="time" value="${time}" /> <property name="table" value="transformation" 
+		/> </bean> <bean class="il.ac.tau.yoavram.pes.statistics.listeners.ChartDrawer"> 
+		<property name="title" value="transformation.${jobName}.${time}" /> <property 
+		name="showApplet" value="${simulation.block}" /> <property name="filename" 
+		value="${output.dir}/${jobName}/transformation.${jobName}.${time}" /> </bean> 
+		</list> </property> <property name="aggregators"> <list> <bean class="il.ac.tau.yoavram.pes.statistics.aggregators.Ticker"> 
+		<property name="name" value="tick" /> </bean> <ref bean="meanTransformationRate" 
+		/> <bean class="il.ac.tau.yoavram.simba.statistics.aggregators.MinimumTransformationRate"> 
+		<property name="name" value="min transformation rate" /> </bean> <bean class="il.ac.tau.yoavram.simba.statistics.aggregators.MaximumTransformationRate"> 
+		<property name="name" value="max transformation rate" /> </bean> <bean class="il.ac.tau.yoavram.simba.statistics.aggregators.StandardDeviationTransformationRate"> 
+		<property name="name" value="stdev transformation rate" /> <property name="meanAggregator" 
+		ref="meanTransformationRate" /> </bean> </list> </property> </bean -->
+	<bean id="meanFitness"
+		class="il.ac.tau.yoavram.simba.statistics.aggregators.MeanFitness">
+		<property name="name" value="mean fitness" />
+	</bean>
+	<!--bean id="meanMutationRate" class="il.ac.tau.yoavram.simba.statistics.aggregators.MeanMutationRate"> 
+		<property name="name" value="mean mutation rate" /> </bean> <bean id="meanTransformationRate" 
+		class="il.ac.tau.yoavram.simba.statistics.aggregators.MeanTransformationRate"> 
+		<property name="name" value="mean transformation rate" /> </bean> <bean id="meanFitnessThreshold" 
+		class="il.ac.tau.yoavram.simba.statistics.aggregators.MeanFitnessThreshold"> 
+		<property name="name" value="mean fitness threshold" /> </bean -->
+</beans>
