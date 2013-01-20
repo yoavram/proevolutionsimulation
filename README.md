@@ -29,8 +29,8 @@ during 2008-09.
 
 ## License[](#License)
 
-[GPL](http://www.gnu.org/licenses/gpl.html) and [Creative Commons
-BY-SA](http://creativecommons.org/licenses/by-sa/3.0/) basically mean
+The code is published under the [Creative Commons
+BY-SA](http://creativecommons.org/licenses/by-sa/3.0/) license, which basically means
 that you are
 **[free](http://en.wikipedia.org/wiki/Gratis_versus_libre)** to:
 
