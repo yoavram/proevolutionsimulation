@@ -5,18 +5,17 @@
 The framework is specificaly designed for individual-based simulations
 of the evolution of the genetic system.
 
+Stable version is **Charles** and working version is **Dobzhansky** (see
+[versions](#versions)).
+
+If you want to use this software for your own research you are welcome
+to **contact me with any questions or
+requests** by using thei [issues](/yoavram/proevolutionsimulation/issues) systems or [e-mailing me directly](/yoavram).
+
+This git repository replaced the old SVN repository on [Google Code](https://code.google.com/p/proevolutionsimulation/) on **January 2013**. Currently, further development is not planned.
 This project replaced the
 [proevolution](http://code.google.com/p/proevolution/) project built
 during 2008-09.
-
-Stable version is **Charles** and working version is **Dobzhansky** (see
-[versions](http://code.google.com/p/proevolutionsimulation/wiki/versions)).
-
-If you want to use this software for your own research you are welcome
-to contact me with any questions or
-requests.
-
-This git repository replaced the old SVN repository on [Google Code](https://code.google.com/p/proevolutionsimulation/) on **January 2013**. Currently, further development is not planned.
 
 ## Publications:[](#Publications:)
 
