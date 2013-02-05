@@ -19,10 +19,10 @@ during 2008-09.
 
 ## Publications:[](#Publications:)
 
--   Ram, Y. and Hadany, L. (2012) [The Evolution of Stress-Induced
+-   Ram, Y. and Hadany, L. (2012) The Evolution of Stress-Induced
     Hypermutation in Asexual
-    Populations](http://doi.wiley.com/10.1111/j.1558-5646.2012.01576.x).
-    *Evolution*, 66: 2315-2328. DOI: 10.1111/j.1558-5646.2012.01576.x
+    Populations.
+    *Evolution*, 66: 2315-2328. DOI: 10.1111/j.1558-5646.2012.01576.x | [Publisher](http://doi.wiley.com/10.1111/j.1558-5646.2012.01576.x) | [Open Access](http://goo.gl/cj1Te)
 -   Gueijman, A., Ayali, A., Ram, Y., Orlova, M., and Hadany, L. The
     evolution of fitness associated dispersal (FAD): Locust
     phase-polymorphism as an example. *Submitted*
