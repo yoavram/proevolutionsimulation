@@ -19,20 +19,13 @@ during 2008-09.
 
 ## Publications:[](#Publications:)
 
--   Ram, Y. and Hadany, L. (2012) The Evolution of Stress-Induced
-    Hypermutation in Asexual
-    Populations.
+-   Ram, Y. and Hadany, L. (2012) The evolution of stress-induced hypermutation in asexual populations.
     *Evolution*, 66: 2315-2328. DOI: 10.1111/j.1558-5646.2012.01576.x | [Publisher](http://doi.wiley.com/10.1111/j.1558-5646.2012.01576.x) | [Open Access](http://goo.gl/cj1Te)
--   Gueijman, A., Ayali, A., Ram, Y., Orlova, M., and Hadany, L. The
-    evolution of fitness associated dispersal (FAD): Locust
-    phase-polymorphism as an example. *Submitted*
+-   Gueijman, A., Ayali, A., Ram, Y., and Hadany, L. (2013) Dispersing away from bad genotypes: the evolution of Fitness-Associated Dispersal (FAD) in homogeneous environments. *BMC Evolutionary Biology*, in press. [code](https://code.google.com/p/fagr/)
 
 ## License[](#License)
 
-The code is published under the [Creative Commons
-BY-SA](http://creativecommons.org/licenses/by-sa/3.0/) license, which basically means
-that you are
-**[free](http://en.wikipedia.org/wiki/Gratis_versus_libre)** to:
+The code is published under the [Creative Commons BY-SA](http://creativecommons.org/licenses/by-sa/3.0/) license, which means that you are **[free](http://en.wikipedia.org/wiki/Gratis_versus_libre)** to:
 
 -   Share — to copy, distribute and transmit the work
 -   Remix — to adapt the work
@@ -47,13 +40,9 @@ Under the following conditions:
     this work, you may distribute the resulting work **only under the
     same or similar license** to this one.
 
-**Attribution:** If you publish a scientific article based on use or
-adaptation of this work you need to cite [Ram and Hadany
-2012](http://onlinelibrary.wiley.com/doi/10.1111/j.1558-5646.2012.01576.x/abstract).
+**Attribution:** If you publish a scientific article based on use or adaptation of this work you need to cite [Ram and Hadany 2012](http://onlinelibrary.wiley.com/doi/10.1111/j.1558-5646.2012.01576.x/abstract).
 
-See [A Quick Guide to Software Licensing for the
-Scientist-Programmer](http://www.ploscompbiol.org/article/info:doi%2F10.1371%2Fjournal.pcbi.1002598)
-on PLos Computational Biology for some help with software licensing.
+See [A Quick Guide to Software Licensing for the Scientist-Programmer](http://www.ploscompbiol.org/article/info:doi%2F10.1371%2Fjournal.pcbi.1002598) on *PLos Computational Biology* for help with software licensing.
 
 ## Dependencies[](#Dependencies)
 
