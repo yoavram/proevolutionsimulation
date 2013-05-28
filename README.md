@@ -60,7 +60,7 @@ See [A Quick Guide to Software Licensing for the Scientist-Programmer](http://ww
 -  **[Alfred](http://en.wikipedia.org/wiki/Alfred_Russel_Wallace)** -
     Closed Sep 16 2010
 -  **[Baptiste](http://en.wikipedia.org/wiki/Jean-Baptiste_Lamarck)** -
-    Closed Apr 17 2011
+    Closed Apr 17 2011. This version was used in the BMC Evol Biol 2013 paper.
 -  **[Charles](http://en.wikipedia.org/wiki/Charles_Darwin)** - Closed
     Sep 4 2011. This version was used in the Evolution 2012 paper.
 -  **[Dobzhansky](http://en.wikipedia.org/wiki/Theodosius_Dobzhansky)** - **Current**
