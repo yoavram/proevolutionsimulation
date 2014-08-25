@@ -5,7 +5,7 @@
 The framework is specificaly designed for individual-based simulations
 of the evolution of the genetic system.
 
-Stable version is **Charles** and working version is **Dobzhansky** (see
+Stable versions are **Charles** and **Dobzhansky** (see
 [versions](#versions)). Development has stopped as of August 2013.
 
 If you want to use this software for your own research you are welcome
@@ -65,7 +65,8 @@ See [A Quick Guide to Software Licensing for the Scientist-Programmer](http://ww
     Closed Apr 17 2011. This version was used in the BMC Evol Biol 2013 paper.
 -  **[Charles](http://en.wikipedia.org/wiki/Charles_Darwin)** - Closed
     Sep 4 2011. This version was used in the Evolution 2012 paper.
--  **[Dobzhansky](http://en.wikipedia.org/wiki/Theodosius_Dobzhansky)** - **Current**
+-  **[Dobzhansky](http://en.wikipedia.org/wiki/Theodosius_Dobzhansky)** - 
+    Aug 25 2014. Finalized for DOI creation.
 -  [Ernst](http://en.wikipedia.org/wiki/Ernst_Haeckel)
 -  [Fisher](http://en.wikipedia.org/wiki/Ronald_Fisher)
 -  [Gregor](http://en.wikipedia.org/wiki/Gregor_Mendel)
