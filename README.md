@@ -6,11 +6,10 @@ The framework is specificaly designed for individual-based simulations
 of the evolution of the genetic system.
 
 Stable version is **Charles** and working version is **Dobzhansky** (see
-[versions](#versions)).
+[versions](#versions)). Development has stopped as of August 2013.
 
 If you want to use this software for your own research you are welcome
-to **contact me with any questions or
-requests** by using thei [issues](/yoavram/proevolutionsimulation/issues) systems or [e-mailing me directly](/yoavram).
+to **contact me with any questions or requests** by using the [issues](/yoavram/proevolutionsimulation/issues) systems or [e-mailing me directly](/yoavram).
 
 This git repository replaced the old SVN repository on [Google Code](https://code.google.com/p/proevolutionsimulation/) on **January 2013**. Currently, further development is not planned.
 This project replaced the
@@ -20,8 +19,11 @@ during 2008-09.
 ## Publications:[](#Publications:)
 
 -   Ram, Y. and Hadany, L. (2012) The evolution of stress-induced hypermutation in asexual populations.
-    *Evolution*, 66: 2315-2328. DOI: 10.1111/j.1558-5646.2012.01576.x | [Publisher](http://doi.wiley.com/10.1111/j.1558-5646.2012.01576.x) | [Open Access](http://goo.gl/cj1Te)
--   Gueijman, A., Ayali, A., Ram, Y., and Hadany, L. (2013) Dispersing away from bad genotypes: the evolution of Fitness-Associated Dispersal (FAD) in homogeneous environments. *BMC Evolutionary Biology*, in press. [code](https://code.google.com/p/fagr/)
+    *Evolution*, 66: 2315-2328. DOI: 10.1111/j.1558-5646.2012.01576.x | [Publisher](http://doi.wiley.com/10.1111/j.1558-5646.2012.01576.x) | 
+[Open Access](http://goo.gl/cj1Te)
+-   Gueijman, A., A. Ayali, Y. Ram, and L. Hadany. (2013) Dispersing away from bad genotypes: the evolution of Fitness-Associated Dispersal (FAD) in homogeneous environments. *BMC Evol. Biol.* 13:125. | 
+[Open Access](http://www.ncbi.nlm.nih.gov/pubmed/23777293) |
+[code](https://code.google.com/p/fagr/)
 
 ## License[](#License)
 
